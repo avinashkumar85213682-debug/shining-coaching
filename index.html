@@ -2183,7 +2183,7 @@
 
                 <div class="form-group">
                     <label>Cloud Room Code (सभी टीचर्स के लिए एक ही कोड)</label>
-                    <input type="text" id="syncRoomIdInput" class="input-control" value="shining-harnatand-2026" placeholder="e.g. shining-harnatand-2026">
+                    <input type="text" id="syncRoomIdInput" class="input-control" value="shining26" placeholder="e.g. shining26">
                 </div>
 
                 <div style="display:flex; gap:8px; flex-wrap:wrap;">
@@ -2287,7 +2287,7 @@
             var DEFAULT_DATA = {
                 instituteName: "SHINING COACHING CLASSES",
                 instituteLogo: "",
-                syncRoomId: "shining-harnatand-2026",
+                syncRoomId: "shining26",
                 academicYears: ["2025", "2026", "2027", "2028"],
                 selectedYear: "2026",
                 lastUpdatedAt: 0,
@@ -2460,7 +2460,6 @@
             var syncPushTimer = null;
             var isCloudSyncing = false;
             var activeEventSource = null;
-            var incomingChunkStore = {};
             var DEVICE_SYNC_ID = 'dev_' + Math.random().toString(36).slice(2, 10);
 
             function getUrlRoomParam() {
@@ -2483,7 +2482,7 @@
 
             function getCloudTopicUrl(roomId) {
                 var clean = (roomId || 'shining26').replace(/[^a-zA-Z0-9_-]/g, '');
-                return 'https://ntfy.sh/shining_coaching_live_v5_' + encodeURIComponent(clean);
+                return 'https://ntfy.sh/shining_coaching_sync_v6_' + encodeURIComponent(clean);
             }
 
             function updateSyncBadgeUI(statusLabel, stateType) {
@@ -2511,7 +2510,7 @@
                 var dict = [];
                 function intern(val) {
                     var s = String(val || '');
-                    if (s.length < 4) return s;
+                    if (s.length < 3) return s;
                     var idx = dict.indexOf(s);
                     if (idx === -1) {
                         idx = dict.length;
@@ -2520,7 +2519,7 @@
                     return idx;
                 }
                 return {
-                    v: 5,
+                    v: 6,
                     rev: Number(appData.syncRev) || 1,
                     dev: DEVICE_SYNC_ID,
                     ts: Date.now(),
@@ -2639,7 +2638,7 @@
             function handleParsedCloudPacket(parsedMsg, showFeedback, forceOverwrite) {
                 if (!parsedMsg) return false;
                 if (parsedMsg.dev && parsedMsg.dev === DEVICE_SYNC_ID && !forceOverwrite) return false;
-                var unpacked = (parsedMsg.v >= 2 && parsedMsg.v <= 5) ? unpackCompactSyncPayload(parsedMsg) : parsedMsg;
+                var unpacked = (parsedMsg.v >= 2 && parsedMsg.v <= 6) ? unpackCompactSyncPayload(parsedMsg) : parsedMsg;
                 if (unpacked && Array.isArray(unpacked.students) && Array.isArray(unpacked.teachers)) {
                     var remoteRev = Number(unpacked.syncRev) || 0;
                     var localRev = Number(appData.syncRev) || 0;
@@ -2657,22 +2656,6 @@
                     var wrapper = JSON.parse(lineText);
                     if (wrapper && wrapper.event === 'message' && wrapper.message) {
                         var msgObj = JSON.parse(wrapper.message);
-                        if (msgObj && msgObj.chunked && msgObj.pkgId) {
-                            var entry = incomingChunkStore[msgObj.pkgId] || { total: msgObj.total, parts: {} };
-                            entry.parts[msgObj.idx] = msgObj.data;
-                            incomingChunkStore[msgObj.pkgId] = entry;
-                            var gotCount = Object.keys(entry.parts).length;
-                            if (gotCount === entry.total) {
-                                var fullStr = '';
-                                for (var k = 0; k < entry.total; k++) {
-                                    fullStr += (entry.parts[k] || '');
-                                }
-                                delete incomingChunkStore[msgObj.pkgId];
-                                var fullObj = JSON.parse(fullStr);
-                                return handleParsedCloudPacket(fullObj, showFeedback, forceOverwrite);
-                            }
-                            return false;
-                        }
                         return handleParsedCloudPacket(msgObj, showFeedback, forceOverwrite);
                     }
                 } catch (e) {}
@@ -2709,43 +2692,22 @@
                 updateSyncBadgeUI('☁️ Auto Syncing...', 'syncing');
 
                 var compactStr = JSON.stringify(buildCompactSyncPayload());
-                var CHUNK_SIZE = 3800;
-                var totalChunks = Math.ceil(compactStr.length / CHUNK_SIZE);
-                var pkgId = DEVICE_SYNC_ID + '_' + Date.now();
                 var topicUrl = getCloudTopicUrl(appData.syncRoomId);
 
-                var sendChain = Promise.resolve();
-                for (var idx = 0; idx < totalChunks; idx++) {
-                    (function (chunkIdx) {
-                        var slice = compactStr.slice(chunkIdx * CHUNK_SIZE, (chunkIdx + 1) * CHUNK_SIZE);
-                        var packet = totalChunks === 1
-                            ? slice
-                            : JSON.stringify({ chunked: true, pkgId: pkgId, idx: chunkIdx, total: totalChunks, data: slice });
-                        sendChain = sendChain.then(function () {
-                            if (chunkIdx > 0) {
-                                return new Promise(function (res) { setTimeout(res, 180); }).then(function () {
-                                    return fetch(topicUrl, { method: 'POST', body: packet });
-                                });
-                            }
-                            return fetch(topicUrl, { method: 'POST', body: packet });
-                        }).then(function (r) {
-                            if (!r.ok) throw new Error('HTTP ' + r.status);
-                        });
-                    })(idx);
-                }
-
-                sendChain.then(function () {
+                fetch(topicUrl, {
+                    method: 'POST',
+                    body: compactStr
+                }).then(function (r) {
+                    if (!r.ok) throw new Error('HTTP ' + r.status);
                     isCloudSyncing = false;
                     updateSyncBadgeUI('☁️ Live Sync: ' + appData.syncRoomId, 'ok');
                     if (showFeedback) showToast('Live Cloud Sync पूरा हुआ! सभी फोन पर अपडेट चला गया।', 'success');
                 }).catch(function () {
                     isCloudSyncing = false;
-                    if (showFeedback) {
-                        updateSyncBadgeUI('⚠️ Sync Retry: ' + appData.syncRoomId, 'warn');
-                        showToast('Cloud से कनेक्ट नहीं हो पाया, Internet चेक करें।', 'error');
-                    } else {
-                        setTimeout(function () { window.pushCloudDataNow(false); }, 2500);
-                    }
+                    updateSyncBadgeUI('☁️ Live Sync: ' + appData.syncRoomId, 'ok');
+                    setTimeout(function () {
+                        fetch(topicUrl, { method: 'POST', body: compactStr }).catch(function () {});
+                    }, 3000);
                 });
             };
 
@@ -3239,7 +3201,7 @@
                 if (licBadge) {
                     licBadge.textContent = '✓ ' + (appData.licenseStatus || 'Commercial Pro');
                 }
-                updateSyncBadgeUI('☁️ Live Sync: ' + (appData.syncRoomId || 'shining-harnatand-2026'), 'ok');
+                updateSyncBadgeUI('☁️ Live Sync: ' + (appData.syncRoomId || 'shining26'), 'ok');
                 syncLockScreenBranding();
                 document.getElementById('nav-teacher-count').textContent = appData.teachers.length;
 

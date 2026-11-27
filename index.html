@@ -2278,6 +2278,7 @@
             var appData = loadAppData();
             var syncPushTimer = null;
             var isCloudSyncing = false;
+            var activeEventSource = null;
 
             function getUrlRoomParam() {
                 try {
@@ -2416,6 +2417,49 @@
                 if (showFeedback) showToast('सभी devices से नया live data सिंक हो गया!', 'success');
             }
 
+            function processIncomingNtfyLine(lineText, showFeedback) {
+                if (!lineText) return false;
+                try {
+                    var wrapper = JSON.parse(lineText);
+                    if (wrapper && wrapper.event === 'message' && wrapper.message) {
+                        var parsedMsg = JSON.parse(wrapper.message);
+                        var unpacked = parsedMsg && parsedMsg.v === 2 ? unpackCompactSyncPayload(parsedMsg) : parsedMsg;
+                        if (unpacked && Array.isArray(unpacked.students) && Array.isArray(unpacked.teachers)) {
+                            var remoteTs = Number(unpacked.lastUpdatedAt) || 0;
+                            var localTs = Number(appData.lastUpdatedAt) || 0;
+                            if (remoteTs > localTs) {
+                                applyRemoteCloudState(unpacked, showFeedback);
+                                return true;
+                            }
+                        }
+                    }
+                } catch (e) {}
+                return false;
+            }
+
+            function startRealtimeCloudStream() {
+                if (activeEventSource) {
+                    try { activeEventSource.close(); } catch (e) {}
+                    activeEventSource = null;
+                }
+                if (!appData.syncRoomId || typeof window.EventSource === 'undefined') return;
+                try {
+                    var sseUrl = getFirebaseRoomUrl(appData.syncRoomId) + '/sse?since=12h';
+                    var es = new window.EventSource(sseUrl);
+                    es.onopen = function () {
+                        updateSyncBadgeUI('☁️ Live Sync: ' + appData.syncRoomId, 'ok');
+                    };
+                    es.onmessage = function (ev) {
+                        updateSyncBadgeUI('☁️ Live Sync: ' + appData.syncRoomId, 'ok');
+                        processIncomingNtfyLine(ev.data, false);
+                    };
+                    es.onerror = function () {
+                        // Browser EventSource auto-reconnects smoothly without flashing warning
+                    };
+                    activeEventSource = es;
+                } catch (e) {}
+            }
+
             window.pushCloudDataNow = function (showFeedback) {
                 if (!appData.syncRoomId) return;
                 isCloudSyncing = true;
@@ -2424,7 +2468,6 @@
                 var compact = buildCompactSyncPayload();
                 fetch(getFirebaseRoomUrl(appData.syncRoomId), {
                     method: 'POST',
-                    headers: { 'Title': 'erp_sync', 'Priority': 'low' },
                     body: JSON.stringify(compact)
                 }).then(function (res) {
                     isCloudSyncing = false;
@@ -2433,53 +2476,41 @@
                     if (showFeedback) showToast('Live Cloud Sync पूरा हुआ! सभी फोन पर अपडेट चला गया।', 'success');
                 }).catch(function () {
                     isCloudSyncing = false;
-                    updateSyncBadgeUI('⚠️ Sync Retry: ' + appData.syncRoomId, 'warn');
-                    if (showFeedback) showToast('Cloud से कनेक्ट नहीं हो पाया, Internet चेक करें।', 'error');
+                    if (showFeedback) {
+                        updateSyncBadgeUI('⚠️ Sync Retry: ' + appData.syncRoomId, 'warn');
+                        showToast('Cloud से कनेक्ट नहीं हो पाया, Internet चेक करें।', 'error');
+                    }
                 });
             };
 
             window.pullCloudDataNow = function (showFeedback) {
                 if (!appData.syncRoomId || isCloudSyncing) return;
-                var endpoint = getFirebaseRoomUrl(appData.syncRoomId) + '/json?poll=1&since=24h&_t=' + Date.now();
+                var endpoint = getFirebaseRoomUrl(appData.syncRoomId) + '/json?poll=1&since=24h';
 
                 fetch(endpoint, {
-                    method: 'GET',
-                    cache: 'no-store'
+                    method: 'GET'
                 }).then(function (res) {
                     if (!res.ok) throw new Error('HTTP ' + res.status);
                     return res.text();
                 }).then(function (rawText) {
                     var lines = rawText.trim().split('\n');
-                    var newestCandidate = null;
-                    var newestTs = Number(appData.lastUpdatedAt) || 0;
+                    var updated = false;
 
                     for (var i = lines.length - 1; i >= 0; i--) {
-                        if (!lines[i]) continue;
-                        try {
-                            var wrapper = JSON.parse(lines[i]);
-                            if (wrapper && wrapper.event === 'message' && wrapper.message) {
-                                var parsedMsg = JSON.parse(wrapper.message);
-                                var unpacked = parsedMsg && parsedMsg.v === 2 ? unpackCompactSyncPayload(parsedMsg) : parsedMsg;
-                                if (unpacked && Array.isArray(unpacked.students) && Array.isArray(unpacked.teachers)) {
-                                    var remoteTs = Number(unpacked.lastUpdatedAt) || 0;
-                                    if (remoteTs > newestTs) {
-                                        newestTs = remoteTs;
-                                        newestCandidate = unpacked;
-                                    }
-                                    break;
-                                }
-                            }
-                        } catch (e) {}
+                        if (processIncomingNtfyLine(lines[i], showFeedback)) {
+                            updated = true;
+                            break;
+                        }
                     }
 
-                    if (newestCandidate) {
-                        applyRemoteCloudState(newestCandidate, showFeedback);
-                    } else if (showFeedback) {
+                    if (!updated && showFeedback) {
                         showToast('आपका डेटा पहले से ही up-to-date है!', 'success');
                     }
                     updateSyncBadgeUI('☁️ Live Sync: ' + appData.syncRoomId, 'ok');
                 }).catch(function () {
-                    updateSyncBadgeUI('⚠️ Sync Retry: ' + appData.syncRoomId, 'warn');
+                    if (showFeedback) {
+                        updateSyncBadgeUI('⚠️ Sync Retry: ' + appData.syncRoomId, 'warn');
+                    }
                 });
             };
 
@@ -2489,7 +2520,7 @@
                 if (syncPushTimer) clearTimeout(syncPushTimer);
                 syncPushTimer = setTimeout(function () {
                     window.pushCloudDataNow(false);
-                }, 200);
+                }, 400);
             }
 
             window.openCloudSyncModal = function () {
@@ -2508,6 +2539,7 @@
                 }
                 appData.syncRoomId = cleanRoom;
                 saveAppData();
+                startRealtimeCloudStream();
                 window.pushCloudDataNow(true);
                 window.closeModal('cloudSyncModal');
             };
@@ -4284,10 +4316,13 @@
 
             checkInitialLockState();
             renderDashboard();
+            startRealtimeCloudStream();
             window.pullCloudDataNow(false);
             setInterval(function () {
-                window.pullCloudDataNow(false);
-            }, 3000);
+                if (!document.hidden) {
+                    window.pullCloudDataNow(false);
+                }
+            }, 15000);
             document.addEventListener('DOMContentLoaded', function () {
                 checkInitialLockState();
                 renderDashboard();

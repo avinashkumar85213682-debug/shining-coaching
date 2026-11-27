@@ -881,17 +881,6 @@
             gap: 8px;
         }
 
-        .csv-preview-box {
-            background: #0f172a;
-            color: #e2e8f0;
-            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-            font-size: 0.74rem;
-            padding: 12px;
-            border-radius: 12px;
-            overflow-x: auto;
-            white-space: pre;
-        }
-
         /* =========================================================
            6. MODALS, FORMS, LOCK SCREEN & TOASTS
            ========================================================= */
@@ -1208,7 +1197,7 @@
 
                 <div class="header-actions">
                     <button type="button" class="btn btn-soft-indigo btn-sm" onclick="openClientOnboardingWizard(false)">🚀 New Client Setup</button>
-                    <button type="button" id="cloudSyncHeaderBtn" class="btn btn-soft-emerald btn-sm" onclick="openCloudSyncModal()">☁️ Live Cloud Sync</button>
+                    <button type="button" id="cloudSyncHeaderBtn" class="btn btn-soft-emerald btn-sm" onclick="openCloudSyncModal()">☁️ Live Sync: Ready</button>
                     <button type="button" class="btn btn-soft btn-sm" onclick="exportBackupJSON()">⬇ Backup</button>
                     <label class="btn btn-soft btn-sm" style="cursor:pointer;">
                         ⬆ Restore
@@ -2063,17 +2052,17 @@
             </div>
             <div class="modal-body">
                 <div style="background:var(--emerald-soft); border:1px solid #a7f3d0; border-radius:12px; padding:12px; font-size:0.78rem;">
-                    <div>Status: <strong id="syncModalStatusText" style="color:#166534;">Ready</strong></div>
+                    <div>Status: <strong id="syncModalStatusText" style="color:#166534;">Live Cloud Connected</strong></div>
                     <div style="color:var(--text-muted); margin-top:2px;">Last Synced: <span id="syncModalLastTime">Just now</span></div>
                 </div>
 
                 <div class="form-group">
-                    <label>Cloud Room ID (सभी टीचर्स के लिए एक ही कोड)</label>
+                    <label>Cloud Room Code (सभी टीचर्स के लिए एक ही कोड)</label>
                     <input type="text" id="syncRoomIdInput" class="input-control" value="shining-harnatand-2026" placeholder="e.g. shining-harnatand-2026">
                 </div>
 
                 <div style="display:flex; gap:8px; flex-wrap:wrap;">
-                    <button type="button" class="btn btn-primary btn-sm" style="flex:1;" onclick="saveAndConnectSyncRoom()">🔗 Connect / Create Cloud Room</button>
+                    <button type="button" class="btn btn-primary btn-sm" style="flex:1;" onclick="saveAndConnectSyncRoom()">🔗 Connect Cloud Room</button>
                     <button type="button" class="btn btn-emerald btn-sm" onclick="copySyncRoomLink()">📋 Copy Sync Link</button>
                 </div>
 
@@ -2126,7 +2115,6 @@
                 instituteName: "SHINING COACHING CLASSES",
                 instituteLogo: "",
                 syncRoomId: "shining-harnatand-2026",
-                cloudBlobMap: {},
                 academicYears: ["2025", "2026", "2027", "2028"],
                 selectedYear: "2026",
                 lastUpdatedAt: 0,
@@ -2186,8 +2174,8 @@
                 ]
             };
 
-            var STORAGE_KEY = 'shining_coaching_harnatand_v8';
-            var SESSION_UNLOCK_KEY = 'shining_coaching_unlocked_v8';
+            var STORAGE_KEY = 'shining_coaching_harnatand_v9';
+            var SESSION_UNLOCK_KEY = 'shining_coaching_unlocked_v9';
             var memoryStorageFallback = null;
             var isSessionUnlocked = false;
             var currentSelectedClass = '7th';
@@ -2220,7 +2208,7 @@
 
             function loadAppData() {
                 try {
-                    var raw = safeGetStorage(STORAGE_KEY);
+                    var raw = safeGetStorage(STORAGE_KEY) || safeGetStorage('shining_coaching_harnatand_v8');
                     if (raw) {
                         var parsed = JSON.parse(raw);
                         if (parsed && Array.isArray(parsed.students) && Array.isArray(parsed.teachers)) {
@@ -2230,7 +2218,6 @@
                             }
                             parsed.instituteLogo = parsed.instituteLogo || "";
                             parsed.syncRoomId = parsed.syncRoomId || DEFAULT_DATA.syncRoomId;
-                            parsed.cloudBlobMap = parsed.cloudBlobMap || {};
                             parsed.academicYears = Array.isArray(parsed.academicYears) && parsed.academicYears.length ? parsed.academicYears : ["2025", "2026", "2027", "2028"];
                             parsed.selectedYear = parsed.selectedYear || "2026";
                             parsed.lastUpdatedAt = Number(parsed.lastUpdatedAt) || 0;
@@ -2292,26 +2279,29 @@
             var syncPushTimer = null;
             var isCloudSyncing = false;
 
-            function getUrlSyncParams() {
+            function getUrlRoomParam() {
                 try {
                     var params = new URLSearchParams(window.location.search || '');
-                    var room = (params.get('room') || '').trim().replace(/[^a-zA-Z0-9_-]/g, '');
-                    var blob = (params.get('blob') || '').trim().replace(/[^a-zA-Z0-9_-]/g, '');
-                    return { room: room, blob: blob };
+                    return (params.get('room') || '').trim().replace(/[^a-zA-Z0-9_-]/g, '');
                 } catch (e) {
-                    return { room: '', blob: '' };
+                    return '';
                 }
             }
 
-            var urlSyncInfo = getUrlSyncParams();
-            if (urlSyncInfo.room) {
-                appData.syncRoomId = urlSyncInfo.room;
-            }
-            if (urlSyncInfo.blob) {
-                appData.cloudBlobMap = appData.cloudBlobMap || {};
-                appData.cloudBlobMap[appData.syncRoomId] = urlSyncInfo.blob;
+            var urlRoomId = getUrlRoomParam();
+            if (urlRoomId && urlRoomId !== appData.syncRoomId) {
+                appData.syncRoomId = urlRoomId;
                 appData.lastUpdatedAt = 0;
                 safeSetStorage(STORAGE_KEY, JSON.stringify(appData));
+            }
+
+            function getNtfyTopicUrl(pollMode) {
+                var cleanRoom = (appData.syncRoomId || 'shining-harnatand-2026').replace(/[^a-zA-Z0-9_-]/g, '');
+                var topic = 'scc_erp_live_' + cleanRoom;
+                if (pollMode) {
+                    return 'https://ntfy.sh/' + encodeURIComponent(topic) + '/json?poll=1&since=24h&_t=' + Date.now();
+                }
+                return 'https://ntfy.sh/' + encodeURIComponent(topic);
             }
 
             function updateSyncBadgeUI(statusLabel, stateType) {
@@ -2327,36 +2317,12 @@
                     else btn.className = 'btn btn-soft-emerald btn-sm';
                 }
                 if (modalStatus) {
-                    modalStatus.textContent = statusLabel + ' (Room: ' + (appData.syncRoomId || 'default') + ')';
+                    modalStatus.textContent = statusLabel + ' (Room: ' + (appData.syncRoomId || 'shining-harnatand-2026') + ')';
                     modalStatus.style.color = stateType === 'warn' ? '#b45309' : '#166534';
                 }
                 if (modalTime && stateType === 'ok') {
                     modalTime.textContent = nowStr;
                 }
-            }
-
-            function getActiveBlobId() {
-                var room = appData.syncRoomId || 'shining-harnatand-2026';
-                appData.cloudBlobMap = appData.cloudBlobMap || {};
-                return appData.cloudBlobMap[room] || '';
-            }
-
-            function setActiveBlobId(blobId) {
-                var room = appData.syncRoomId || 'shining-harnatand-2026';
-                appData.cloudBlobMap = appData.cloudBlobMap || {};
-                appData.cloudBlobMap[room] = blobId;
-                safeSetStorage(STORAGE_KEY, JSON.stringify(appData));
-            }
-
-            function buildShareableSyncUrl() {
-                var room = (appData.syncRoomId || 'shining-harnatand-2026').replace(/[^a-zA-Z0-9_-]/g, '');
-                var blobId = getActiveBlobId();
-                var baseUrl = window.location.href.split('?')[0].split('#')[0];
-                var url = baseUrl + '?room=' + encodeURIComponent(room);
-                if (blobId) {
-                    url += '&blob=' + encodeURIComponent(blobId);
-                }
-                return url;
             }
 
             window.pushCloudDataNow = function (showFeedback) {
@@ -2365,78 +2331,79 @@
                 updateSyncBadgeUI('☁️ Syncing...', 'syncing');
 
                 var payload = cloneData(appData);
-                delete payload.cloudBlobMap;
-                var blobId = getActiveBlobId();
-                var endpoint = blobId
-                    ? ('https://jsonblob.com/api/jsonBlob/' + encodeURIComponent(blobId))
-                    : 'https://jsonblob.com/api/jsonBlob';
-                var method = blobId ? 'PUT' : 'POST';
+                // Keep payload compact so cloud push never exceeds size limits
+                if (payload.instituteLogo && payload.instituteLogo.length > 60000) {
+                    payload.instituteLogo = "";
+                }
 
-                fetch(endpoint, {
-                    method: method,
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    },
+                fetch(getNtfyTopicUrl(false), {
+                    method: 'POST',
                     body: JSON.stringify(payload)
                 }).then(function (res) {
                     isCloudSyncing = false;
                     if (!res.ok) throw new Error('HTTP ' + res.status);
-                    var loc = res.headers.get('Location') || res.headers.get('X-jsonblob') || '';
-                    if (!blobId && loc) {
-                        var parts = loc.split('/');
-                        var createdId = parts[parts.length - 1];
-                        if (createdId) setActiveBlobId(createdId);
-                    }
-                    updateSyncBadgeUI('☁️ Synced: ' + appData.syncRoomId, 'ok');
+                    updateSyncBadgeUI('☁️ Live Sync: ' + appData.syncRoomId, 'ok');
                     if (showFeedback) showToast('Live Cloud Sync पूरा हुआ! अब Copy Sync Link से शेयर करें।', 'success');
                 }).catch(function () {
                     isCloudSyncing = false;
-                    updateSyncBadgeUI('☁️ Saved Locally', 'ok');
-                    if (showFeedback) showToast('Local storage में सेव है। Internet/Cloud check करें।', 'error');
+                    updateSyncBadgeUI('☁️ Sync: ' + appData.syncRoomId, 'ok');
+                    if (showFeedback) showToast('Device में सेव है। Internet कनेक्शन चेक करें।', 'error');
                 });
             };
 
             window.pullCloudDataNow = function (showFeedback) {
-                var blobId = getActiveBlobId();
-                if (!blobId || isCloudSyncing) {
-                    if (!blobId) updateSyncBadgeUI('☁️ Sync: ' + (appData.syncRoomId || 'Ready'), 'ok');
-                    return;
-                }
+                if (!appData.syncRoomId || isCloudSyncing) return;
 
-                fetch('https://jsonblob.com/api/jsonBlob/' + encodeURIComponent(blobId) + '?_t=' + Date.now(), {
+                fetch(getNtfyTopicUrl(true), {
                     method: 'GET',
-                    headers: { 'Accept': 'application/json' },
                     cache: 'no-store'
                 }).then(function (res) {
-                    if (!res.ok) return null;
-                    return res.json();
-                }).then(function (remoteData) {
-                    if (remoteData && Array.isArray(remoteData.students) && Array.isArray(remoteData.teachers)) {
-                        var remoteTs = Number(remoteData.lastUpdatedAt) || 0;
-                        var localTs = Number(appData.lastUpdatedAt) || 0;
-                        if (remoteTs > localTs) {
-                            var savedMap = appData.cloudBlobMap || {};
-                            var currentRoom = appData.syncRoomId;
-                            appData = remoteData;
-                            appData.syncRoomId = currentRoom;
-                            appData.cloudBlobMap = savedMap;
-                            safeSetStorage(STORAGE_KEY, JSON.stringify(appData));
-                            renderDashboard();
-                            if (!document.getElementById('view-class-students').classList.contains('hidden')) renderStudentList();
-                            if (!document.getElementById('view-teachers').classList.contains('hidden')) renderTeacherList();
-                            if (!document.getElementById('view-attendance').classList.contains('hidden')) renderAttendanceView();
-                            if (!document.getElementById('view-reminders').classList.contains('hidden')) renderBulkRemindersView();
-                            if (showFeedback) showToast('सभी devices से नया live data आ गया!', 'success');
-                        } else if (localTs > remoteTs && localTs > 0) {
-                            window.pushCloudDataNow(false);
-                        } else if (showFeedback) {
-                            showToast('आपका डेटा पहले से ही up-to-date है!', 'success');
-                        }
-                        updateSyncBadgeUI('☁️ Synced: ' + appData.syncRoomId, 'ok');
+                    if (!res.ok) return '';
+                    return res.text();
+                }).then(function (rawText) {
+                    if (!rawText) {
+                        updateSyncBadgeUI('☁️ Live Sync: ' + appData.syncRoomId, 'ok');
+                        return;
                     }
+                    var lines = rawText.trim().split('\n');
+                    var newestRemote = null;
+                    var newestTs = Number(appData.lastUpdatedAt) || 0;
+
+                    for (var i = 0; i < lines.length; i++) {
+                        try {
+                            var wrapper = JSON.parse(lines[i]);
+                            if (wrapper && wrapper.event === 'message' && wrapper.message) {
+                                var candidate = JSON.parse(wrapper.message);
+                                if (candidate && Array.isArray(candidate.students) && Array.isArray(candidate.teachers)) {
+                                    var ts = Number(candidate.lastUpdatedAt) || 0;
+                                    if (ts > newestTs) {
+                                        newestTs = ts;
+                                        newestRemote = candidate;
+                                    }
+                                }
+                            }
+                        } catch (e) {}
+                    }
+
+                    if (newestRemote) {
+                        var currentRoom = appData.syncRoomId;
+                        var localLogo = appData.instituteLogo;
+                        appData = newestRemote;
+                        appData.syncRoomId = currentRoom;
+                        if (!appData.instituteLogo && localLogo) appData.instituteLogo = localLogo;
+                        safeSetStorage(STORAGE_KEY, JSON.stringify(appData));
+                        renderDashboard();
+                        if (!document.getElementById('view-class-students').classList.contains('hidden')) renderStudentList();
+                        if (!document.getElementById('view-teachers').classList.contains('hidden')) renderTeacherList();
+                        if (!document.getElementById('view-attendance').classList.contains('hidden')) renderAttendanceView();
+                        if (!document.getElementById('view-reminders').classList.contains('hidden')) renderBulkRemindersView();
+                        if (showFeedback) showToast('सभी devices से नया live data आ गया!', 'success');
+                    } else if (showFeedback) {
+                        showToast('आपका डेटा पहले से ही up-to-date है!', 'success');
+                    }
+                    updateSyncBadgeUI('☁️ Live Sync: ' + appData.syncRoomId, 'ok');
                 }).catch(function () {
-                    updateSyncBadgeUI('☁️ Saved Locally', 'ok');
+                    updateSyncBadgeUI('☁️ Sync: ' + appData.syncRoomId, 'ok');
                 });
             };
 
@@ -2446,13 +2413,13 @@
                 if (syncPushTimer) clearTimeout(syncPushTimer);
                 syncPushTimer = setTimeout(function () {
                     window.pushCloudDataNow(false);
-                }, 400);
+                }, 350);
             }
 
             window.openCloudSyncModal = function () {
                 var inp = document.getElementById('syncRoomIdInput');
                 if (inp) inp.value = appData.syncRoomId || 'shining-harnatand-2026';
-                updateSyncBadgeUI('☁️ Synced: ' + (appData.syncRoomId || 'shining-harnatand-2026'), 'ok');
+                updateSyncBadgeUI('☁️ Live Sync: ' + (appData.syncRoomId || 'shining-harnatand-2026'), 'ok');
                 window.openModal('cloudSyncModal');
             };
 
@@ -2460,7 +2427,7 @@
                 var rawRoom = (document.getElementById('syncRoomIdInput').value || '').trim();
                 var cleanRoom = rawRoom.replace(/[^a-zA-Z0-9_-]/g, '');
                 if (!cleanRoom) {
-                    showToast('कृपया सही Sync Room ID लिखें (जैसे: shining-harnatand-2026)', 'error');
+                    showToast('कृपया सही Sync Room Code लिखें (जैसे: shining-harnatand-2026)', 'error');
                     return;
                 }
                 appData.syncRoomId = cleanRoom;
@@ -2472,16 +2439,11 @@
             window.copySyncRoomLink = function () {
                 var rawRoom = (document.getElementById('syncRoomIdInput').value || appData.syncRoomId || 'shining-harnatand-2026').trim().replace(/[^a-zA-Z0-9_-]/g, '');
                 appData.syncRoomId = rawRoom;
-                if (!getActiveBlobId()) {
-                    window.pushCloudDataNow(false);
-                    setTimeout(function () {
-                        copyTextFallback(buildShareableSyncUrl());
-                        showToast('Live Multi-Device Sync Link कॉपी हो गया! WhatsApp पर भेजें।', 'success');
-                    }, 900);
-                } else {
-                    copyTextFallback(buildShareableSyncUrl());
-                    showToast('Live Multi-Device Sync Link कॉपी हो गया! WhatsApp पर भेजें।', 'success');
-                }
+                var baseUrl = window.location.href.split('?')[0].split('#')[0];
+                var shareUrl = baseUrl + '?room=' + encodeURIComponent(rawRoom);
+                copyTextFallback(shareUrl);
+                window.pushCloudDataNow(false);
+                showToast('Live Multi-Device Sync Link कॉपी हो गया! WhatsApp पर भेजें।', 'success');
             };
 
             function formatCurrency(amount) {
@@ -2570,13 +2532,13 @@
                     var img = new Image();
                     img.onload = function () {
                         var canvas = document.createElement('canvas');
-                        var maxSide = 220;
+                        var maxSide = 160;
                         var scale = Math.min(1, maxSide / Math.max(img.width, img.height));
                         canvas.width = Math.round(img.width * scale);
                         canvas.height = Math.round(img.height * scale);
                         var ctx = canvas.getContext('2d');
                         ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                        appData.instituteLogo = canvas.toDataURL('image/png', 0.9);
+                        appData.instituteLogo = canvas.toDataURL('image/jpeg', 0.8);
                         saveAppData();
                         applyCoachingLogoUI();
                         showToast('Coaching logo uploaded & saved!', 'success');
@@ -2902,7 +2864,7 @@
                 if (licBadge) {
                     licBadge.textContent = '✓ ' + (appData.licenseStatus || 'Commercial Pro');
                 }
-                updateSyncBadgeUI('☁️ Synced: ' + (appData.syncRoomId || 'shining-harnatand-2026'), 'ok');
+                updateSyncBadgeUI('☁️ Live Sync: ' + (appData.syncRoomId || 'shining-harnatand-2026'), 'ok');
                 syncLockScreenBranding();
                 document.getElementById('nav-teacher-count').textContent = appData.teachers.length;
 
@@ -3695,29 +3657,19 @@
 
                 var activeYr = appData.selectedYear || "2026";
                 var importedCount = 0;
-                var skippedCount = 0;
 
                 for (var i = startIdx; i < lines.length; i++) {
                     var cols = parseCSVLine(lines[i]);
-                    if (cols.length < 3) {
-                        skippedCount++;
-                        continue;
-                    }
+                    if (cols.length < 3) continue;
                     var name = cols[0];
                     var cls = normalizeClassLabel(cols[1]);
                     var rollNo = cols[2];
-                    if (!name || !cls || !rollNo) {
-                        skippedCount++;
-                        continue;
-                    }
+                    if (!name || !cls || !rollNo) continue;
 
                     var isDuplicate = appData.students.some(function (st) {
                         return (st.academicYear || '2026') === activeYr && st.className === cls && String(st.rollNo).toLowerCase() === String(rollNo).toLowerCase();
                     });
-                    if (isDuplicate) {
-                        skippedCount++;
-                        continue;
-                    }
+                    if (isDuplicate) continue;
 
                     appData.students.push({
                         id: "s_csv_" + Date.now() + "_" + i,
@@ -4259,7 +4211,7 @@
             window.pullCloudDataNow(false);
             setInterval(function () {
                 window.pullCloudDataNow(false);
-            }, 6000);
+            }, 5000);
             document.addEventListener('DOMContentLoaded', function () {
                 checkInitialLockState();
                 renderDashboard();

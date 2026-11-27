@@ -2417,7 +2417,7 @@
                 if (showFeedback) showToast('सभी devices से नया live data सिंक हो गया!', 'success');
             }
 
-            function processIncomingNtfyLine(lineText, showFeedback) {
+            function processIncomingNtfyLine(lineText, showFeedback, forceOverwrite) {
                 if (!lineText) return false;
                 try {
                     var wrapper = JSON.parse(lineText);
@@ -2427,7 +2427,7 @@
                         if (unpacked && Array.isArray(unpacked.students) && Array.isArray(unpacked.teachers)) {
                             var remoteTs = Number(unpacked.lastUpdatedAt) || 0;
                             var localTs = Number(appData.lastUpdatedAt) || 0;
-                            if (remoteTs > localTs) {
+                            if (forceOverwrite || remoteTs > localTs) {
                                 applyRemoteCloudState(unpacked, showFeedback);
                                 return true;
                             }
@@ -2451,7 +2451,7 @@
                     };
                     es.onmessage = function (ev) {
                         updateSyncBadgeUI('☁️ Live Sync: ' + appData.syncRoomId, 'ok');
-                        processIncomingNtfyLine(ev.data, false);
+                        processIncomingNtfyLine(ev.data, false, false);
                     };
                     es.onerror = function () {
                         // Browser EventSource auto-reconnects smoothly without flashing warning
@@ -2463,6 +2463,8 @@
             window.pushCloudDataNow = function (showFeedback) {
                 if (!appData.syncRoomId) return;
                 isCloudSyncing = true;
+                appData.lastUpdatedAt = Date.now();
+                safeSetStorage(STORAGE_KEY, JSON.stringify(appData));
                 updateSyncBadgeUI('☁️ Syncing...', 'syncing');
 
                 var compact = buildCompactSyncPayload();
@@ -2497,7 +2499,7 @@
                     var updated = false;
 
                     for (var i = lines.length - 1; i >= 0; i--) {
-                        if (processIncomingNtfyLine(lines[i], showFeedback)) {
+                        if (processIncomingNtfyLine(lines[i], showFeedback, Boolean(showFeedback))) {
                             updated = true;
                             break;
                         }

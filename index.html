@@ -2279,41 +2279,32 @@
             var syncPushTimer = null;
             var isCloudSyncing = false;
 
-            function getUrlRoomParam() {
+            function getUrlSyncParams() {
                 try {
                     var params = new URLSearchParams(window.location.search || '');
-                    return (params.get('room') || '').trim().replace(/[^a-zA-Z0-9_-]/g, '');
+                    return {
+                        room: (params.get('room') || '').trim().replace(/[^a-zA-Z0-9_-]/g, ''),
+                        bin: (params.get('bin') || '').trim().replace(/[^a-zA-Z0-9_-]/g, '')
+                    };
                 } catch (e) {
-                    return '';
+                    return { room: '', bin: '' };
                 }
             }
 
-            var urlRoomId = getUrlRoomParam();
-            if (urlRoomId && urlRoomId !== appData.syncRoomId) {
-                appData.syncRoomId = urlRoomId;
+            var urlParams = getUrlSyncParams();
+            if (urlParams.room && urlParams.room !== appData.syncRoomId) {
+                appData.syncRoomId = urlParams.room;
+                appData.syncBinId = urlParams.bin || '';
+                appData.lastUpdatedAt = 0;
+                safeSetStorage(STORAGE_KEY, JSON.stringify(appData));
+            } else if (urlParams.bin && urlParams.bin !== appData.syncBinId) {
+                appData.syncBinId = urlParams.bin;
                 appData.lastUpdatedAt = 0;
                 safeSetStorage(STORAGE_KEY, JSON.stringify(appData));
             }
 
-            // Deterministic 32-char hex bucket key derived from room name for full-size JSON cloud storage
-            function getRoomStorageId(roomName) {
-                var clean = (roomName || 'shining-harnatand-2026').replace(/[^a-zA-Z0-9_-]/g, '');
-                var h1 = 0x811c9dc5, h2 = 0x1b873593, h3 = 0x85ebca6b, h4 = 0xc2b2ae35;
-                for (var i = 0; i < clean.length; i++) {
-                    var c = clean.charCodeAt(i);
-                    h1 = Math.imul(h1 ^ c, 0x01000193);
-                    h2 = Math.imul(h2 ^ (c + 17), 0x27d4eb2f);
-                    h3 = Math.imul(h3 ^ (c + 31), 0x165667b1);
-                    h4 = Math.imul(h4 ^ (c + 47), 0x9e3779b1);
-                }
-                function toHex8(n) { return (n >>> 0).toString(16).padStart(8, '0'); }
-                return 'scc' + toHex8(h1) + toHex8(h2) + toHex8(h3) + toHex8(h4).slice(0, 5);
-            }
-
-            function getCloudEndpointUrl() {
-                var cleanRoom = (appData.syncRoomId || 'shining-harnatand-2026').replace(/[^a-zA-Z0-9_-]/g, '');
-                var bucketId = getRoomStorageId(cleanRoom);
-                return 'https://api.jsonstorage.net/v1/json/00000000-0000-0000-0000-000000000000/' + bucketId;
+            function getCloudBinUrl(binId) {
+                return 'https://api.jsonstorage.net/v1/json/' + encodeURIComponent(binId);
             }
 
             function updateSyncBadgeUI(statusLabel, stateType) {
@@ -2329,7 +2320,7 @@
                     else btn.className = 'btn btn-soft-emerald btn-sm';
                 }
                 if (modalStatus) {
-                    modalStatus.textContent = statusLabel + ' (Room: ' + (appData.syncRoomId || 'shining-harnatand-2026') + ')';
+                    modalStatus.textContent = statusLabel + ' (Room: ' + (appData.syncRoomId || 'shining26') + ')';
                     modalStatus.style.color = stateType === 'warn' ? '#b45309' : '#166534';
                 }
                 if (modalTime && stateType === 'ok') {
@@ -2345,9 +2336,11 @@
 
             function applyRemoteCloudState(candidate, showFeedback) {
                 var currentRoom = appData.syncRoomId;
+                var currentBin = appData.syncBinId;
                 var localLogo = appData.instituteLogo;
                 appData = candidate;
                 appData.syncRoomId = currentRoom;
+                appData.syncBinId = currentBin;
                 if (!appData.instituteLogo && localLogo) appData.instituteLogo = localLogo;
                 safeSetStorage(STORAGE_KEY, JSON.stringify(appData));
                 renderDashboard();
@@ -2358,47 +2351,75 @@
                 if (showFeedback) showToast('सभी devices से नया live data सिंक हो गया!', 'success');
             }
 
+            function ensureCloudBinCreated(payload, callback) {
+                if (appData.syncBinId) {
+                    callback(appData.syncBinId);
+                    return;
+                }
+                fetch('https://api.jsonstorage.net/v1/json', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                }).then(function (res) {
+                    if (!res.ok) throw new Error('HTTP ' + res.status);
+                    return res.json();
+                }).then(function (data) {
+                    var uri = (data && data.uri) || '';
+                    var parts = uri.split('/');
+                    var newId = parts[parts.length - 1] || '';
+                    if (!newId) throw new Error('No bin ID');
+                    appData.syncBinId = newId;
+                    safeSetStorage(STORAGE_KEY, JSON.stringify(appData));
+                    try {
+                        var newUrl = window.location.pathname + '?room=' + encodeURIComponent(appData.syncRoomId || 'shining26') + '&bin=' + encodeURIComponent(newId);
+                        window.history.replaceState({}, '', newUrl);
+                    } catch (e) {}
+                    callback(newId);
+                }).catch(function () {
+                    isCloudSyncing = false;
+                    updateSyncBadgeUI('⚠️ Offline Saved: ' + (appData.syncRoomId || 'shining26'), 'warn');
+                });
+            }
+
             window.pushCloudDataNow = function (showFeedback) {
                 if (!appData.syncRoomId) return;
                 isCloudSyncing = true;
                 updateSyncBadgeUI('☁️ Syncing...', 'syncing');
 
                 var payload = buildCompactSyncPayload();
-                var endpoint = getCloudEndpointUrl();
-
-                fetch(endpoint, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                }).then(function (res) {
-                    isCloudSyncing = false;
-                    if (!res.ok) throw new Error('HTTP ' + res.status);
-                    updateSyncBadgeUI('☁️ Live Sync: ' + appData.syncRoomId, 'ok');
-                    if (showFeedback) showToast('Live Cloud Sync पूरा हुआ! अब सभी फ़ोन पर यही डेटा दिखेगा।', 'success');
-                }).catch(function () {
-                    isCloudSyncing = false;
-                    updateSyncBadgeUI('⚠️ Sync Retry: ' + appData.syncRoomId, 'warn');
-                    if (showFeedback) showToast('Cloud से कनेक्ट नहीं हो पाया, Internet चेक करें।', 'error');
+                ensureCloudBinCreated(payload, function (binId) {
+                    fetch(getCloudBinUrl(binId), {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    }).then(function (res) {
+                        isCloudSyncing = false;
+                        if (!res.ok) throw new Error('HTTP ' + res.status);
+                        updateSyncBadgeUI('☁️ Live Sync: ' + appData.syncRoomId, 'ok');
+                        if (showFeedback) showToast('Live Cloud Sync पूरा हुआ! अब "Copy Sync Link" भेजें।', 'success');
+                    }).catch(function () {
+                        isCloudSyncing = false;
+                        updateSyncBadgeUI('⚠️ Sync Retry: ' + appData.syncRoomId, 'warn');
+                        if (showFeedback) showToast('Cloud से कनेक्ट नहीं हो पाया, Internet चेक करें।', 'error');
+                    });
                 });
             };
 
             window.pullCloudDataNow = function (showFeedback) {
                 if (!appData.syncRoomId || isCloudSyncing) return;
-                var endpoint = getCloudEndpointUrl() + '?_t=' + Date.now();
+                if (!appData.syncBinId) {
+                    window.pushCloudDataNow(false);
+                    return;
+                }
+                var endpoint = getCloudBinUrl(appData.syncBinId) + '?_t=' + Date.now();
 
                 fetch(endpoint, {
                     method: 'GET',
                     cache: 'no-store'
                 }).then(function (res) {
-                    if (res.status === 404) {
-                        // Room not initialized in cloud yet — push current local state once
-                        window.pushCloudDataNow(false);
-                        return null;
-                    }
                     if (!res.ok) throw new Error('HTTP ' + res.status);
                     return res.json();
                 }).then(function (candidate) {
-                    if (!candidate) return;
                     if (candidate && Array.isArray(candidate.students) && Array.isArray(candidate.teachers)) {
                         var remoteTs = Number(candidate.lastUpdatedAt) || 0;
                         var localTs = Number(appData.lastUpdatedAt) || 0;
@@ -2425,8 +2446,8 @@
 
             window.openCloudSyncModal = function () {
                 var inp = document.getElementById('syncRoomIdInput');
-                if (inp) inp.value = appData.syncRoomId || 'shining-harnatand-2026';
-                updateSyncBadgeUI('☁️ Live Sync: ' + (appData.syncRoomId || 'shining-harnatand-2026'), 'ok');
+                if (inp) inp.value = appData.syncRoomId || 'shining26';
+                updateSyncBadgeUI('☁️ Live Sync: ' + (appData.syncRoomId || 'shining26'), 'ok');
                 window.openModal('cloudSyncModal');
             };
 
@@ -2434,23 +2455,29 @@
                 var rawRoom = (document.getElementById('syncRoomIdInput').value || '').trim();
                 var cleanRoom = rawRoom.replace(/[^a-zA-Z0-9_-]/g, '');
                 if (!cleanRoom) {
-                    showToast('कृपया सही Sync Room Code लिखें (जैसे: shining-harnatand-2026)', 'error');
+                    showToast('कृपया सही Sync Room Code लिखें (जैसे: shining26)', 'error');
                     return;
                 }
-                appData.syncRoomId = cleanRoom;
+                if (cleanRoom !== appData.syncRoomId) {
+                    appData.syncRoomId = cleanRoom;
+                    appData.syncBinId = '';
+                }
                 saveAppData();
                 window.pushCloudDataNow(true);
                 window.closeModal('cloudSyncModal');
             };
 
             window.copySyncRoomLink = function () {
-                var rawRoom = (document.getElementById('syncRoomIdInput').value || appData.syncRoomId || 'shining-harnatand-2026').trim().replace(/[^a-zA-Z0-9_-]/g, '');
+                var rawRoom = (document.getElementById('syncRoomIdInput').value || appData.syncRoomId || 'shining26').trim().replace(/[^a-zA-Z0-9_-]/g, '');
                 appData.syncRoomId = rawRoom;
-                var baseUrl = window.location.href.split('?')[0].split('#')[0];
-                var shareUrl = baseUrl + '?room=' + encodeURIComponent(rawRoom);
-                copyTextFallback(shareUrl);
-                window.pushCloudDataNow(false);
-                showToast('Live Multi-Device Sync Link कॉपी हो गया! WhatsApp पर भेजें।', 'success');
+                var payload = buildCompactSyncPayload();
+                ensureCloudBinCreated(payload, function (binId) {
+                    var baseUrl = window.location.href.split('?')[0].split('#')[0];
+                    var shareUrl = baseUrl + '?room=' + encodeURIComponent(rawRoom) + '&bin=' + encodeURIComponent(binId);
+                    copyTextFallback(shareUrl);
+                    window.pushCloudDataNow(false);
+                    showToast('Live Multi-Device Sync Link कॉपी हो गया! WhatsApp पर भेजें।', 'success');
+                });
             };
 
             function formatCurrency(amount) {

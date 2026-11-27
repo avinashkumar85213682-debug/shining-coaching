@@ -2297,7 +2297,7 @@
 
             function getFirebaseRoomUrl(roomId) {
                 var clean = (roomId || 'shining26').replace(/[^a-zA-Z0-9_-]/g, '');
-                return 'https://shining-coaching-sync-default-rtdb.firebaseio.com/rooms/' + encodeURIComponent(clean) + '.json';
+                return 'https://ntfy.sh/shining_erp_v2_' + encodeURIComponent(clean);
             }
 
             function updateSyncBadgeUI(statusLabel, stateType) {
@@ -2322,9 +2322,83 @@
             }
 
             function buildCompactSyncPayload() {
-                var payload = cloneData(appData);
-                payload.instituteLogo = "";
-                return payload;
+                return {
+                    v: 2,
+                    ts: appData.lastUpdatedAt || Date.now(),
+                    n: appData.instituteName,
+                    tg: appData.instituteTagline,
+                    dn: appData.directorName,
+                    ad: appData.instituteAddress,
+                    ph: appData.institutePhone,
+                    px: appData.receiptPrefix,
+                    ls: appData.licenseStatus,
+                    le: appData.licenseExpiry,
+                    pn: appData.adminPin,
+                    ay: appData.academicYears,
+                    sy: appData.selectedYear,
+                    at: appData.attendance || {},
+                    st: (appData.students || []).map(function (s) {
+                        return [
+                            s.id, s.academicYear || '2026', s.name, s.gender || 'Boys',
+                            s.section || 'A', s.className, s.rollNo, s.fatherName,
+                            s.motherName || '', s.mobile, s.dob || '', s.admissionDate || '',
+                            s.schoolName || '', s.subjects || '', s.address || '',
+                            Number(s.totalFee) || 0, Number(s.paidFee) || 0
+                        ];
+                    }),
+                    tc: (appData.teachers || []).map(function (t) {
+                        return [
+                            t.id, t.name, t.qualification || '', t.subjects || '',
+                            t.classesAssigned || '', t.mobile || '', t.experience || '',
+                            t.joiningDate || '', Number(t.salary) || 0, Number(t.paidSalary) || 0,
+                            Number(t.advanceAmount) || 0, Number(t.classesTaken) || 0,
+                            Number(t.leaveDays) || 0, t.isOnLeave ? 1 : 0,
+                            t.leaveFrom || '', t.leaveTo || '', t.leaveReason || '',
+                            t.timing || '', t.address || ''
+                        ];
+                    })
+                };
+            }
+
+            function unpackCompactSyncPayload(p) {
+                if (!p || !Array.isArray(p.st) || !Array.isArray(p.tc)) return null;
+                return {
+                    instituteName: p.n || appData.instituteName,
+                    instituteLogo: appData.instituteLogo || "",
+                    syncRoomId: appData.syncRoomId,
+                    academicYears: Array.isArray(p.ay) && p.ay.length ? p.ay : ["2025", "2026", "2027", "2028"],
+                    selectedYear: p.sy || "2026",
+                    lastUpdatedAt: Number(p.ts) || Date.now(),
+                    instituteTagline: p.tg || appData.instituteTagline,
+                    directorName: p.dn || appData.directorName,
+                    instituteAddress: p.ad || appData.instituteAddress,
+                    institutePhone: p.ph || appData.institutePhone,
+                    receiptPrefix: p.px || appData.receiptPrefix,
+                    licenseStatus: p.ls || appData.licenseStatus,
+                    licenseExpiry: p.le || appData.licenseExpiry,
+                    adminPin: p.pn || appData.adminPin,
+                    attendance: p.at || {},
+                    students: p.st.map(function (r) {
+                        return {
+                            id: r[0], academicYear: r[1], name: r[2], gender: r[3],
+                            section: r[4], className: r[5], rollNo: r[6], fatherName: r[7],
+                            motherName: r[8], mobile: r[9], dob: r[10], admissionDate: r[11],
+                            schoolName: r[12], subjects: r[13], address: r[14],
+                            totalFee: Number(r[15]) || 0, paidFee: Number(r[16]) || 0
+                        };
+                    }),
+                    teachers: p.tc.map(function (r) {
+                        return {
+                            id: r[0], name: r[1], qualification: r[2], subjects: r[3],
+                            classesAssigned: r[4], mobile: r[5], experience: r[6],
+                            joiningDate: r[7], salary: Number(r[8]) || 0, paidSalary: Number(r[9]) || 0,
+                            advanceAmount: Number(r[10]) || 0, classesTaken: Number(r[11]) || 0,
+                            leaveDays: Number(r[12]) || 0, isOnLeave: Boolean(r[13]),
+                            leaveFrom: r[14], leaveTo: r[15], leaveReason: r[16],
+                            timing: r[17], address: r[18]
+                        };
+                    })
+                };
             }
 
             function applyRemoteCloudState(candidate, showFeedback) {
@@ -2347,16 +2421,16 @@
                 isCloudSyncing = true;
                 updateSyncBadgeUI('☁️ Syncing...', 'syncing');
 
-                var payload = buildCompactSyncPayload();
+                var compact = buildCompactSyncPayload();
                 fetch(getFirebaseRoomUrl(appData.syncRoomId), {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
+                    method: 'POST',
+                    headers: { 'Title': 'erp_sync', 'Priority': 'low' },
+                    body: JSON.stringify(compact)
                 }).then(function (res) {
                     isCloudSyncing = false;
                     if (!res.ok) throw new Error('HTTP ' + res.status);
                     updateSyncBadgeUI('☁️ Live Sync: ' + appData.syncRoomId, 'ok');
-                    if (showFeedback) showToast('Live Cloud Sync पूरा हुआ! अब "Copy Sync Link" भेजें।', 'success');
+                    if (showFeedback) showToast('Live Cloud Sync पूरा हुआ! सभी फोन पर अपडेट चला गया।', 'success');
                 }).catch(function () {
                     isCloudSyncing = false;
                     updateSyncBadgeUI('⚠️ Sync Retry: ' + appData.syncRoomId, 'warn');
@@ -2366,27 +2440,42 @@
 
             window.pullCloudDataNow = function (showFeedback) {
                 if (!appData.syncRoomId || isCloudSyncing) return;
-                var endpoint = getFirebaseRoomUrl(appData.syncRoomId) + '?_t=' + Date.now();
+                var endpoint = getFirebaseRoomUrl(appData.syncRoomId) + '/json?poll=1&since=24h&_t=' + Date.now();
 
                 fetch(endpoint, {
                     method: 'GET',
                     cache: 'no-store'
                 }).then(function (res) {
                     if (!res.ok) throw new Error('HTTP ' + res.status);
-                    return res.json();
-                }).then(function (candidate) {
-                    if (!candidate) {
-                        window.pushCloudDataNow(false);
-                        return;
+                    return res.text();
+                }).then(function (rawText) {
+                    var lines = rawText.trim().split('\n');
+                    var newestCandidate = null;
+                    var newestTs = Number(appData.lastUpdatedAt) || 0;
+
+                    for (var i = lines.length - 1; i >= 0; i--) {
+                        if (!lines[i]) continue;
+                        try {
+                            var wrapper = JSON.parse(lines[i]);
+                            if (wrapper && wrapper.event === 'message' && wrapper.message) {
+                                var parsedMsg = JSON.parse(wrapper.message);
+                                var unpacked = parsedMsg && parsedMsg.v === 2 ? unpackCompactSyncPayload(parsedMsg) : parsedMsg;
+                                if (unpacked && Array.isArray(unpacked.students) && Array.isArray(unpacked.teachers)) {
+                                    var remoteTs = Number(unpacked.lastUpdatedAt) || 0;
+                                    if (remoteTs > newestTs) {
+                                        newestTs = remoteTs;
+                                        newestCandidate = unpacked;
+                                    }
+                                    break;
+                                }
+                            }
+                        } catch (e) {}
                     }
-                    if (candidate && Array.isArray(candidate.students) && Array.isArray(candidate.teachers)) {
-                        var remoteTs = Number(candidate.lastUpdatedAt) || 0;
-                        var localTs = Number(appData.lastUpdatedAt) || 0;
-                        if (remoteTs > localTs) {
-                            applyRemoteCloudState(candidate, showFeedback);
-                        } else if (showFeedback) {
-                            showToast('आपका डेटा पहले से ही up-to-date है!', 'success');
-                        }
+
+                    if (newestCandidate) {
+                        applyRemoteCloudState(newestCandidate, showFeedback);
+                    } else if (showFeedback) {
+                        showToast('आपका डेटा पहले से ही up-to-date है!', 'success');
                     }
                     updateSyncBadgeUI('☁️ Live Sync: ' + appData.syncRoomId, 'ok');
                 }).catch(function () {

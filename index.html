@@ -100,8 +100,8 @@
         }
 
         .brand-icon {
-            width: 42px;
-            height: 42px;
+            width: 44px;
+            height: 44px;
             border-radius: 13px;
             background: linear-gradient(135deg, #4f46e5, #2563eb);
             color: #fff;
@@ -110,22 +110,24 @@
             justify-content: center;
             box-shadow: 0 4px 10px rgba(79, 70, 229, 0.28);
             flex-shrink: 0;
+            overflow: hidden;
         }
 
         .brand-title-row {
             display: flex;
             align-items: center;
             gap: 6px;
+            flex-wrap: wrap;
         }
 
         .brand-title {
-            font-size: 1.1rem;
+            font-size: 1.08rem;
             font-weight: 800;
             color: var(--text-main);
         }
 
         .edit-icon-btn {
-            padding: 4px 6px;
+            padding: 4px 7px;
             border-radius: 6px;
             color: var(--text-muted);
             background: var(--bg-subtle);
@@ -140,7 +142,7 @@
         }
 
         .brand-subtitle {
-            font-size: 0.75rem;
+            font-size: 0.74rem;
             color: var(--text-muted);
             font-weight: 500;
         }
@@ -157,14 +159,14 @@
         }
 
         .nav-btn {
-            padding: 7px 12px;
+            padding: 7px 11px;
             border-radius: 10px;
-            font-size: 0.8rem;
+            font-size: 0.78rem;
             font-weight: 700;
             color: var(--text-secondary);
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
             transition: all 0.2s ease;
         }
 
@@ -179,7 +181,7 @@
         }
 
         .pill-count {
-            font-size: 0.7rem;
+            font-size: 0.68rem;
             padding: 1px 7px;
             border-radius: 999px;
             background: #e2e8f0;
@@ -194,8 +196,9 @@
 
         .header-actions {
             display: flex;
+            flex-wrap: wrap;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
 
         /* =========================================================
@@ -216,7 +219,7 @@
 
         .btn-sm {
             padding: 6px 11px;
-            font-size: 0.75rem;
+            font-size: 0.74rem;
             border-radius: 9px;
         }
 
@@ -343,7 +346,6 @@
             color: var(--rose);
         }
 
-        /* Blinking Leave Alert Animation for Teachers on Leave */
         @keyframes teacherLeaveBlink {
             0%, 100% {
                 opacity: 1;
@@ -393,7 +395,7 @@
         .section-stack {
             display: flex;
             flex-direction: column;
-            gap: 26px;
+            gap: 24px;
         }
 
         .kpi-grid {
@@ -433,26 +435,27 @@
         }
 
         .kpi-value {
-            font-size: 1.5rem;
+            font-size: 1.45rem;
             font-weight: 800;
             margin-top: 4px;
         }
 
         .kpi-sub {
-            font-size: 0.75rem;
+            font-size: 0.74rem;
             color: var(--text-muted);
             margin-top: 3px;
             font-weight: 500;
         }
 
         .kpi-icon {
-            width: 46px;
-            height: 46px;
+            width: 44px;
+            height: 44px;
             border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
+            font-size: 1.25rem;
         }
 
         .section-header {
@@ -465,7 +468,7 @@
         }
 
         .section-title {
-            font-size: 1.15rem;
+            font-size: 1.12rem;
             font-weight: 800;
             color: var(--text-main);
             display: flex;
@@ -482,22 +485,21 @@
         }
 
         .section-desc {
-            font-size: 0.82rem;
+            font-size: 0.8rem;
             color: var(--text-muted);
             margin-top: 2px;
         }
 
-        /* 4 SQUARE CLASS BOXES IN A SINGLE HORIZONTAL LINE */
-        .class-square-row {
+        .class-square-row-6 {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 18px;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 14px;
         }
 
         .class-square-card {
             aspect-ratio: 1 / 1;
             border-radius: var(--radius-xl);
-            padding: 20px;
+            padding: 16px;
             color: #ffffff;
             display: flex;
             flex-direction: column;
@@ -519,8 +521,8 @@
             position: absolute;
             right: -24px;
             bottom: -24px;
-            width: 110px;
-            height: 110px;
+            width: 100px;
+            height: 100px;
             border-radius: 50%;
             background: rgba(255, 255, 255, 0.12);
             pointer-events: none;
@@ -533,17 +535,11 @@
         .grad-11th { background: linear-gradient(135deg, #8b5cf6, #6d28d9); }
         .grad-12th { background: linear-gradient(135deg, #06b6d4, #0369a1); }
 
-        .class-square-row-6 {
-            display: grid;
-            grid-template-columns: repeat(6, 1fr);
-            gap: 14px;
-        }
-
         .batch-switcher-bar {
             display: flex;
             flex-wrap: wrap;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             background: #ffffff;
             border: 1px solid var(--border-color);
             border-radius: 16px;
@@ -552,9 +548,9 @@
         }
 
         .wing-btn {
-            padding: 8px 16px;
+            padding: 7px 14px;
             border-radius: 11px;
-            font-size: 0.82rem;
+            font-size: 0.8rem;
             font-weight: 800;
             border: 1.5px solid var(--border-color);
             background: #f8fafc;
@@ -572,20 +568,18 @@
             background: #2563eb;
             color: #ffffff;
             border-color: #2563eb;
-            box-shadow: 0 3px 10px rgba(37, 99, 235, 0.25);
         }
 
         .wing-btn.active-girls {
             background: #db2777;
             color: #ffffff;
             border-color: #db2777;
-            box-shadow: 0 3px 10px rgba(219, 39, 119, 0.25);
         }
 
         .section-btn {
-            padding: 7px 14px;
+            padding: 7px 13px;
             border-radius: 10px;
-            font-size: 0.8rem;
+            font-size: 0.78rem;
             font-weight: 800;
             border: 1.5px solid #cbd5e1;
             background: #ffffff;
@@ -598,33 +592,6 @@
             border-color: var(--primary);
         }
 
-        .sync-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            background: #ecfdf5;
-            color: #047857;
-            border: 1px solid #a7f3d0;
-            padding: 4px 10px;
-            border-radius: 999px;
-            font-size: 0.72rem;
-            font-weight: 800;
-        }
-
-        .csv-preview-box {
-            background: #0f172a;
-            color: #e2e8f0;
-            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-            font-size: 0.74rem;
-            padding: 12px;
-            border-radius: 12px;
-            overflow-x: auto;
-            white-space: pre;
-        }
-
-        /* =========================================================
-           5. SQUARE CARD INTERNALS, PANELS, TABLES & ENTITY CARDS
-           ========================================================= */
         .sq-top {
             display: flex;
             align-items: center;
@@ -633,8 +600,8 @@
         }
 
         .sq-icon {
-            width: 34px;
-            height: 34px;
+            width: 32px;
+            height: 32px;
             border-radius: 10px;
             background: rgba(255, 255, 255, 0.2);
             display: flex;
@@ -644,20 +611,20 @@
 
         .sq-pill {
             background: rgba(255, 255, 255, 0.22);
-            padding: 3px 9px;
+            padding: 2px 8px;
             border-radius: 999px;
-            font-size: 0.7rem;
+            font-size: 0.68rem;
             font-weight: 800;
         }
 
         .sq-sub {
-            font-size: 0.7rem;
+            font-size: 0.68rem;
             opacity: 0.9;
             font-weight: 600;
         }
 
         .sq-title {
-            font-size: 1.45rem;
+            font-size: 1.3rem;
             font-weight: 800;
             line-height: 1.15;
             margin-top: 2px;
@@ -671,15 +638,15 @@
         }
 
         .sq-arrow {
-            width: 28px;
-            height: 28px;
+            width: 26px;
+            height: 26px;
             border-radius: 50%;
             background: rgba(255, 255, 255, 0.24);
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 800;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
         }
 
         .panel {
@@ -914,6 +881,17 @@
             gap: 8px;
         }
 
+        .csv-preview-box {
+            background: #0f172a;
+            color: #e2e8f0;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+            font-size: 0.74rem;
+            padding: 12px;
+            border-radius: 12px;
+            overflow-x: auto;
+            white-space: pre;
+        }
+
         /* =========================================================
            6. MODALS, FORMS, LOCK SCREEN & TOASTS
            ========================================================= */
@@ -1108,10 +1086,15 @@
         .toast-item.error {
             background: var(--rose);
         }
+
+        @media (max-width: 1024px) {
+            .kpi-grid,
+            .salary-summary-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
             .cards-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
-            .class-square-row,
             .class-square-row-6 {
                 grid-template-columns: repeat(3, 1fr);
             }
@@ -1122,10 +1105,10 @@
             .cards-grid,
             .bio-grid,
             .form-grid,
-            .fee-quad {
+            .fee-quad,
+            .salary-summary-grid {
                 grid-template-columns: 1fr;
             }
-            .class-square-row,
             .class-square-row-6 {
                 grid-template-columns: repeat(2, 1fr);
                 gap: 12px;
@@ -1134,14 +1117,13 @@
                 padding: 14px;
             }
             .sq-title {
-                font-size: 1.3rem;
+                font-size: 1.2rem;
             }
             .fee-trio {
                 grid-template-columns: 1fr;
             }
         }
 
-        /* Print Receipt Styles */
         @media print {
             body * {
                 visibility: hidden;
@@ -1151,8 +1133,82 @@
             }
             #printableReceiptArea {
                 position: fixed;
+                left: 0;
+                top: 0;
+                width: 100%;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- =========================================================
+         ADMIN LOCK SCREEN (SECURITY OVERLAY)
+         ========================================================= -->
+    <div id="adminLockScreen" class="lock-screen-overlay">
+        <div class="lock-card">
+            <span class="lock-badge">🔒 LICENSED COACHING ERP PORTAL</span>
+            <div class="lock-logo">
+                <img id="lockScreenLogoImg" class="lock-logo-img hidden" alt="Coaching Logo">
+                <span id="lockScreenDefaultSvg" style="font-size:1.8rem;">🎓</span>
+            </div>
+            <h2 id="lockScreenInstituteName" style="font-size:1.25rem; font-weight:800; color:#0f172a;">SHINING COACHING CLASSES</h2>
+            <p id="lockScreenTagline" style="font-size:0.76rem; color:#64748b; margin-top:3px;">Harnatand • Class 7th to 12th (Boys &amp; Girls Sec A &amp; B)</p>
+
+            <div class="demo-pin-hint">
+                Admin Login Required — Enter PIN/Password to unlock records<br>
+                <strong style="color:var(--primary);">Default PIN: 1234</strong>
+            </div>
+
+            <form onsubmit="unlockAdminPortal(event)" style="display:flex; flex-direction:column; gap:10px;">
+                <input type="password" id="adminPinInput" class="input-control" style="text-align:center; font-size:1.1rem; letter-spacing:4px; font-weight:800;" placeholder="••••" required>
+                <p id="lockErrorText" class="hidden" style="color:var(--rose); font-size:0.76rem; font-weight:700;">गलत पासवर्ड! कृपया सही Admin PIN दर्ज करें।</p>
+                <button type="submit" class="btn btn-primary" style="width:100%; padding:11px;">🔓 Unlock Coaching Dashboard</button>
+            </form>
+
+            <div style="margin-top:14px; padding-top:12px; border-top:1px solid #f1f5f9; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px; font-size:0.7rem; color:#64748b;">
+                <span id="lockLicenseStatusText">Commercial Pro</span>
+                <div style="display:flex; gap:8px;">
+                    <button type="button" onclick="resetPinToDefault()" style="color:#d97706; font-weight:800;">🔑 Reset PIN (1234)</button>
+                    <button type="button" onclick="openClientOnboardingWizard(true)" style="color:var(--primary); font-weight:800;">🚀 New Client</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =========================================================
+         TOP APPLICATION HEADER & NAVIGATION
+         ========================================================= -->
+    <header class="app-header">
+        <div class="container">
+            <div class="header-inner">
+                <div class="brand-box" onclick="switchView('dashboard')">
+                    <div class="brand-icon">
+                        <img id="headerLogoImg" class="brand-logo-img hidden" alt="Logo">
+                        <span id="headerDefaultSvg" style="font-size:1.35rem;">🎓</span>
+                    </div>
+                    <div>
+                        <div class="brand-title-row">
+                            <h1 id="instituteTitleDisplay" class="brand-title">SHINING COACHING CLASSES</h1>
+                            <span id="headerLicenseBadge" class="license-pill">✓ Commercial Pro</span>
+                            <button type="button" class="edit-icon-btn" onclick="event.stopPropagation(); openInstituteEditModal()" title="Edit Coaching Details">✏️</button>
+                        </div>
+                        <p id="instituteSubtitleDisplay" class="brand-subtitle">Harnatand • Class 7th to 12th (Boys &amp; Girls Sec A &amp; B)</p>
+                    </div>
+                </div>
+
+                <nav class="nav-tabs">
+                    <button type="button" id="nav-dashboard" class="nav-btn active" onclick="switchView('dashboard')">🏠 Home</button>
+                    <button type="button" id="nav-teachers" class="nav-btn" onclick="switchView('teachers')">👨‍🏫 Teachers <span id="nav-teacher-count" class="pill-count">4</span></button>
+                    <button type="button" id="nav-attendance" class="nav-btn" onclick="switchView('attendance')">📋 हाजिरी</button>
+                    <button type="button" id="nav-reminders" class="nav-btn" onclick="switchView('reminders')">🔔 Reminders <span id="nav-due-count" class="pill-count amber">0</span></button>
+                    <button type="button" id="nav-excel" class="nav-btn" onclick="switchView('excel')">📊 Excel / CSV</button>
+                    <button type="button" id="nav-whitelabel" class="nav-btn" onclick="switchView('whitelabel')">🏷 White-Label</button>
+                </nav>
+
+                <div class="header-actions">
                     <button type="button" class="btn btn-soft-indigo btn-sm" onclick="openClientOnboardingWizard(false)">🚀 New Client Setup</button>
-                    <button type="button" id="cloudSyncHeaderBtn" class="btn btn-soft-emerald btn-sm" onclick="openCloudSyncModal()">☁️ Cloud Sync: Live</button>
+                    <button type="button" id="cloudSyncHeaderBtn" class="btn btn-soft-emerald btn-sm" onclick="openCloudSyncModal()">☁️ Synced: shining-harnatand-2026</button>
                     <button type="button" class="btn btn-soft btn-sm" onclick="exportBackupJSON()">⬇ Backup</button>
                     <label class="btn btn-soft btn-sm" style="cursor:pointer;">
                         ⬆ Restore
@@ -1165,287 +1221,246 @@
     </header>
 
     <!-- =========================================================
-         MODAL 8: MULTI-DEVICE REAL-TIME CLOUD SYNC SETTINGS
+         MAIN CONTENT VIEWS
          ========================================================= -->
-    <div id="cloudSyncModal" class="modal-backdrop hidden" onclick="if(event.target===this) closeModal('cloudSyncModal')">
-        <div class="modal-card sm">
-            <div class="modal-hero" style="background:linear-gradient(135deg, #059669, #0284c7);">
-                <button type="button" class="modal-close" onclick="closeModal('cloudSyncModal')">✕</button>
-                <span class="sq-pill">☁️ MULTI-DEVICE LIVE SYNC</span>
-                <h3 style="font-size:1.25rem; font-weight:800; margin-top:6px;">Sabhi Phones me Same Data Sync</h3>
-                <p style="font-size:0.78rem; opacity:0.92;">एक ही Sync Room ID डालने पर सभी टीचर्स के मोबाइल और लैपटॉप पर 3 सेकंड में लाइव डेटा अपडेट होगा</p>
-            </div>
-            <div class="modal-body">
-                <div style="background:#f0fdf4; border:1px solid #bbf7d0; border-radius:12px; padding:12px; font-size:0.8rem; color:#166534;">
-                    <div><strong>Sync Status:</strong> <span id="syncModalStatusText">Connected &amp; Auto-Syncing</span></div>
-                    <div style="margin-top:4px; font-size:0.74rem; color:#15803d;">Last Synced: <span id="syncModalLastTime">Just now</span></div>
-                </div>
-
-                <div class="form-group">
-                    <label>Coaching Sync Room ID (सभी फोन में यही कोड रखें) *</label>
-                    <div style="display:flex; gap:6px;">
-                        <input type="text" id="syncRoomIdInput" class="input-control" style="flex:1; font-weight:800;" placeholder="e.g. shining-harnatand-2026">
-                        <button type="button" class="btn btn-soft btn-sm" onclick="copySyncRoomLink()">📋 Copy Link</button>
-                    </div>
-                </div>
-
-                <div style="display:flex; gap:8px; flex-wrap:wrap;">
-                    <button type="button" class="btn btn-emerald" style="flex:1;" onclick="saveAndConnectSyncRoom()">✓ Connect &amp; Sync Now</button>
-                    <button type="button" class="btn btn-soft-indigo btn-sm" onclick="pullCloudDataNow(true)">⬇ Pull Latest</button>
-                    <button type="button" class="btn btn-soft btn-sm" onclick="pushCloudDataNow(true)">⬆ Push Now</button>
-                </div>
-
-                <p style="font-size:0.72rem; color:var(--text-muted); line-height:1.45;">
-                    <strong>टिप:</strong> "📋 Copy Link" दबाकर WhatsApp पर सभी टीचर्स को भेज दें—उस लिंक से खोलते ही उनके फोन में अपने आप यही Room ID जुड़ जाएगा!
-                </p>
-            </div>
-        </div>
-    </div>
-
-    <!-- =========================================================
-         MODAL 7: NEW CLIENT ONBOARDING WIZARD (FOR COMMERCIAL RESELLING)
-         ========================================================= -->
-    <div id="clientOnboardingModal" class="modal-backdrop hidden" onclick="if(event.target===this) closeModal('clientOnboardingModal')">
-        <div class="modal-card">
-            <div class="modal-hero">
-                <button type="button" class="modal-close" onclick="closeModal('clientOnboardingModal')">✕</button>
-                <span class="sq-pill">🚀 COMMERCIAL RESELLER WIZARD</span>
-                <h3 style="font-size:1.35rem; font-weight:800; margin-top:6px;">Setup Software for a New Coaching Client</h3>
-                <p style="font-size:0.8rem; opacity:0.9;">30 सेकंड में किसी भी नए कोचिंग सेंटर के नाम से यह सॉफ्टवेयर तैयार करें</p>
-            </div>
-            <form onsubmit="completeClientOnboarding(event)" class="modal-body">
-                <div class="form-grid">
-                    <div class="form-group full">
-                        <label>Client's Coaching Institute Name *</label>
-                        <input type="text" id="wizCoachingName" class="input-control" required placeholder="e.g. Bright Future Coaching Center">
-                    </div>
-                    <div class="form-group">
-                        <label>Director / Owner Name *</label>
-                        <input type="text" id="wizDirectorName" class="input-control" required placeholder="e.g. Mr. Rakesh Tiwari">
-                    </div>
-                    <div class="form-group">
-                        <label>Coaching Contact Mobile *</label>
-                        <input type="tel" id="wizPhone" class="input-control" required placeholder="e.g. 9876543210">
-                    </div>
-                    <div class="form-group full">
-                        <label>Coaching Address *</label>
-                        <input type="text" id="wizAddress" class="input-control" required placeholder="e.g. Station Road, Patna">
-                    </div>
-                    <div class="form-group">
-                        <label>Receipt Prefix *</label>
-                        <input type="text" id="wizPrefix" class="input-control" required value="BFC-2026-">
-                    </div>
-                    <div class="form-group">
-                        <label>Set Client Admin PIN *</label>
-                        <input type="text" id="wizAdminPin" class="input-control" required value="1234" minlength="4">
-                    </div>
-                    <div class="form-group">
-                        <label>License Plan</label>
-                        <select id="wizLicensePlan" class="input-control">
-                            <option value="Active • Commercial Pro">Active • Commercial Pro (1 Year)</option>
-                            <option value="Active • Lifetime License">Active • Lifetime License</option>
-                            <option value="7-Day Free Trial">7-Day Free Trial</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Initial Data Mode</label>
-                        <select id="wizDataMode" class="input-control">
-                            <option value="demo">Keep 24 Demo Students (For Live Demo)</option>
-                            <option value="clean">Start Fresh / Empty (For Real Client Entry)</option>
-                        </select>
-                    </div>
-                </div>
-                <div style="display:flex; justify-content:flex-end; gap:8px; padding-top:10px; border-top:1px solid var(--border-color);">
-                    <button type="button" class="btn btn-soft" onclick="closeModal('clientOnboardingModal')">Cancel</button>
-                    <button type="submit" class="btn btn-emerald">✓ Launch Branded Coaching App</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- =========================================================
-         MODAL 4: ADD / EDIT TEACHER FORM
-         ========================================================= -->
-    <div id="teacherFormModal" class="modal-backdrop hidden" onclick="if(event.target===this) closeModal('teacherFormModal')">
-        <div class="modal-card">
-            <div class="panel-header">
-                <h3 id="teacherFormTitle" style="font-size:1.1rem; font-weight:800;">Add New Teacher</h3>
-                <button type="button" class="edit-icon-btn" onclick="closeModal('teacherFormModal')">✕</button>
-            </div>
-            <form id="teacherForm" onsubmit="saveTeacherForm(event)" class="modal-body">
-                <input type="hidden" id="formTeacherId">
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label>Teacher Full Name *</label>
-                        <input type="text" id="formTeacherName" class="input-control" required placeholder="e.g. Prof. Rajesh Verma">
-                    </div>
-                    <div class="form-group">
-                        <label>Qualification *</label>
-                        <input type="text" id="formTeacherQual" class="input-control" required placeholder="e.g. M.Sc., B.Ed.">
-                    </div>
-                    <div class="form-group">
-                        <label>Subject(s) Taught *</label>
-                        <input type="text" id="formTeacherSubjects" class="input-control" required placeholder="e.g. Mathematics & Physics">
-                    </div>
-                    <div class="form-group">
-                        <label>Classes Assigned *</label>
-                        <input type="text" id="formTeacherClasses" class="input-control" required value="7th, 8th, 9th, 10th">
-                    </div>
-                    <div class="form-group">
-                        <label>Mobile Number *</label>
-                        <input type="tel" id="formTeacherMobile" class="input-control" required placeholder="e.g. 9835011223">
-                    </div>
-                    <div class="form-group">
-                        <label>Experience</label>
-                        <input type="text" id="formTeacherExp" class="input-control" placeholder="e.g. 6 Years">
-                    </div>
-                    <div class="form-group">
-                        <label>Monthly Salary (कुल वेतन ₹) *</label>
-                        <input type="number" id="formTeacherSalary" class="input-control" required min="0" value="14000">
-                    </div>
-                    <div class="form-group">
-                        <label>Salary Paid Till Now (कितना पे किया ₹)</label>
-                        <input type="number" id="formTeacherPaid" class="input-control" min="0" value="0">
-                    </div>
-                    <div class="form-group">
-                        <label>Advance Given (एडवांस ₹)</label>
-                        <input type="number" id="formTeacherAdvance" class="input-control" min="0" value="0">
-                    </div>
-                    <div class="form-group">
-                        <label>Batch Timing</label>
-                        <input type="text" id="formTeacherTiming" class="input-control" value="7:00 AM - 11:00 AM">
-                    </div>
-                    <div class="form-group">
-                        <label>Classes Taken This Month (कितने दिन क्लास ली)</label>
-                        <input type="number" id="formTeacherClassesTaken" class="input-control" min="0" max="31" value="22">
-                    </div>
-                    <div class="form-group">
-                        <label>Leave Days This Month (कितने दिन छुट्टी)</label>
-                        <input type="number" id="formTeacherLeaveDays" class="input-control" min="0" max="31" value="0">
-                    </div>
-                    <div class="form-group">
-                        <label>Currently On Leave? (क्या अभी छुट्टी पर हैं?)</label>
-                        <select id="formTeacherOnLeave" class="input-control">
-                            <option value="no">No — Active / Regular Class</option>
-                            <option value="yes">Yes — On Leave (नाम Blink करेगा)</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Leave Reason (छुट्टी का कारण)</label>
-                        <input type="text" id="formTeacherLeaveReason" class="input-control" placeholder="e.g. Medical / Family Function">
-                    </div>
-                    <div class="form-group">
-                        <label>Leave From Date (कब से छुट्टी)</label>
-                        <input type="date" id="formTeacherLeaveFrom" class="input-control">
-                    </div>
-                    <div class="form-group">
-                        <label>Leave To Date (कब तक छुट्टी)</label>
-                        <input type="date" id="formTeacherLeaveTo" class="input-control">
-                    </div>
-                    <div class="form-group full">
-                        <label>Full Address</label>
-                        <input type="text" id="formTeacherAddress" class="input-control" placeholder="Teacher residential address">
-                    </div>
-                </div>
-
-                <div style="display:flex; justify-content:flex-end; gap:8px; padding-top:10px; border-top:1px solid var(--border-color);">
-                    <button type="button" class="btn btn-soft" onclick="closeModal('teacherFormModal')">Cancel</button>
-                    <button type="submit" class="btn btn-purple">Save Teacher</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- =========================================================
-         MODAL 1: STUDENT BIODATA MODAL
-         ========================================================= -->
-    <div id="studentBiodataModal" class="modal-backdrop hidden" onclick="if(event.target===this) closeModal('studentBiodataModal')">
-        <div class="modal-card">
-            <div class="modal-hero">
-                <button type="button" class="modal-close" onclick="closeModal('studentBiodataModal')">✕</button>
-                <div style="display:flex; align-items:center; gap:14px;">
-                    <div id="bioStudentAvatar" style="width:54px; height:54px; border-radius:16px; background:rgba(255,255,255,0.22); display:flex; align-items:center; justify-content:center; font-size:1.3rem; font-weight:800;">AK</div>
+    <main class="container">
+        <!-- VIEW 1: DASHBOARD -->
+        <div id="view-dashboard" class="section-stack">
+            <!-- 4 KPI Cards -->
+            <div class="kpi-grid">
+                <div class="kpi-card">
                     <div>
-                        <div style="display:flex; gap:6px; flex-wrap:wrap;">
-                            <span id="bioStudentClass" class="sq-pill">Class 11th</span>
-                            <span id="bioStudentWingSec" class="sq-pill">Boys • Section A</span>
-                            <span id="bioStudentRoll" class="sq-pill">Roll No: 1101</span>
-                        </div>
-                        <h3 id="bioStudentName" style="font-size:1.35rem; font-weight:800; margin-top:4px;">Student Name</h3>
-                        <p id="bioStudentSubjects" style="font-size:0.78rem; opacity:0.9;">Subjects: All Subjects</p>
+                        <div class="kpi-label">Total Fee Collected</div>
+                        <div id="kpi-total-collected" class="kpi-value" style="color:var(--emerald-dark);">₹0</div>
+                        <div id="kpi-collection-percent" class="kpi-sub">0% expected</div>
                     </div>
+                    <div class="kpi-icon" style="background:var(--emerald-soft); color:var(--emerald-dark);">💰</div>
+                </div>
+                <div class="kpi-card clickable" onclick="switchView('reminders')">
+                    <div>
+                        <div class="kpi-label">Pending Fee (बकाया)</div>
+                        <div id="kpi-total-pending" class="kpi-value" style="color:#b45309;">₹0</div>
+                        <div id="kpi-pending-students" class="kpi-sub">0 dues • Send Hindi Alert →</div>
+                    </div>
+                    <div class="kpi-icon" style="background:var(--amber-soft); color:var(--amber);">⏳</div>
+                </div>
+                <div class="kpi-card clickable" onclick="switchView('attendance')">
+                    <div>
+                        <div class="kpi-label">Total Students (<span id="kpi-year-label">2026</span>)</div>
+                        <div id="kpi-total-students" class="kpi-value" style="color:var(--primary);">0</div>
+                        <div id="kpi-today-attendance" class="kpi-sub">Today Present: 0 / 0</div>
+                    </div>
+                    <div class="kpi-icon" style="background:var(--primary-soft); color:var(--primary);">🎓</div>
+                </div>
+                <div class="kpi-card clickable" onclick="switchView('teachers')">
+                    <div>
+                        <div class="kpi-label">Teacher Salary Due (बाकी)</div>
+                        <div id="kpi-teacher-due" class="kpi-value" style="color:var(--purple);">₹0</div>
+                        <div id="kpi-total-teachers" class="kpi-sub">0 Teachers • View Salary →</div>
+                    </div>
+                    <div class="kpi-icon" style="background:var(--purple-soft); color:var(--purple);">👨‍🏫</div>
                 </div>
             </div>
-            <div class="modal-body">
-                <div class="bio-grid">
-                    <div class="bio-item"><label>Father's Name (पिता का नाम)</label><span id="bioFatherName">—</span></div>
-                    <div class="bio-item"><label>Mother's Name (माता का नाम)</label><span id="bioMotherName">—</span></div>
-                    <div class="bio-item"><label>Mobile / WhatsApp</label><span id="bioMobile">—</span></div>
-                    <div class="bio-item"><label>Date of Birth</label><span id="bioDob">—</span></div>
-                    <div class="bio-item"><label>Admission Date</label><span id="bioAdmissionDate">—</span></div>
-                    <div class="bio-item"><label>School Name</label><span id="bioSchoolName">—</span></div>
-                    <div class="bio-item full"><label>Residential Address</label><span id="bioAddress">—</span></div>
-                </div>
 
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <strong style="font-size:0.9rem;">💰 Fee Status &amp; Payment</strong>
-                    <span id="bioFeeStatusBadge" class="badge badge-emerald">Fully Paid</span>
-                </div>
-
-                <div class="fee-trio">
-                    <div class="stat-pill-card">
-                        <div class="kpi-label">Total Fee</div>
-                        <div id="bioTotalFee" style="font-size:1.15rem; font-weight:800; margin-top:3px;">₹0</div>
+            <!-- Class Selection & Boys/Girls Wing Switcher -->
+            <div>
+                <div class="section-header">
+                    <div>
+                        <h2 class="section-title"><span class="title-accent"></span> Select Class (7th to 12th)</h2>
+                        <p class="section-desc">किसी भी कक्षा (7th से 12th) पर क्लिक करें — Boys/Girls अलग-अलग तथा Section A और Section B मिलेंगे</p>
                     </div>
-                    <div class="stat-pill-card" style="background:var(--emerald-soft); border-color:#a7f3d0;">
-                        <div class="kpi-label" style="color:var(--emerald-dark);">Paid (जमा)</div>
-                        <div id="bioPaidFee" style="font-size:1.15rem; font-weight:800; color:var(--emerald-dark); margin-top:3px;">₹0</div>
-                    </div>
-                    <div class="stat-pill-card" style="background:var(--amber-soft); border-color:#fde68a;">
-                        <div class="kpi-label" style="color:#b45309;">Due (बकाया)</div>
-                        <div id="bioDueFee" style="font-size:1.15rem; font-weight:800; color:#b45309; margin-top:3px;">₹0</div>
+                    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                        <button type="button" class="btn btn-emerald btn-sm" onclick="switchView('attendance')">📋 आज की हाजिरी</button>
+                        <button type="button" class="btn btn-primary btn-sm" onclick="openAddStudentModal('7th')">+ Add Student</button>
                     </div>
                 </div>
 
-                <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center; background:#f8fafc; padding:10px; border-radius:12px; border:1px solid var(--border-color);">
-                    <input type="number" id="quickFeeInput" class="input-control" style="flex:1; min-width:130px;" placeholder="Enter fee amount ₹">
-                    <button type="button" class="btn btn-emerald btn-sm" onclick="recordQuickFeePayment()">+ Deposit Fee</button>
+                <!-- Academic Year / Session Selector Bar -->
+                <div class="batch-switcher-bar" style="margin-bottom:10px; justify-content:space-between;">
+                    <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                        <span style="font-size:0.78rem; font-weight:800; color:var(--primary);">📅 ACADEMIC YEAR (सत्र):</span>
+                        <div id="homeYearButtonsGroup" style="display:flex; gap:6px; flex-wrap:wrap;"></div>
+                        <button type="button" class="btn btn-soft-indigo btn-sm" onclick="addNewAcademicYearPrompt()">+ Add Year</button>
+                    </div>
+                    <span id="yearWiseComparisonBadge" class="badge badge-indigo">2026: 32 Students</span>
                 </div>
 
-                <div style="display:flex; gap:8px; flex-wrap:wrap;">
-                    <button type="button" id="bioWhatsAppBtn" class="btn btn-emerald btn-sm" style="flex:1;">💬 WhatsApp रिमाइंडर (हिंदी)</button>
-                    <button type="button" id="bioCopyHindiMsgBtn" class="btn btn-soft btn-sm">📋 Copy Hindi Msg</button>
-                    <button type="button" id="bioPrintReceiptBtn" class="btn btn-soft-indigo btn-sm">🖨 Print Receipt</button>
+                <div class="batch-switcher-bar" style="margin-bottom:16px;">
+                    <span style="font-size:0.78rem; font-weight:800; color:var(--text-muted);">BATCH WING:</span>
+                    <button type="button" id="home-wing-all" class="wing-btn active-all" onclick="setHomeWingFilter('all')">All Students (Boys + Girls)</button>
+                    <button type="button" id="home-wing-Boys" class="wing-btn" onclick="setHomeWingFilter('Boys')">👦 Boys Batch (लड़के)</button>
+                    <button type="button" id="home-wing-Girls" class="wing-btn" onclick="setHomeWingFilter('Girls')">👧 Girls Batch (लड़कियां)</button>
                 </div>
 
-                <div style="display:flex; justify-content:space-between; gap:8px; padding-top:10px; border-top:1px solid var(--border-color);">
-                    <button type="button" id="deleteStudentBtn" class="btn btn-danger-ghost btn-sm">🗑 Delete Student</button>
-                    <button type="button" id="editStudentBtn" class="btn btn-primary btn-sm">✏️ Edit Biodata</button>
+                <div id="classSquareGrid" class="class-square-row-6"></div>
+            </div>
+
+            <!-- Class-Wise Fee Collection Summary Table -->
+            <div class="panel">
+                <div class="panel-header">
+                    <div>
+                        <h3 class="section-title">📊 Class-Wise Fee Collection Summary (फीस कलेक्शन रिपोर्ट)</h3>
+                        <p class="section-desc">किस क्लास से कुल कितनी फीस जमा हुई और कितनी बकाया है, उसका पूरा हिसाब</p>
+                    </div>
+                    <button type="button" class="btn btn-emerald btn-sm" onclick="switchView('reminders')">💬 Send Hindi Fee Reminders</button>
                 </div>
+                <div class="table-wrap">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Class</th>
+                                <th class="text-center">Students</th>
+                                <th class="text-right">Total Expected Fee</th>
+                                <th class="text-right">Collected Fee (जमा)</th>
+                                <th class="text-right">Pending Due (बकाया)</th>
+                                <th>Collection %</th>
+                                <th class="text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="homeFeeSummaryBody"></tbody>
+                        <tfoot id="homeFeeSummaryFoot"></tfoot>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Teacher Salary & Leave Live Summary -->
+            <div class="panel">
+                <div class="panel-header">
+                    <div>
+                        <h3 class="section-title">💼 Teacher Salary &amp; Staff Status (शिक्षक वेतन एवं छुट्टी विवरण)</h3>
+                        <p class="section-desc">मासिक कुल वेतन, भुगतान, एडवांस एवं छुट्टी पर चल रहे शिक्षकों की स्थिति</p>
+                    </div>
+                    <button type="button" class="btn btn-purple btn-sm" onclick="switchView('teachers')">Manage Teachers →</button>
+                </div>
+                <div id="homeTeacherLeaveBanner" style="padding:0 20px;"></div>
+                <div id="homeTeacherSalarySummary" class="salary-summary-grid"></div>
             </div>
         </div>
-    </div>
 
-    <!-- =========================================================
-         MODAL 2: ADD / EDIT STUDENT FORM
-         ========================================================= -->
-    <div id="studentFormModal" class="modal-backdrop hidden" onclick="if(event.target===this) closeModal('studentFormModal')">
-        <div class="modal-card">
-            <div class="panel-header">
-                <h3 id="studentFormTitle" style="font-size:1.1rem; font-weight:800;">Add New Student</h3>
-                <button type="button" class="edit-icon-btn" onclick="closeModal('studentFormModal')">✕</button>
+        <!-- VIEW 2: CLASS STUDENTS & BIODATA -->
+        <div id="view-class-students" class="section-stack hidden">
+            <div class="toolbar-bar">
+                <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+                    <button type="button" class="btn btn-soft btn-sm" onclick="switchView('dashboard')">← Back</button>
+                    <h2 id="selectedClassHeading" style="font-size:1.15rem; font-weight:800;">Class 7th Students</h2>
+                    <span id="selectedClassBadge" class="badge badge-indigo">0 Students</span>
+                </div>
+                <div class="class-pills">
+                    <button type="button" id="tab-class-7th" class="class-pill-btn" onclick="openClassView('7th')">7th</button>
+                    <button type="button" id="tab-class-8th" class="class-pill-btn" onclick="openClassView('8th')">8th</button>
+                    <button type="button" id="tab-class-9th" class="class-pill-btn" onclick="openClassView('9th')">9th</button>
+                    <button type="button" id="tab-class-10th" class="class-pill-btn" onclick="openClassView('10th')">10th</button>
+                    <button type="button" id="tab-class-11th" class="class-pill-btn" onclick="openClassView('11th')">11th</button>
+                    <button type="button" id="tab-class-12th" class="class-pill-btn" onclick="openClassView('12th')">12th</button>
+                </div>
+                <button type="button" class="btn btn-primary btn-sm" onclick="openAddStudentModal(currentSelectedClass)">+ Add Student (<span id="addBtnClassLabel">Class 7th</span>)</button>
             </div>
-            <form id="studentForm" onsubmit="saveStudentForm(event)" class="modal-body">
-                <input type="hidden" id="formStudentId">
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label>Student Full Name *</label>
-                        <input type="text" id="formStudentName" class="input-control" required placeholder="e.g. Aarav Kumar">
-                    </div>
-                    <div class="form-group">
-                        <label>Class *</label>
-                        <select id="formStudentClass" class="input-control" required>
-                            <option value="7th">Class 7th</option>
+
+            <!-- Boys/Girls & Section A/B Filter Bar -->
+            <div class="batch-switcher-bar">
+                <span style="font-size:0.75rem; font-weight:800; color:var(--primary);">YEAR:</span>
+                <select id="classYearSelect" class="input-control" style="padding:6px 10px; font-weight:800;" onchange="selectClassYear(this.value)"></select>
+                <span style="font-size:0.75rem; font-weight:800; color:var(--text-muted); margin-left:4px;">WING:</span>
+                <button type="button" id="class-wing-all" class="wing-btn active-all" onclick="selectClassWing('all')">All (Boys+Girls)</button>
+                <button type="button" id="class-wing-Boys" class="wing-btn" onclick="selectClassWing('Boys')">👦 Boys Batch</button>
+                <button type="button" id="class-wing-Girls" class="wing-btn" onclick="selectClassWing('Girls')">👧 Girls Batch</button>
+                <span style="font-size:0.75rem; font-weight:800; color:var(--text-muted); margin-left:8px;">SECTION:</span>
+                <button type="button" id="class-sec-all" class="section-btn active" onclick="selectClassSection('all')">All Sec</button>
+                <button type="button" id="class-sec-A" class="section-btn" onclick="selectClassSection('A')">Section A</button>
+                <button type="button" id="class-sec-B" class="section-btn" onclick="selectClassSection('B')">Section B</button>
+            </div>
+
+            <!-- Class Fee Trio -->
+            <div class="fee-trio">
+                <div class="stat-pill-card">
+                    <div class="kpi-label">Class <span class="dyn-cls-lbl">7th</span> Expected Fee</div>
+                    <div id="classDetailTotalFee" style="font-size:1.25rem; font-weight:800; margin-top:4px;">₹0</div>
+                </div>
+                <div class="stat-pill-card" style="background:var(--emerald-soft); border-color:#a7f3d0;">
+                    <div class="kpi-label" style="color:var(--emerald-dark);">Collected (जमा)</div>
+                    <div id="classDetailCollectedFee" style="font-size:1.25rem; font-weight:800; color:var(--emerald-dark); margin-top:4px;">₹0</div>
+                </div>
+                <div class="stat-pill-card" style="background:var(--amber-soft); border-color:#fde68a;">
+                    <div class="kpi-label" style="color:#b45309;">Pending Due (बकाया)</div>
+                    <div id="classDetailPendingFee" style="font-size:1.25rem; font-weight:800; color:#b45309; margin-top:4px;">₹0</div>
+                </div>
+            </div>
+
+            <div class="filter-row">
+                <input type="text" id="studentSearchInput" class="input-control" style="flex:1; min-width:220px;" placeholder="🔍 Search student by Name, Roll No, or Father's Name..." oninput="renderStudentList()">
+                <select id="studentFeeFilter" class="input-control" onchange="renderStudentList()">
+                    <option value="all">All Fee Status</option>
+                    <option value="paid">Fully Paid Only</option>
+                    <option value="pending">Pending Dues Only</option>
+                </select>
+            </div>
+
+            <div id="studentListContainer" class="cards-grid"></div>
+        </div>
+
+        <!-- VIEW 3: TEACHERS & SALARY -->
+        <div id="view-teachers" class="section-stack hidden">
+            <div class="toolbar-bar">
+                <div>
+                    <h2 class="section-title">👨‍🏫 Teachers Directory, Attendance &amp; Salary</h2>
+                    <p class="section-desc">शिक्षक का बायोडाटा, मासिक क्लास/छुट्टी रिकॉर्ड और वेतन/एडवांस प्रबंधन</p>
+                </div>
+                <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                    <input type="text" id="teacherSearchInput" class="input-control" placeholder="🔍 Search teacher or subject..." oninput="renderTeacherList()">
+                    <button type="button" class="btn btn-purple btn-sm" onclick="openAddTeacherModal()">+ Add Teacher</button>
+                </div>
+            </div>
+            <div id="teachersPageSalaryStrip" class="kpi-grid"></div>
+            <div id="teacherListContainer" class="cards-grid"></div>
+        </div>
+
+        <!-- VIEW 4: DAILY ATTENDANCE -->
+        <div id="view-attendance" class="section-stack hidden">
+            <div class="toolbar-bar">
+                <div>
+                    <h2 class="section-title">📋 Daily Student Attendance (दैनिक छात्र उपस्थिति)</h2>
+                    <p class="section-desc">हाजिरी लगाएं और अनुपस्थित (Absent) छात्रों के अभिभावक को तुरंत WhatsApp अलर्ट भेजें</p>
+                </div>
+                <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+                    <select id="attendanceYearSelect" class="input-control" onchange="renderAttendanceView()"></select>
+                    <input type="date" id="attendanceDateInput" class="input-control" onchange="renderAttendanceView()">
+                    <select id="attendanceClassSelect" class="input-control" onchange="renderAttendanceView()">
+                        <option value="7th">Class 7th</option>
+                        <option value="8th">Class 8th</option>
+                        <option value="9th">Class 9th</option>
+                        <option value="10th">Class 10th</option>
+                        <option value="11th">Class 11th</option>
+                        <option value="12th">Class 12th</option>
+                    </select>
+                    <select id="attendanceWingSelect" class="input-control" onchange="renderAttendanceView()">
+                        <option value="all">Boys &amp; Girls</option>
+                        <option value="Boys">Boys Only</option>
+                        <option value="Girls">Girls Only</option>
+                    </select>
+                    <select id="attendanceSectionSelect" class="input-control" onchange="renderAttendanceView()">
+                        <option value="all">All Sections</option>
+                        <option value="A">Section A</option>
+                        <option value="B">Section B</option>
+                    </select>
+                    <button type="button" class="btn btn-emerald btn-sm" onclick="markAllClassPresent()">✓ Mark All Present</button>
+                </div>
+            </div>
+            <div id="attendanceSummaryBadges" style="display:flex; gap:8px; flex-wrap:wrap;"></div>
+            <div id="attendanceListContainer" class="cards-grid"></div>
+        </div>
+
+        <!-- VIEW 5: BULK HINDI WHATSAPP REMINDERS -->
+        <div id="view-reminders" class="section-stack hidden">
+            <div class="toolbar-bar">
+                <div>
+                    <h2 class="section-title">🔔 Pending Fee Hindi WhatsApp Reminders</h2>
+                    <p class="section-desc">जिन छात्रों की फीस बकाया है, उनके अभिभावकों को एक क्लिक में हिंदी में रिमाइंडर भेजें</p>
+                </div>
+                <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                    <select id="reminderYearFilter" class="input-control" onchange="renderBulkRemindersView()"></select>
+                    <select id="reminderClassFilter" class="input-control" onchange="renderBulkRemindersView()">
+                        <option value="all">All Classes (7th–12th)</option>
+                        <option value="7th">Class 7th</option>
                             <option value="8th">Class 8th</option>
                             <option value="9th">Class 9th</option>
                             <option value="10th">Class 10th</option>
@@ -1454,17 +1469,17 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>Batch Wing (Boys / Girls) *</label>
-                        <select id="formStudentGender" class="input-control" required>
-                            <option value="Boys">Boys Batch (लड़के)</option>
-                            <option value="Girls">Girls Batch (लड़कियां)</option>
+                        <label>Academic Year (सत्र) *</label>
+                        <select id="formStudentYear" class="input-control" required>
+                            <option value="2025">2025</option>
+                            <option value="2026" selected>2026</option>
+                            <option value="2027">2027</option>
+                            <option value="2028">2028</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>Section (A / B) *</label>
-                        <select id="formStudentSection" class="input-control" required>
-                            <option value="A">Section A</option>
-                            <option value="B">Section B</option>
+                        <label>Class *</label>
+                        <select id="formStudentClass" class="input-control" required>
                         </select>
                     </div>
                     <div class="form-group">
@@ -1545,7 +1560,6 @@
                     <div class="bio-item full"><label>Residential Address</label><span id="bioTeacherAddress">—</span></div>
                 </div>
 
-                <!-- Quick Attendance / Leave Controls -->
                 <div style="background:#fff1f2; border:1px solid #fecdd3; border-radius:12px; padding:12px; display:flex; flex-direction:column; gap:8px;">
                     <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:6px;">
                         <strong style="font-size:0.82rem; color:#be123c;">📅 Monthly Class &amp; Leave Tracker (हाजिरी एवं छुट्टी)</strong>
@@ -1609,7 +1623,7 @@
          ========================================================= -->
     <div id="receiptPrintModal" class="modal-backdrop hidden" onclick="if(event.target===this) closeModal('receiptPrintModal')">
         <div class="modal-card">
-            <div class="panel-header no-print">
+            <div class="panel-header">
                 <h3 style="font-size:1rem; font-weight:800;">Print Receipt / Slip</h3>
                 <div style="display:flex; gap:8px;">
                     <button type="button" class="btn btn-primary btn-sm" onclick="window.print()">🖨 Print Now</button>
@@ -1619,6 +1633,9 @@
             <div id="printableReceiptArea" style="padding:24px; background:#fff;"></div>
         </div>
     </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toastContainer" class="toast-wrap"></div>
 
     <!-- =========================================================
          JAVASCRIPT APPLICATION LOGIC (100% SELF-CONTAINED & SAFE)
@@ -1642,6 +1659,8 @@
                 instituteName: "SHINING COACHING CLASSES",
                 instituteLogo: "",
                 syncRoomId: "shining-harnatand-2026",
+                academicYears: ["2025", "2026", "2027", "2028"],
+                selectedYear: "2026",
                 lastUpdatedAt: 0,
                 instituteTagline: "Harnatand • Class 7th to 12th (Boys & Girls Sec A & B)",
                 directorName: "Director, Shining Coaching Classes",
@@ -1653,7 +1672,6 @@
                 adminPin: "1234",
                 attendance: {},
                 students: [
-                    // Class 7th
                     { id: 's1', name: 'Aarav Kumar', gender: 'Boys', section: 'A', className: '7th', rollNo: '701', fatherName: 'Manoj Kumar', motherName: 'Sunita Devi', mobile: '9876543210', dob: '2014-05-12', admissionDate: '2026-04-02', schoolName: 'DAV Public School', subjects: 'Maths, Science, English, SST', address: 'Station Road, Ward No. 4', totalFee: 5000, paidFee: 5000 },
                     { id: 's2', name: 'Ananya Kumari', gender: 'Girls', section: 'A', className: '7th', rollNo: '702', fatherName: 'Rakesh Singh', motherName: 'Pooja Singh', mobile: '9876543211', dob: '2014-08-21', admissionDate: '2026-04-05', schoolName: 'St. Mary School', subjects: 'Maths, Science, English', address: 'Gandhi Nagar, Near Temple', totalFee: 5000, paidFee: 3500 },
                     { id: 's3', name: 'Rohan Das', gender: 'Boys', section: 'A', className: '7th', rollNo: '703', fatherName: 'Suresh Das', motherName: 'Meena Das', mobile: '9876543212', dob: '2014-02-14', admissionDate: '2026-04-10', schoolName: 'Govt. High School', subjects: 'All Subjects', address: 'Shanti Colony, Lane 2', totalFee: 5000, paidFee: 5000 },
@@ -1661,7 +1679,6 @@
                     { id: 's5', name: 'Kavya Mishra', gender: 'Girls', section: 'A', className: '7th', rollNo: '705', fatherName: 'Devendra Mishra', motherName: 'Ritu Mishra', mobile: '9876543214', dob: '2014-11-18', admissionDate: '2026-04-14', schoolName: 'Holy Cross School', subjects: 'All Subjects', address: 'Ashok Nagar, Block C', totalFee: 5000, paidFee: 5000 },
                     { id: 's6', name: 'Prince Raj', gender: 'Boys', section: 'B', className: '7th', rollNo: '706', fatherName: 'Bipin Bihari', motherName: 'Anita Devi', mobile: '9876543215', dob: '2014-06-27', admissionDate: '2026-04-16', schoolName: 'Saraswati Vidya Mandir', subjects: 'Maths, Science, English', address: 'Purani Bazar, Near Post Office', totalFee: 5000, paidFee: 1500 },
 
-                    // Class 8th
                     { id: 's7', name: 'Priya Sharma', gender: 'Girls', section: 'A', className: '8th', rollNo: '801', fatherName: 'Dinesh Sharma', motherName: 'Kavita Sharma', mobile: '9811223301', dob: '2013-03-19', admissionDate: '2026-04-01', schoolName: 'Central Academy', subjects: 'Maths, Science, English, Sanskrit', address: 'Civil Lines, Block B', totalFee: 6000, paidFee: 6000 },
                     { id: 's8', name: 'Aditya Raj', gender: 'Boys', section: 'A', className: '8th', rollNo: '802', fatherName: 'Santosh Prasad', motherName: 'Rekha Devi', mobile: '9811223302', dob: '2013-11-05', admissionDate: '2026-04-03', schoolName: 'DAV Public School', subjects: 'Maths, Science, English', address: 'Subhash Chowk', totalFee: 6000, paidFee: 4000 },
                     { id: 's9', name: 'Neha Gupta', gender: 'Girls', section: 'B', className: '8th', rollNo: '803', fatherName: 'Anil Gupta', motherName: 'Seema Gupta', mobile: '9811223303', dob: '2013-07-28', admissionDate: '2026-04-08', schoolName: 'Holy Cross School', subjects: 'All Subjects', address: 'Main Market Road', totalFee: 6000, paidFee: 6000 },
@@ -1669,7 +1686,6 @@
                     { id: 's11', name: 'Riya Kumari', gender: 'Girls', section: 'A', className: '8th', rollNo: '805', fatherName: 'Mukesh Yadav', motherName: 'Sangeeta Devi', mobile: '9811223305', dob: '2013-04-22', admissionDate: '2026-04-14', schoolName: 'Govt. Girls High School', subjects: 'All Subjects', address: 'Naya Tola, Ward 9', totalFee: 6000, paidFee: 6000 },
                     { id: 's12', name: 'Ayush Tiwari', gender: 'Boys', section: 'B', className: '8th', rollNo: '806', fatherName: 'Rameshwar Tiwari', motherName: 'Archana Tiwari', mobile: '9811223306', dob: '2013-12-01', admissionDate: '2026-04-18', schoolName: 'Kendriya Vidyalaya', subjects: 'Maths, Science, English', address: 'Railway Colony, Qtr 42', totalFee: 6000, paidFee: 2000 },
 
-                    // Class 9th
                     { id: 's13', name: 'Sakshi Verma', gender: 'Girls', section: 'A', className: '9th', rollNo: '901', fatherName: 'Ramesh Verma', motherName: 'Geeta Verma', mobile: '9934512301', dob: '2012-01-15', admissionDate: '2026-03-25', schoolName: 'Kendriya Vidyalaya', subjects: 'Maths, Physics, Chemistry, Biology, English', address: 'Patel Nagar', totalFee: 7500, paidFee: 7500 },
                     { id: 's14', name: 'Aman Kumar', gender: 'Boys', section: 'A', className: '9th', rollNo: '902', fatherName: 'Vinod Yadav', motherName: 'Sarita Devi', mobile: '9934512302', dob: '2012-06-30', admissionDate: '2026-03-28', schoolName: 'Govt. Boys High School', subjects: 'Maths, Science, English', address: 'Naya Tola', totalFee: 7500, paidFee: 5000 },
                     { id: 's15', name: 'Kajal Kumari', gender: 'Girls', section: 'B', className: '9th', rollNo: '903', fatherName: 'Deepak Thakur', motherName: 'Rina Thakur', mobile: '9934512303', dob: '2012-10-08', admissionDate: '2026-04-01', schoolName: 'DAV Public School', subjects: 'All Subjects', address: 'College Road', totalFee: 7500, paidFee: 7500 },
@@ -1677,7 +1693,6 @@
                     { id: 's17', name: 'Nandini Singh', gender: 'Girls', section: 'A', className: '9th', rollNo: '905', fatherName: 'Pradeep Singh', motherName: 'Madhu Singh', mobile: '9934512305', dob: '2012-08-14', admissionDate: '2026-04-07', schoolName: 'Notre Dame Academy', subjects: 'All Subjects', address: 'Boring Canal Road', totalFee: 7500, paidFee: 7500 },
                     { id: 's18', name: 'Gaurav Raj', gender: 'Boys', section: 'A', className: '9th', rollNo: '906', fatherName: 'Naresh Paswan', motherName: 'Usha Devi', mobile: '9934512306', dob: '2012-11-29', admissionDate: '2026-04-09', schoolName: 'Model High School', subjects: 'Maths, Science, Hindi', address: 'Ambedkar Chowk', totalFee: 7500, paidFee: 3000 },
 
-                    // Class 10th (Boys & Girls, Section A & B)
                     { id: 's19', name: 'Abhishek Mishra', gender: 'Boys', section: 'A', className: '10th', rollNo: '1001', fatherName: 'Prakash Mishra', motherName: 'Archana Mishra', mobile: '9709812301', dob: '2011-04-18', admissionDate: '2026-03-15', schoolName: 'St. Xavier High School', subjects: 'Maths, Science, English, SST (Board Target)', address: 'Shastri Nagar', totalFee: 9000, paidFee: 9000 },
                     { id: 's20', name: 'Shreya Singh', gender: 'Girls', section: 'A', className: '10th', rollNo: '1002', fatherName: 'Amitabh Singh', motherName: 'Vandana Singh', mobile: '9709812302', dob: '2011-08-09', admissionDate: '2026-03-16', schoolName: 'Kendriya Vidyalaya', subjects: 'Maths, Science, English, SST', address: 'Rajendra Path', totalFee: 9000, paidFee: 6500 },
                     { id: 's21', name: 'Harsh Vardhan', gender: 'Boys', section: 'B', className: '10th', rollNo: '1003', fatherName: 'Sanjay Kumar', motherName: 'Priyanka Devi', mobile: '9709812303', dob: '2011-12-22', admissionDate: '2026-03-20', schoolName: 'Model High School', subjects: 'Maths, Science, Hindi, English', address: 'Boring Road', totalFee: 9000, paidFee: 9000 },
@@ -1685,13 +1700,11 @@
                     { id: 's23', name: 'Rahul Ranjan', gender: 'Boys', section: 'A', className: '10th', rollNo: '1005', fatherName: 'Ashok Ranjan', motherName: 'Babita Devi', mobile: '9709812305', dob: '2011-07-11', admissionDate: '2026-03-24', schoolName: 'DAV Public School', subjects: 'Maths, Science, English, SST (Board Target)', address: 'Hanuman Nagar', totalFee: 9000, paidFee: 9000 },
                     { id: 's24', name: 'Soni Kumari', gender: 'Girls', section: 'A', className: '10th', rollNo: '1006', fatherName: 'Lalan Prasad', motherName: 'Manju Devi', mobile: '9709812306', dob: '2011-10-04', admissionDate: '2026-03-26', schoolName: 'Zila School', subjects: 'Maths, Science, English, Hindi', address: 'Station Chowk, Ward 12', totalFee: 9000, paidFee: 5000 },
 
-                    // Class 11th (Boys Sec A & B, Girls Sec A & B)
                     { id: 's25', name: 'Utkarsh Pandey', gender: 'Boys', section: 'A', className: '11th', rollNo: '1101', fatherName: 'Awadhesh Pandey', motherName: 'Reena Pandey', mobile: '9801122301', dob: '2010-03-14', admissionDate: '2026-04-02', schoolName: 'DAV Senior Secondary', subjects: 'Physics, Chemistry, Maths (PCM)', address: 'Kankarbagh Colony', totalFee: 11000, paidFee: 11000 },
                     { id: 's26', name: 'Rishabh Raj', gender: 'Boys', section: 'B', className: '11th', rollNo: '1102', fatherName: 'Manish Kumar', motherName: 'Suman Kumari', mobile: '9801122302', dob: '2010-07-19', admissionDate: '2026-04-04', schoolName: 'St. Michael High School', subjects: 'Physics, Chemistry, Biology (PCB)', address: 'Bailey Road', totalFee: 11000, paidFee: 6500 },
                     { id: 's27', name: 'Anushka Sinha', gender: 'Girls', section: 'A', className: '11th', rollNo: '1103', fatherName: 'Rajeev Sinha', motherName: 'Nidhi Sinha', mobile: '9801122303', dob: '2010-05-25', admissionDate: '2026-04-03', schoolName: 'Notre Dame Academy', subjects: 'Physics, Chemistry, Maths (PCM)', address: 'Patliputra Colony', totalFee: 11000, paidFee: 11000 },
                     { id: 's28', name: 'Pallavi Kumari', gender: 'Girls', section: 'B', className: '11th', rollNo: '1104', fatherName: 'Dinesh Yadav', motherName: 'Geeta Devi', mobile: '9801122304', dob: '2010-09-12', admissionDate: '2026-04-06', schoolName: 'Bankipore Girls School', subjects: 'Physics, Chemistry, Biology (PCB)', address: 'Ashok Rajpath', totalFee: 11000, paidFee: 5500 },
 
-                    // Class 12th (Boys Sec A & B, Girls Sec A & B)
                     { id: 's29', name: 'Shubham Kumar', gender: 'Boys', section: 'A', className: '12th', rollNo: '1201', fatherName: 'Vinay Kumar', motherName: 'Anita Sinha', mobile: '9801122401', dob: '2009-02-11', admissionDate: '2026-03-18', schoolName: 'College of Commerce', subjects: 'Physics, Chemistry, Maths (12th Board)', address: 'Rajendra Nagar', totalFee: 12500, paidFee: 12500 },
                     { id: 's30', name: 'Kunal Kishore', gender: 'Boys', section: 'B', className: '12th', rollNo: '1202', fatherName: 'Nawal Kishore', motherName: 'Poonam Devi', mobile: '9801122402', dob: '2009-06-28', admissionDate: '2026-03-20', schoolName: 'AN College', subjects: 'Physics, Chemistry, Biology (12th Board)', address: 'Boring Canal Road', totalFee: 12500, paidFee: 8000 },
                     { id: 's31', name: 'Pragya Jha', gender: 'Girls', section: 'A', className: '12th', rollNo: '1203', fatherName: 'Subodh Jha', motherName: 'Meera Jha', mobile: '9801122403', dob: '2009-04-09', admissionDate: '2026-03-17', schoolName: 'JD Women College', subjects: 'Physics, Chemistry, Maths (12th Board)', address: 'Shastri Nagar', totalFee: 12500, paidFee: 12500 },
@@ -1734,9 +1747,7 @@
                     if (window.localStorage) {
                         window.localStorage.setItem(key, value);
                     }
-                } catch (e) {
-                    // Sandboxed iframe fallback works seamlessly via memoryStorageFallback
-                }
+                } catch (e) {}
             }
 
             function loadAppData() {
@@ -1751,6 +1762,8 @@
                             }
                             parsed.instituteLogo = parsed.instituteLogo || "";
                             parsed.syncRoomId = parsed.syncRoomId || DEFAULT_DATA.syncRoomId;
+                            parsed.academicYears = Array.isArray(parsed.academicYears) && parsed.academicYears.length ? parsed.academicYears : ["2025", "2026", "2027", "2028"];
+                            parsed.selectedYear = parsed.selectedYear || "2026";
                             parsed.lastUpdatedAt = Number(parsed.lastUpdatedAt) || 0;
                             parsed.instituteTagline = parsed.instituteTagline || DEFAULT_DATA.instituteTagline;
                             parsed.directorName = parsed.directorName || DEFAULT_DATA.directorName;
@@ -1767,6 +1780,9 @@
                             parsed.students = parsed.students.map(function (st) {
                                 st.gender = st.gender || 'Boys';
                                 st.section = st.section || 'A';
+                                if (!st.academicYear) {
+                                    st.academicYear = (st.admissionDate && /^\d{4}/.test(st.admissionDate)) ? st.admissionDate.slice(0, 4) : "2026";
+                                }
                                 return st;
                             });
                             parsed.teachers = parsed.teachers.map(function (t) {
@@ -1946,23 +1962,6 @@
                 copyTextFallback(shareUrl);
                 showToast('Sync Link कॉपी हो गया! WhatsApp पर सभी टीचर्स को भेज दें।', 'success');
             };
-                            });
-                            return parsed;
-                        }
-                    }
-                } catch (err) {
-                    console.warn("Using fresh default data:", err);
-                }
-                var fresh = cloneData(DEFAULT_DATA);
-                safeSetStorage(STORAGE_KEY, JSON.stringify(fresh));
-                return fresh;
-            }
-
-            var appData = loadAppData();
-
-            function saveAppData() {
-                safeSetStorage(STORAGE_KEY, JSON.stringify(appData));
-            }
 
             function formatCurrency(amount) {
                 var num = Number(amount) || 0;
@@ -2015,9 +2014,6 @@
                 document.body.removeChild(ta);
             }
 
-            // =====================================================
-            // COACHING LOGO UPLOAD & RENDER HELPER
-            // =====================================================
             function applyCoachingLogoUI() {
                 var logoData = appData.instituteLogo || "";
                 var headerImg = document.getElementById('headerLogoImg');
@@ -2077,9 +2073,6 @@
                 showToast('Coaching logo removed.', 'success');
             };
 
-            // =====================================================
-            // ADMIN LOCK SCREEN & SECURITY AUTHENTICATION
-            // =====================================================
             function syncLockScreenBranding() {
                 applyCoachingLogoUI();
                 var nameEl = document.getElementById('lockScreenInstituteName');
@@ -2177,9 +2170,6 @@
                 showToast('Admin PIN सफलतापूर्वक बदल दिया गया!', 'success');
             };
 
-            // =====================================================
-            // HINDI WHATSAPP MESSAGE BUILDERS
-            // =====================================================
             function buildHindiFeeReminderText(student) {
                 var total = Number(student.totalFee) || 0;
                 var paid = Number(student.paidFee) || 0;
@@ -2249,9 +2239,6 @@
                 window.open('https://wa.me/' + fullPhone + '?text=' + encodeURIComponent(msg), '_blank');
             };
 
-            // =====================================================
-            // NAVIGATION & VIEW SWITCHER
-            // =====================================================
             window.switchView = function (viewName) {
                 var views = ['dashboard', 'class-students', 'teachers', 'attendance', 'reminders', 'excel', 'whitelabel'];
                 views.forEach(function (v) {
@@ -2287,6 +2274,59 @@
                 renderDashboard();
             };
 
+            window.selectAcademicYear = function (yr) {
+                appData.selectedYear = String(yr);
+                saveAppData();
+                renderDashboard();
+                if (!document.getElementById('view-class-students').classList.contains('hidden')) renderStudentList();
+                if (!document.getElementById('view-attendance').classList.contains('hidden')) renderAttendanceView();
+                if (!document.getElementById('view-reminders').classList.contains('hidden')) renderBulkRemindersView();
+            };
+
+            window.addNewAcademicYearPrompt = function () {
+                var years = appData.academicYears || ["2025", "2026", "2027", "2028"];
+                var maxYr = years.reduce(function (m, y) { return Math.max(m, parseInt(y, 10) || 2026); }, 2026);
+                var nextYr = String(maxYr + 1);
+                if (years.indexOf(nextYr) === -1) {
+                    years.push(nextYr);
+                    years.sort();
+                }
+                appData.academicYears = years;
+                appData.selectedYear = nextYr;
+                saveAppData();
+                renderDashboard();
+                showToast('New Academic Year ' + nextYr + ' added & selected!', 'success');
+            };
+
+            function populateYearDropdowns(selectedVal) {
+                var years = appData.academicYears || ["2025", "2026", "2027", "2028"];
+                var activeYr = selectedVal || appData.selectedYear || "2026";
+                ['classYearSelect', 'attendanceYearSelect', 'reminderYearFilter', 'formStudentYear'].forEach(function (elId) {
+                    var sel = document.getElementById(elId);
+                    if (!sel) return;
+                    var html = (elId === 'reminderYearFilter') ? '<option value="all">All Years</option>' : '';
+                    years.forEach(function (yr) {
+                        var count = appData.students.filter(function (s) { return (s.academicYear || '2026') === yr; }).length;
+                        var label = (elId === 'formStudentYear') ? yr : (yr + ' (' + count + ' Students)');
+                        html += '<option value="' + yr + '">' + label + '</option>';
+                    });
+                    sel.innerHTML = html;
+                    if (elId !== 'reminderYearFilter' || activeYr === 'all') {
+                        sel.value = activeYr;
+                    } else if (!sel.dataset.initialized) {
+                        sel.value = activeYr;
+                        sel.dataset.initialized = '1';
+                    }
+                });
+            }
+
+            window.selectClassYear = function (yr) {
+                appData.selectedYear = String(yr);
+                saveAppData();
+                renderDashboard();
+                renderStudentList();
+            };
+
             window.selectClassWing = function (wing) {
                 currentClassWingFilter = wing;
                 renderStudentList();
@@ -2309,9 +2349,6 @@
                 renderStudentList();
             };
 
-            // =====================================================
-            // DASHBOARD RENDERING
-            // =====================================================
             function getTeacherFinancialTotals() {
                 var totalMonthlySalary = 0;
                 var totalPaidSalary = 0;
@@ -2339,19 +2376,46 @@
 
             function renderDashboard() {
                 document.getElementById('instituteTitleDisplay').textContent = appData.instituteName;
-                document.getElementById('instituteSubtitleDisplay').textContent = appData.instituteTagline || 'Class 7th to 10th • Fee, Teacher & WhatsApp Portal';
+                document.getElementById('instituteSubtitleDisplay').textContent = appData.instituteTagline || 'Harnatand • Class 7th to 12th';
                 var licBadge = document.getElementById('headerLicenseBadge');
                 if (licBadge) {
-                    licBadge.textContent = '✓ ' + (appData.licenseStatus || 'Pro Active');
+                    licBadge.textContent = '✓ ' + (appData.licenseStatus || 'Commercial Pro');
                 }
+                updateSyncBadgeUI('☁️ Synced: ' + (appData.syncRoomId || 'shining-harnatand-2026'), false);
                 syncLockScreenBranding();
                 document.getElementById('nav-teacher-count').textContent = appData.teachers.length;
+
+                var activeYr = appData.selectedYear || '2026';
+                var yearsList = appData.academicYears || ['2025', '2026', '2027', '2028'];
+                populateYearDropdowns(activeYr);
+
+                var yrBtnsEl = document.getElementById('homeYearButtonsGroup');
+                if (yrBtnsEl) {
+                    yrBtnsEl.innerHTML = yearsList.map(function (yr) {
+                        var cnt = appData.students.filter(function (s) { return (s.academicYear || '2026') === yr; }).length;
+                        var isAct = yr === activeYr;
+                        return '<button type="button" class="wing-btn ' + (isAct ? 'active-all' : '') + '" onclick="selectAcademicYear(\'' + yr + '\')">' + yr + ' (' + cnt + ')</button>';
+                    }).join('');
+                }
+                var yrCompEl = document.getElementById('yearWiseComparisonBadge');
+                if (yrCompEl) {
+                    yrCompEl.textContent = yearsList.map(function (yr) {
+                        var cnt = appData.students.filter(function (s) { return (s.academicYear || '2026') === yr; }).length;
+                        return yr + ': ' + cnt;
+                    }).join(' | ');
+                }
+                var kpiYrLbl = document.getElementById('kpi-year-label');
+                if (kpiYrLbl) kpiYrLbl.textContent = activeYr;
+
+                var yearStudents = appData.students.filter(function (s) {
+                    return (s.academicYear || '2026') === activeYr;
+                });
 
                 var grandExpected = 0;
                 var grandCollected = 0;
                 var dueCount = 0;
 
-                appData.students.forEach(function (s) {
+                yearStudents.forEach(function (s) {
                     var total = Number(s.totalFee) || 0;
                     var paid = Number(s.paidFee) || 0;
                     grandExpected += total;
@@ -2365,41 +2429,19 @@
                 var overallPct = grandExpected > 0 ? Math.round((grandCollected / grandExpected) * 100) : 0;
 
                 document.getElementById('kpi-total-collected').textContent = formatCurrency(grandCollected);
-                document.getElementById('kpi-collection-percent').textContent = overallPct + '% of ' + formatCurrency(grandExpected) + ' expected';
+                document.getElementById('kpi-collection-percent').textContent = overallPct + '% of ' + formatCurrency(grandExpected) + ' (' + activeYr + ')';
                 document.getElementById('kpi-total-pending').textContent = formatCurrency(grandPending);
-                document.getElementById('kpi-pending-students').textContent = dueCount + ' dues • Send Hindi Alert →';
-                document.getElementById('kpi-total-students').textContent = appData.students.length;
+                document.getElementById('kpi-pending-students').textContent = dueCount + ' dues (' + activeYr + ') • Alert →';
+                document.getElementById('kpi-total-students').textContent = yearStudents.length;
 
                 var todayStr = new Date().toISOString().split('T')[0];
                 var todayMap = appData.attendance[todayStr] || {};
-                var presentToday = Object.keys(todayMap).filter(function (k) { return todayMap[k] === 'present'; }).length;
-                document.getElementById('kpi-today-attendance').textContent = 'Today Present: ' + presentToday + ' / ' + appData.students.length;
+                var presentToday = yearStudents.filter(function (s) { return todayMap[s.id] === 'present'; }).length;
+                document.getElementById('kpi-today-attendance').textContent = 'Today Present: ' + presentToday + ' / ' + yearStudents.length;
 
                 var tTotals = getTeacherFinancialTotals();
                 document.getElementById('kpi-teacher-due').textContent = formatCurrency(tTotals.totalRemainingPayable);
                 document.getElementById('kpi-total-teachers').textContent = appData.teachers.length + ' Teachers • View Salary →';
-
-                var leaveBannerEl = document.getElementById('homeTeacherLeaveBanner');
-                if (leaveBannerEl) {
-                    var onLeaveTeachers = appData.teachers.filter(function (t) { return t.isOnLeave; });
-                    if (onLeaveTeachers.length > 0) {
-                        leaveBannerEl.innerHTML = onLeaveTeachers.map(function (t) {
-                            var rangeTxt = (t.leaveFrom || t.leaveTo)
-                                ? (' (' + (t.leaveFrom || '—') + ' से ' + (t.leaveTo || '—') + ' तक)')
-                                : '';
-                            return '<div class="teacher-leave-blink-card" style="margin-top:14px; padding:10px 14px; border-radius:12px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:8px; cursor:pointer;" onclick="openTeacherBiodata(\'' + t.id + '\')">' +
-                                '<div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">' +
-                                    '<span class="teacher-leave-blink-text">🚨 ON LEAVE (छुट्टी पर)</span>' +
-                                    '<strong style="color:#be123c; font-size:0.88rem;">' + escapeHTML(t.name) + '</strong>' +
-                                    '<span style="font-size:0.78rem; font-weight:700; color:#881337;">' + escapeHTML(rangeTxt) + (t.leaveReason ? (' • ' + escapeHTML(t.leaveReason)) : '') + '</span>' +
-                                '</div>' +
-                                '<span style="font-size:0.75rem; font-weight:800; color:#be123c;">Details →</span>' +
-                            '</div>';
-                        }).join('');
-                    } else {
-                        leaveBannerEl.innerHTML = '';
-                    }
-                }
 
                 document.getElementById('homeTeacherSalarySummary').innerHTML =
                     '<div class="mini-stat-box">' +
@@ -2419,18 +2461,17 @@
                         '<div style="font-size:1.25rem; font-weight:800; color:var(--purple); margin-top:4px;">' + formatCurrency(tTotals.totalRemainingPayable) + '</div>' +
                     '</div>';
 
-                // Render 4 Square Class Cards in a Line
                 var squareGrid = document.getElementById('classSquareGrid');
                 var feeBody = document.getElementById('homeFeeSummaryBody');
                 squareGrid.innerHTML = '';
                 feeBody.innerHTML = '';
 
                 CLASSES.forEach(function (cls) {
-                    var classStudents = appData.students.filter(function (s) {
+                    var classStudents = yearStudents.filter(function (s) {
                         return s.className === cls && (currentHomeWingFilter === 'all' || (s.gender || 'Boys') === currentHomeWingFilter);
                     });
-                    var boysCount = appData.students.filter(function (s) { return s.className === cls && (s.gender || 'Boys') === 'Boys'; }).length;
-                    var girlsCount = appData.students.filter(function (s) { return s.className === cls && (s.gender || 'Boys') === 'Girls'; }).length;
+                    var boysCount = yearStudents.filter(function (s) { return s.className === cls && (s.gender || 'Boys') === 'Boys'; }).length;
+                    var girlsCount = yearStudents.filter(function (s) { return s.className === cls && (s.gender || 'Boys') === 'Girls'; }).length;
                     var expected = classStudents.reduce(function (sum, s) { return sum + (Number(s.totalFee) || 0); }, 0);
                     var collected = classStudents.reduce(function (sum, s) { return sum + (Number(s.paidFee) || 0); }, 0);
                     var pending = Math.max(0, expected - collected);
@@ -2442,22 +2483,22 @@
                     card.onclick = function () { window.openClassView(cls); };
                     card.innerHTML =
                         '<div class="sq-top">' +
-                            '<div class="sq-icon" style="font-size:1.2rem;">' + meta.emoji + '</div>' +
+                            '<div class="sq-icon" style="font-size:1.1rem;">' + meta.emoji + '</div>' +
                             '<span class="sq-pill">' + classStudents.length + ' Students</span>' +
                         '</div>' +
                         '<div class="sq-mid">' +
                             '<div class="sq-sub">' + meta.subtitle + '</div>' +
                             '<div class="sq-title">Class ' + cls + '</div>' +
                             '<div style="display:flex; gap:4px; flex-wrap:wrap; margin-top:6px;">' +
-                                '<button type="button" onclick="event.stopPropagation(); openClassView(\'' + cls + '\', \'Boys\', \'all\')" style="background:rgba(255,255,255,0.24); color:#fff; padding:2px 7px; border-radius:6px; font-size:0.68rem; font-weight:800;">👦 Boys (' + boysCount + ')</button>' +
-                                '<button type="button" onclick="event.stopPropagation(); openClassView(\'' + cls + '\', \'Girls\', \'all\')" style="background:rgba(255,255,255,0.24); color:#fff; padding:2px 7px; border-radius:6px; font-size:0.68rem; font-weight:800;">👧 Girls (' + girlsCount + ')</button>' +
+                                '<button type="button" onclick="event.stopPropagation(); openClassView(\'' + cls + '\', \'Boys\', \'all\')" style="background:rgba(255,255,255,0.24); color:#fff; padding:2px 7px; border-radius:6px; font-size:0.66rem; font-weight:800;">👦 Boys (' + boysCount + ')</button>' +
+                                '<button type="button" onclick="event.stopPropagation(); openClassView(\'' + cls + '\', \'Girls\', \'all\')" style="background:rgba(255,255,255,0.24); color:#fff; padding:2px 7px; border-radius:6px; font-size:0.66rem; font-weight:800;">👧 Girls (' + girlsCount + ')</button>' +
                             '</div>' +
                         '</div>' +
                         '<div class="sq-bottom">' +
                             '<div>' +
-                                '<div style="font-size:0.66rem; opacity:0.85;">Collected / Due</div>' +
-                                '<div style="font-size:0.88rem; font-weight:800;">' + formatCurrency(collected) + '</div>' +
-                                '<div style="font-size:0.68rem; opacity:0.9;">Due: ' + formatCurrency(pending) + '</div>' +
+                                '<div style="font-size:0.64rem; opacity:0.85;">Collected / Due</div>' +
+                                '<div style="font-size:0.86rem; font-weight:800;">' + formatCurrency(collected) + '</div>' +
+                                '<div style="font-size:0.66rem; opacity:0.9;">Due: ' + formatCurrency(pending) + '</div>' +
                             '</div>' +
                             '<div class="sq-arrow">→</div>' +
                         '</div>';
@@ -2493,8 +2534,8 @@
 
                 document.getElementById('homeFeeSummaryFoot').innerHTML =
                     '<tr>' +
-                        '<td>Grand Total (7th – 12th)</td>' +
-                        '<td class="text-center">' + appData.students.length + '</td>' +
+                        '<td>Grand Total (' + activeYr + ' • 7th – 12th)</td>' +
+                        '<td class="text-center">' + yearStudents.length + '</td>' +
                         '<td class="text-right">' + formatCurrency(grandExpected) + '</td>' +
                         '<td class="text-right" style="color:var(--emerald-dark);">' + formatCurrency(grandCollected) + '</td>' +
                         '<td class="text-right" style="color:#b45309;">' + formatCurrency(grandPending) + '</td>' +
@@ -2503,17 +2544,14 @@
                     '</tr>';
             }
 
-            // =====================================================
-            // STUDENT LIST & BIODATA (BOYS / GIRLS + SECTION A & B)
-            // =====================================================
             function renderStudentList() {
                 var cls = currentSelectedClass;
+                var activeYr = appData.selectedYear || '2026';
+                populateYearDropdowns(activeYr);
                 var wingLabel = currentClassWingFilter === 'all' ? '' : (' ' + currentClassWingFilter);
                 var secLabel = currentClassSectionFilter === 'all' ? '' : (' • Section ' + currentClassSectionFilter);
-                document.getElementById('selectedClassHeading').textContent = 'Class ' + cls + wingLabel + secLabel + ' Students';
-                document.getElementById('addBtnClassLabel').textContent = 'Class ' + cls;
-
-                var dynLabels = document.querySelectorAll('.dyn-cls-lbl');
+                document.getElementById('selectedClassHeading').textContent = 'Class ' + cls + wingLabel + secLabel + ' (' + activeYr + ')';
+                document.getElementById('addBtnClassLabel').textContent = 'Class ' + cls + ' • ' + activeYr;
                 for (var i = 0; i < dynLabels.length; i++) {
                     dynLabels[i].textContent = cls;
                 }
@@ -2542,13 +2580,13 @@
                 });
 
                 var classStudents = appData.students.filter(function (s) {
+                    var matchYr = (s.academicYear || '2026') === activeYr;
                     var matchCls = s.className === cls;
                     var matchWing = currentClassWingFilter === 'all' || (s.gender || 'Boys') === currentClassWingFilter;
                     var matchSec = currentClassSectionFilter === 'all' || (s.section || 'A') === currentClassSectionFilter;
-                    return matchCls && matchWing && matchSec;
+                    return matchYr && matchCls && matchWing && matchSec;
                 });
-                document.getElementById('selectedClassBadge').textContent = classStudents.length + ' Students';
-
+                document.getElementById('selectedClassBadge').textContent = classStudents.length + ' Students (' + activeYr + ')';
                 var totalExpected = classStudents.reduce(function (sum, s) { return sum + (Number(s.totalFee) || 0); }, 0);
                 var totalCollected = classStudents.reduce(function (sum, s) { return sum + (Number(s.paidFee) || 0); }, 0);
                 var totalPending = Math.max(0, totalExpected - totalCollected);
@@ -2598,7 +2636,7 @@
                                     '<div class="avatar-box">' + getInitials(student.name) + '</div>' +
                                     '<div>' +
                                         '<div style="display:flex; gap:4px; flex-wrap:wrap;">' +
-                                            '<span class="badge badge-indigo">Roll: ' + escapeHTML(student.rollNo) + '</span>' +
+                                            '<span class="badge badge-indigo">' + escapeHTML(student.academicYear || '2026') + ' • Roll: ' + escapeHTML(student.rollNo) + '</span>' +
                                             '<span class="badge ' + (wing === 'Girls' ? 'badge-rose' : 'badge-purple') + '">' + escapeHTML(wing) + ' • Sec ' + escapeHTML(sec) + '</span>' +
                                         '</div>' +
                                         '<h3 style="font-size:1rem; font-weight:800; margin-top:4px;">' + escapeHTML(student.name) + '</h3>' +
@@ -2743,9 +2781,6 @@
                 window.openModal('receiptPrintModal');
             }
 
-            // =====================================================
-            // TEACHERS LIST & SALARY MANAGEMENT
-            // =====================================================
             function renderTeacherList() {
                 var tTotals = getTeacherFinancialTotals();
                 document.getElementById('teachersPageSalaryStrip').innerHTML =
@@ -3014,9 +3049,6 @@
                 window.openModal('receiptPrintModal');
             }
 
-            // =====================================================
-            // EXCEL / CSV BULK STUDENT IMPORT & EXPORT
-            // =====================================================
             window.downloadSampleCSVTemplate = function () {
                 var csvContent = "Name,Class,RollNo,FatherName,MotherName,Mobile,School,TotalFee,PaidFee\n" +
                     "Rohan Kumar,7th,707,Manoj Kumar,Sunita Devi,9876543299,DAV Public School,5000,2500\n" +
@@ -3139,7 +3171,6 @@
                         continue;
                     }
 
-                    // Duplicate Roll No check within same class
                     var isDuplicate = appData.students.some(function (st) {
                         return st.className === cls && String(st.rollNo).toLowerCase() === String(rollNo).toLowerCase();
                     });
@@ -3197,21 +3228,20 @@
                 processCSVTextImport(text);
             };
 
-            // =====================================================
-            // DAILY ATTENDANCE VIEW & MARKING
-            // =====================================================
             function renderAttendanceView() {
                 var dateInput = document.getElementById('attendanceDateInput');
                 if (!dateInput.value) {
                     dateInput.value = new Date().toISOString().split('T')[0];
                 }
                 var dateStr = dateInput.value;
+                var activeYr = (document.getElementById('attendanceYearSelect') && document.getElementById('attendanceYearSelect').value) || appData.selectedYear || '2026';
                 var cls = document.getElementById('attendanceClassSelect').value || '7th';
                 var wing = (document.getElementById('attendanceWingSelect') && document.getElementById('attendanceWingSelect').value) || 'all';
                 var sec = (document.getElementById('attendanceSectionSelect') && document.getElementById('attendanceSectionSelect').value) || 'all';
                 var dayMap = appData.attendance[dateStr] || {};
                 var classStudents = appData.students.filter(function (s) {
-                    return s.className === cls &&
+                    return (s.academicYear || '2026') === activeYr &&
+                           s.className === cls &&
                            (wing === 'all' || (s.gender || 'Boys') === wing) &&
                            (sec === 'all' || (s.section || 'A') === sec);
                 });
@@ -3278,10 +3308,25 @@
 
             window.markAllClassPresent = function () {
                 var dateStr = document.getElementById('attendanceDateInput').value || new Date().toISOString().split('T')[0];
+                var activeYr = (document.getElementById('attendanceYearSelect') && document.getElementById('attendanceYearSelect').value) || appData.selectedYear || '2026';
                 var cls = document.getElementById('attendanceClassSelect').value;
                 if (!appData.attendance[dateStr]) appData.attendance[dateStr] = {};
-                appData.students.filter(function (s) { return s.className === cls; }).forEach(function (s) {
+                appData.students.filter(function (s) { return (s.academicYear || '2026') === activeYr && s.className === cls; }).forEach(function (s) {
                     appData.attendance[dateStr][s.id] = 'present';
+                });
+                saveAppData();
+                renderAttendanceView();
+                renderDashboard();
+                showToast('Class ' + cls + ' (' + activeYr + ') के सभी छात्र Present मार्क किए गए!', 'success');
+            };
+
+            function renderBulkRemindersView() {
+                var filterYr = (document.getElementById('reminderYearFilter') && document.getElementById('reminderYearFilter').value) || appData.selectedYear || '2026';
+                var filterCls = document.getElementById('reminderClassFilter').value;
+                var dueStudents = appData.students.filter(function (s) {
+                    var due = (Number(s.totalFee) || 0) - (Number(s.paidFee) || 0);
+                    var matchYr = filterYr === 'all' || (s.academicYear || '2026') === filterYr;
+                    return due > 0 && matchYr && (filterCls === 'all' || s.className === filterCls);
                 });
                 saveAppData();
                 renderAttendanceView();
@@ -3337,18 +3382,18 @@
                 });
             }
 
-            // =====================================================
-            // CRUD FORMS (STUDENTS, TEACHERS, INSTITUTE)
-            // =====================================================
             window.openAddStudentModal = function (preselectedClass) {
                 var cls = preselectedClass || '7th';
-                document.getElementById('studentFormTitle').textContent = 'Add New Student';
+                var activeYr = appData.selectedYear || '2026';
+                populateYearDropdowns(activeYr);
+                document.getElementById('studentFormTitle').textContent = 'Add New Student (' + activeYr + ')';
                 document.getElementById('studentForm').reset();
                 document.getElementById('formStudentId').value = '';
+                document.getElementById('formStudentYear').value = activeYr;
                 document.getElementById('formStudentClass').value = cls;
                 document.getElementById('formStudentGender').value = (currentClassWingFilter !== 'all') ? currentClassWingFilter : 'Boys';
                 document.getElementById('formStudentSection').value = (currentClassSectionFilter !== 'all') ? currentClassSectionFilter : 'A';
-                var classStudents = appData.students.filter(function (s) { return s.className === cls; });
+                var classStudents = appData.students.filter(function (s) { return s.className === cls && (s.academicYear || '2026') === activeYr; });
                 var prefix = cls.replace('th', '');
                 document.getElementById('formStudentRoll').value = prefix + '0' + (classStudents.length + 1);
                 window.openModal('studentFormModal');
@@ -3357,8 +3402,10 @@
             window.openEditStudentModal = function (studentId) {
                 var s = appData.students.find(function (st) { return st.id === studentId; });
                 if (!s) return;
+                populateYearDropdowns(s.academicYear || '2026');
                 document.getElementById('studentFormTitle').textContent = 'Edit Student Biodata';
                 document.getElementById('formStudentId').value = s.id;
+                document.getElementById('formStudentYear').value = s.academicYear || '2026';
                 document.getElementById('formStudentName').value = s.name;
                 document.getElementById('formStudentClass').value = s.className;
                 document.getElementById('formStudentGender').value = s.gender || 'Boys';
@@ -3379,8 +3426,10 @@
             window.saveStudentForm = function (event) {
                 event.preventDefault();
                 var id = document.getElementById('formStudentId').value;
+                var selectedYr = document.getElementById('formStudentYear').value || appData.selectedYear || '2026';
                 var studentObj = {
                     id: id || ('s_' + Date.now()),
+                    academicYear: selectedYr,
                     name: document.getElementById('formStudentName').value.trim(),
                     className: document.getElementById('formStudentClass').value,
                     gender: document.getElementById('formStudentGender').value || 'Boys',
@@ -3390,7 +3439,7 @@
                     fatherName: document.getElementById('formFatherName').value.trim(),
                     motherName: document.getElementById('formMotherName').value.trim(),
                     dob: document.getElementById('formDob').value,
-                    admissionDate: new Date().toISOString().split('T')[0],
+                    admissionDate: selectedYr + '-' + new Date().toISOString().slice(5, 10),
                     schoolName: document.getElementById('formSchoolName').value.trim(),
                     subjects: document.getElementById('formSubjects').value.trim(),
                     address: document.getElementById('formAddress').value.trim(),
@@ -3574,7 +3623,7 @@
                 showToast('Branding & License settings saved!', 'success');
             };
 
-            window.openClientOnboardingWizard = function (fromLockScreen) {
+            window.openClientOnboardingWizard = function () {
                 document.getElementById('wizCoachingName').value = '';
                 document.getElementById('wizDirectorName').value = '';
                 document.getElementById('wizPhone').value = '';
@@ -3617,7 +3666,7 @@
                 if (!document.getElementById('view-class-students').classList.contains('hidden')) renderStudentList();
                 if (!document.getElementById('view-attendance').classList.contains('hidden')) renderAttendanceView();
                 if (!document.getElementById('view-reminders').classList.contains('hidden')) renderBulkRemindersView();
-                showToast('24 Demo Students (6 per class 7th–10th) loaded!', 'success');
+                showToast('Demo Students loaded!', 'success');
             };
 
             window.exportBackupJSON = function () {
@@ -3670,13 +3719,11 @@
                 if (el) el.classList.add('hidden');
             };
 
-            // Expose search/filter render triggers globally for inline handlers
             window.renderStudentList = renderStudentList;
             window.renderTeacherList = renderTeacherList;
             window.renderAttendanceView = renderAttendanceView;
             window.renderBulkRemindersView = renderBulkRemindersView;
 
-            // Immediate synchronous bootstrap so page NEVER appears blank
             checkInitialLockState();
             renderDashboard();
             window.pullCloudDataNow(false);

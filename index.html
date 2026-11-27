@@ -1208,7 +1208,7 @@
 
                 <div class="header-actions">
                     <button type="button" class="btn btn-soft-indigo btn-sm" onclick="openClientOnboardingWizard(false)">🚀 New Client Setup</button>
-                    <button type="button" id="cloudSyncHeaderBtn" class="btn btn-soft-emerald btn-sm" onclick="openCloudSyncModal()">☁️ Synced: shining-harnatand-2026</button>
+                    <button type="button" id="cloudSyncHeaderBtn" class="btn btn-soft-emerald btn-sm" onclick="openCloudSyncModal()">☁️ Live Cloud Sync</button>
                     <button type="button" class="btn btn-soft btn-sm" onclick="exportBackupJSON()">⬇ Backup</button>
                     <label class="btn btn-soft btn-sm" style="cursor:pointer;">
                         ⬆ Restore
@@ -1461,12 +1461,230 @@
                     <select id="reminderClassFilter" class="input-control" onchange="renderBulkRemindersView()">
                         <option value="all">All Classes (7th–12th)</option>
                         <option value="7th">Class 7th</option>
-                            <option value="8th">Class 8th</option>
-                            <option value="9th">Class 9th</option>
-                            <option value="10th">Class 10th</option>
-                            <option value="11th">Class 11th</option>
-                            <option value="12th">Class 12th</option>
-                        </select>
+                        <option value="8th">Class 8th</option>
+                        <option value="9th">Class 9th</option>
+                        <option value="10th">Class 10th</option>
+                        <option value="11th">Class 11th</option>
+                        <option value="12th">Class 12th</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="panel" style="padding:16px 20px;">
+                <div style="font-size:0.78rem; font-weight:800; color:var(--emerald-dark); margin-bottom:6px;">📱 Sample Hindi WhatsApp Reminder Preview:</div>
+                <div id="hindiMessageSamplePreview" style="background:var(--emerald-soft); border:1px solid #a7f3d0; border-radius:12px; padding:12px; font-size:0.82rem; white-space:pre-line; color:#064e3b;"></div>
+            </div>
+
+            <div id="bulkRemindersContainer" class="cards-grid"></div>
+        </div>
+
+        <!-- VIEW 6: EXCEL / CSV IMPORT & EXPORT -->
+        <div id="view-excel" class="section-stack hidden">
+            <div class="toolbar-bar">
+                <div>
+                    <h2 class="section-title">📊 Excel / CSV Bulk Import &amp; Export</h2>
+                    <p class="section-desc">सैकड़ों छात्रों का डेटा Excel/CSV फाइल से एक साथ अपलोड करें या पूरी फीस रिपोर्ट डाउनलोड करें</p>
+                </div>
+                <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                    <button type="button" class="btn btn-soft-indigo btn-sm" onclick="downloadSampleCSVTemplate()">⬇ Sample CSV Template</button>
+                    <button type="button" class="btn btn-emerald btn-sm" onclick="exportAllStudentsToCSV()">📤 Export All Students CSV</button>
+                </div>
+            </div>
+
+            <div class="panel" style="padding:20px; display:flex; flex-direction:column; gap:14px;">
+                <h3 style="font-size:1rem; font-weight:800;">1. Upload CSV File (Excel से Save as CSV करके अपलोड करें)</h3>
+                <label class="btn btn-primary" style="width:fit-content; cursor:pointer;">
+                    📂 Choose .CSV File to Import
+                    <input type="file" accept=".csv" style="display:none;" onchange="handleCSVFileUpload(event)">
+                </label>
+
+                <h3 style="font-size:1rem; font-weight:800; margin-top:8px;">2. Or Paste CSV Rows Directly</h3>
+                <textarea id="csvPasteTextarea" rows="5" class="input-control" style="font-family:monospace;" placeholder="Name,Class,RollNo,FatherName,MotherName,Mobile,School,TotalFee,PaidFee"></textarea>
+                <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                    <button type="button" class="btn btn-soft btn-sm" onclick="fillSamplePasteRows()">Fill Sample Rows</button>
+                    <button type="button" class="btn btn-emerald btn-sm" onclick="importFromPastedCSV()">✓ Import Pasted Rows</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW 7: WHITE-LABEL BRANDING, LOGO & LICENSE -->
+        <div id="view-whitelabel" class="section-stack hidden">
+            <div class="toolbar-bar">
+                <div>
+                    <h2 class="section-title">🏷 White-Label Branding, Logo &amp; Security PIN</h2>
+                    <p class="section-desc">अपने कोचिंग संस्थान का नाम, लोगो (Logo), पता, रसीद कोड और पासवर्ड बदलें</p>
+                </div>
+                <button type="button" class="btn btn-soft-indigo btn-sm" onclick="loadAll24DemoStudents()">🔄 Reload 32 Demo Students</button>
+            </div>
+
+            <div class="panel" style="padding:20px;">
+                <form onsubmit="saveWhiteLabelPanelForm(event)" style="display:flex; flex-direction:column; gap:14px;">
+                    <div style="display:flex; align-items:center; gap:14px; flex-wrap:wrap; background:var(--bg-subtle); padding:14px; border-radius:14px; border:1px solid var(--border-color);">
+                        <div id="wlLogoPreviewBox" style="width:64px; height:64px; border-radius:14px; background:#e2e8f0; display:flex; align-items:center; justify-content:center; font-weight:800; color:#64748b; overflow:hidden; border:1px solid #cbd5e1;">LOGO</div>
+                        <div style="display:flex; flex-direction:column; gap:6px;">
+                            <strong style="font-size:0.88rem;">Coaching Institute Logo (Header, Login &amp; Receipts)</strong>
+                            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                                <label class="btn btn-primary btn-sm" style="cursor:pointer;">
+                                    📷 Upload Logo (PNG/JPG)
+                                    <input type="file" accept="image/*" style="display:none;" onchange="handleCoachingLogoUpload(event)">
+                                </label>
+                                <button type="button" class="btn btn-soft btn-sm" onclick="removeCoachingLogo()">Remove Logo</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Coaching Institute Name *</label>
+                            <input type="text" id="wlInstituteName" class="input-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Tagline / Subtitle</label>
+                            <input type="text" id="wlTagline" class="input-control">
+                        </div>
+                        <div class="form-group">
+                            <label>Director / Owner Name</label>
+                            <input type="text" id="wlDirectorName" class="input-control">
+                        </div>
+                        <div class="form-group">
+                            <label>Coaching Contact Mobile</label>
+                            <input type="text" id="wlInstitutePhone" class="input-control">
+                        </div>
+                        <div class="form-group full">
+                            <label>Coaching Address (Printed on Receipts)</label>
+                            <input type="text" id="wlInstituteAddress" class="input-control">
+                        </div>
+                        <div class="form-group">
+                            <label>Receipt Prefix</label>
+                            <input type="text" id="wlReceiptPrefix" class="input-control">
+                        </div>
+                        <div class="form-group">
+                            <label>License Badge Label</label>
+                            <select id="wlLicenseStatus" class="input-control">
+                                <option value="Active • Commercial Pro">Active • Commercial Pro</option>
+                                <option value="Official Coaching Portal">Official Coaching Portal</option>
+                                <option value="Lifetime Verified License">Lifetime Verified License</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Valid Till Date</label>
+                            <input type="date" id="wlLicenseExpiry" class="input-control">
+                        </div>
+                    </div>
+                    <div style="display:flex; justify-content:flex-end;">
+                        <button type="submit" class="btn btn-primary">✓ Save White-Label Branding</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="panel" style="padding:20px;">
+                <h3 style="font-size:1rem; font-weight:800; margin-bottom:12px;">🔑 Change Admin Login PIN</h3>
+                <form onsubmit="changeAdminPinForm(event)" class="form-grid">
+                    <div class="form-group">
+                        <label>Current PIN</label>
+                        <input type="password" id="currentPinInput" class="input-control" required placeholder="1234">
+                    </div>
+                    <div class="form-group">
+                        <label>New PIN (Min 4 digits)</label>
+                        <input type="password" id="newPinInput" class="input-control" required placeholder="••••">
+                    </div>
+                    <div class="form-group">
+                        <label>Confirm New PIN</label>
+                        <input type="password" id="confirmPinInput" class="input-control" required placeholder="••••">
+                    </div>
+                    <div class="form-group" style="justify-content:flex-end;">
+                        <button type="submit" class="btn btn-dark">Update PIN</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <!-- =========================================================
+         MODAL 1: STUDENT BIODATA & QUICK FEE MODAL
+         ========================================================= -->
+    <div id="studentBiodataModal" class="modal-backdrop hidden" onclick="if(event.target===this) closeModal('studentBiodataModal')">
+        <div class="modal-card">
+            <div class="modal-hero">
+                <button type="button" class="modal-close" onclick="closeModal('studentBiodataModal')">✕</button>
+                <div style="display:flex; align-items:center; gap:14px;">
+                    <div id="bioStudentAvatar" style="width:54px; height:54px; border-radius:16px; background:rgba(255,255,255,0.22); display:flex; align-items:center; justify-content:center; font-size:1.3rem; font-weight:800;">AK</div>
+                    <div>
+                        <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                            <span id="bioStudentClass" class="sq-pill">Class 7th</span>
+                            <span id="bioStudentWingSec" class="sq-pill">Boys • Section A</span>
+                            <span id="bioStudentRoll" class="sq-pill">Roll No: 701</span>
+                        </div>
+                        <h3 id="bioStudentName" style="font-size:1.35rem; font-weight:800; margin-top:4px;">Student Name</h3>
+                        <p id="bioStudentSubjects" style="font-size:0.78rem; opacity:0.9;">Subjects: Maths, Science</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="bio-grid">
+                    <div class="bio-item"><label>Father's Name</label><span id="bioFatherName">—</span></div>
+                    <div class="bio-item"><label>Mother's Name</label><span id="bioMotherName">—</span></div>
+                    <div class="bio-item"><label>Parent Mobile</label><span id="bioMobile">—</span></div>
+                    <div class="bio-item"><label>Date of Birth</label><span id="bioDob">—</span></div>
+                    <div class="bio-item"><label>Admission Date</label><span id="bioAdmissionDate">—</span></div>
+                    <div class="bio-item"><label>School Name</label><span id="bioSchoolName">—</span></div>
+                    <div class="bio-item full"><label>Full Address</label><span id="bioAddress">—</span></div>
+                </div>
+
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <strong style="font-size:0.9rem;">💰 Fee Ledger (फीस विवरण)</strong>
+                    <span id="bioFeeStatusBadge" class="badge badge-amber">Pending ₹0</span>
+                </div>
+
+                <div class="fee-trio">
+                    <div class="stat-pill-card">
+                        <div class="kpi-label">Total Fee</div>
+                        <div id="bioTotalFee" style="font-size:1.1rem; font-weight:800;">₹0</div>
+                    </div>
+                    <div class="stat-pill-card" style="background:var(--emerald-soft); border-color:#a7f3d0;">
+                        <div class="kpi-label" style="color:var(--emerald-dark);">Paid Fee</div>
+                        <div id="bioPaidFee" style="font-size:1.1rem; font-weight:800; color:var(--emerald-dark);">₹0</div>
+                    </div>
+                    <div class="stat-pill-card" style="background:var(--amber-soft); border-color:#fde68a;">
+                        <div class="kpi-label" style="color:#b45309;">Pending Due</div>
+                        <div id="bioDueFee" style="font-size:1.1rem; font-weight:800; color:#b45309;">₹0</div>
+                    </div>
+                </div>
+
+                <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center; background:#f8fafc; padding:10px; border-radius:12px; border:1px solid var(--border-color);">
+                    <input type="number" id="quickFeeInput" class="input-control" style="flex:1; min-width:130px;" placeholder="Enter fee amount ₹">
+                    <button type="button" class="btn btn-emerald btn-sm" onclick="recordQuickFeePayment()">+ Collect Fee (जमा करें)</button>
+                </div>
+
+                <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                    <button type="button" id="bioWhatsAppBtn" class="btn btn-emerald btn-sm" style="flex:1;">💬 WhatsApp Fee Reminder (हिंदी)</button>
+                    <button type="button" id="bioCopyHindiMsgBtn" class="btn btn-soft btn-sm">📋 Copy Msg</button>
+                    <button type="button" id="bioPrintReceiptBtn" class="btn btn-soft-indigo btn-sm">🖨 Print Receipt</button>
+                </div>
+
+                <div style="display:flex; justify-content:space-between; gap:8px; padding-top:10px; border-top:1px solid var(--border-color);">
+                    <button type="button" id="deleteStudentBtn" class="btn btn-danger-ghost btn-sm">🗑 Delete Student</button>
+                    <button type="button" id="editStudentBtn" class="btn btn-primary btn-sm">✏️ Edit Student</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =========================================================
+         MODAL 2: ADD / EDIT STUDENT MODAL
+         ========================================================= -->
+    <div id="studentFormModal" class="modal-backdrop hidden" onclick="if(event.target===this) closeModal('studentFormModal')">
+        <div class="modal-card">
+            <div class="panel-header">
+                <h3 id="studentFormTitle" style="font-size:1.05rem; font-weight:800;">Add New Student</h3>
+                <button type="button" class="edit-icon-btn" onclick="closeModal('studentFormModal')">✕</button>
+            </div>
+            <form id="studentForm" onsubmit="saveStudentForm(event)" class="modal-body">
+                <input type="hidden" id="formStudentId">
+                <div class="form-grid">
+                    <div class="form-group full">
+                        <label>Student Full Name *</label>
+                        <input type="text" id="formStudentName" class="input-control" required placeholder="e.g. Aarav Kumar">
                     </div>
                     <div class="form-group">
                         <label>Academic Year (सत्र) *</label>
@@ -1480,6 +1698,26 @@
                     <div class="form-group">
                         <label>Class *</label>
                         <select id="formStudentClass" class="input-control" required>
+                            <option value="7th">Class 7th</option>
+                            <option value="8th">Class 8th</option>
+                            <option value="9th">Class 9th</option>
+                            <option value="10th">Class 10th</option>
+                            <option value="11th">Class 11th</option>
+                            <option value="12th">Class 12th</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Batch Wing (Boys / Girls) *</label>
+                        <select id="formStudentGender" class="input-control" required>
+                            <option value="Boys">👦 Boys Batch (लड़के)</option>
+                            <option value="Girls">👧 Girls Batch (लड़कियां)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Section (A / B) *</label>
+                        <select id="formStudentSection" class="input-control" required>
+                            <option value="A">Section A</option>
+                            <option value="B">Section B</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -1619,7 +1857,236 @@
     </div>
 
     <!-- =========================================================
-         MODAL 6: PRINTABLE FEE RECEIPT / TEACHER SALARY SLIP
+         MODAL 4: ADD / EDIT TEACHER FORM MODAL
+         ========================================================= -->
+    <div id="teacherFormModal" class="modal-backdrop hidden" onclick="if(event.target===this) closeModal('teacherFormModal')">
+        <div class="modal-card">
+            <div class="panel-header">
+                <h3 id="teacherFormTitle" style="font-size:1.05rem; font-weight:800;">Add New Teacher</h3>
+                <button type="button" class="edit-icon-btn" onclick="closeModal('teacherFormModal')">✕</button>
+            </div>
+            <form id="teacherForm" onsubmit="saveTeacherForm(event)" class="modal-body">
+                <input type="hidden" id="formTeacherId">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Teacher Name *</label>
+                        <input type="text" id="formTeacherName" class="input-control" required placeholder="e.g. Prof. Rajesh Verma">
+                    </div>
+                    <div class="form-group">
+                        <label>Qualification *</label>
+                        <input type="text" id="formTeacherQual" class="input-control" required placeholder="e.g. M.Sc., B.Ed.">
+                    </div>
+                    <div class="form-group">
+                        <label>Subjects Taught *</label>
+                        <input type="text" id="formTeacherSubjects" class="input-control" required placeholder="e.g. Mathematics & Physics">
+                    </div>
+                    <div class="form-group">
+                        <label>Assigned Classes *</label>
+                        <input type="text" id="formTeacherClasses" class="input-control" required value="7th to 12th">
+                    </div>
+                    <div class="form-group">
+                        <label>Mobile / WhatsApp *</label>
+                        <input type="tel" id="formTeacherMobile" class="input-control" required placeholder="9876543210">
+                    </div>
+                    <div class="form-group">
+                        <label>Experience</label>
+                        <input type="text" id="formTeacherExp" class="input-control" placeholder="e.g. 5 Years">
+                    </div>
+                    <div class="form-group">
+                        <label>Monthly Salary (कुल वेतन ₹) *</label>
+                        <input type="number" id="formTeacherSalary" class="input-control" required min="0" value="12000">
+                    </div>
+                    <div class="form-group">
+                        <label>Salary Paid (जमा वेतन ₹)</label>
+                        <input type="number" id="formTeacherPaid" class="input-control" min="0" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Advance Given (एडवांस ₹)</label>
+                        <input type="number" id="formTeacherAdvance" class="input-control" min="0" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Batch Timing</label>
+                        <input type="text" id="formTeacherTiming" class="input-control" placeholder="e.g. 7:00 AM – 11:00 AM">
+                    </div>
+                    <div class="form-group">
+                        <label>Classes Taken (दिन)</label>
+                        <input type="number" id="formTeacherClassesTaken" class="input-control" min="0" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Leave Days (छुट्टी दिन)</label>
+                        <input type="number" id="formTeacherLeaveDays" class="input-control" min="0" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Currently On Leave?</label>
+                        <select id="formTeacherOnLeave" class="input-control">
+                            <option value="no">No (Regular)</option>
+                            <option value="yes">Yes (On Leave 🚨)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Leave Reason</label>
+                        <input type="text" id="formTeacherLeaveReason" class="input-control" placeholder="e.g. Personal Work">
+                    </div>
+                    <div class="form-group">
+                        <label>Leave From Date</label>
+                        <input type="date" id="formTeacherLeaveFrom" class="input-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Leave To Date</label>
+                        <input type="date" id="formTeacherLeaveTo" class="input-control">
+                    </div>
+                    <div class="form-group full">
+                        <label>Address</label>
+                        <input type="text" id="formTeacherAddress" class="input-control" placeholder="Teacher residential address">
+                    </div>
+                </div>
+                <div style="display:flex; justify-content:flex-end; gap:8px; padding-top:10px; border-top:1px solid var(--border-color);">
+                    <button type="button" class="btn btn-soft" onclick="closeModal('teacherFormModal')">Cancel</button>
+                    <button type="submit" class="btn btn-purple">Save Teacher</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- =========================================================
+         MODAL 5: QUICK INSTITUTE EDIT MODAL
+         ========================================================= -->
+    <div id="instituteNameModal" class="modal-backdrop hidden" onclick="if(event.target===this) closeModal('instituteNameModal')">
+        <div class="modal-card sm">
+            <div class="panel-header">
+                <h3 style="font-size:1rem; font-weight:800;">✏️ Edit Coaching Details</h3>
+                <button type="button" class="edit-icon-btn" onclick="closeModal('instituteNameModal')">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Coaching Institute Name</label>
+                    <input type="text" id="instituteNameInput" class="input-control">
+                </div>
+                <div class="form-group">
+                    <label>Tagline / Subtitle</label>
+                    <input type="text" id="instituteTaglineInput" class="input-control">
+                </div>
+                <div class="form-group">
+                    <label>Director Name</label>
+                    <input type="text" id="instituteDirectorInput" class="input-control">
+                </div>
+                <div class="form-group">
+                    <label>Coaching Address</label>
+                    <input type="text" id="instituteAddressInput" class="input-control">
+                </div>
+                <div class="form-group">
+                    <label>Contact Phone</label>
+                    <input type="text" id="institutePhoneInput" class="input-control">
+                </div>
+                <div class="form-group">
+                    <label>Receipt Prefix</label>
+                    <input type="text" id="institutePrefixInput" class="input-control">
+                </div>
+                <div style="display:flex; justify-content:flex-end; gap:8px;">
+                    <button type="button" class="btn btn-soft" onclick="closeModal('instituteNameModal')">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="saveInstituteName()">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =========================================================
+         MODAL 6: NEW CLIENT ONBOARDING WIZARD
+         ========================================================= -->
+    <div id="clientOnboardingModal" class="modal-backdrop hidden" onclick="if(event.target===this) closeModal('clientOnboardingModal')">
+        <div class="modal-card">
+            <div class="modal-hero">
+                <button type="button" class="modal-close" onclick="closeModal('clientOnboardingModal')">✕</button>
+                <span class="sq-pill">🚀 COMMERCIAL RESELLER WIZARD</span>
+                <h3 style="font-size:1.25rem; font-weight:800; margin-top:6px;">Setup Software for a New Coaching Client</h3>
+                <p style="font-size:0.76rem; opacity:0.9;">30 सेकंड में किसी भी नए कोचिंग सेंटर के नाम से यह सॉफ्टवेयर तैयार करें</p>
+            </div>
+            <form onsubmit="completeClientOnboarding(event)" class="modal-body">
+                <div class="form-grid">
+                    <div class="form-group full">
+                        <label>Client's Coaching Institute Name *</label>
+                        <input type="text" id="wizCoachingName" class="input-control" required placeholder="e.g. SHINING COACHING CLASSES">
+                    </div>
+                    <div class="form-group">
+                        <label>Director / Owner Name *</label>
+                        <input type="text" id="wizDirectorName" class="input-control" required placeholder="e.g. Mr. Avinash Kumar">
+                    </div>
+                    <div class="form-group">
+                        <label>Coaching Contact Mobile *</label>
+                        <input type="tel" id="wizPhone" class="input-control" required placeholder="e.g. 9876543210">
+                    </div>
+                    <div class="form-group full">
+                        <label>Coaching Address *</label>
+                        <input type="text" id="wizAddress" class="input-control" required placeholder="e.g. Harnatand, West Champaran">
+                    </div>
+                    <div class="form-group">
+                        <label>Receipt Prefix *</label>
+                        <input type="text" id="wizPrefix" class="input-control" value="SCC-2026-" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Set Client Admin PIN *</label>
+                        <input type="text" id="wizAdminPin" class="input-control" value="1234" required>
+                    </div>
+                    <div class="form-group">
+                        <label>License Plan</label>
+                        <select id="wizLicensePlan" class="input-control">
+                            <option value="Active • Commercial Pro">Active • Commercial Pro (1 Year)</option>
+                            <option value="Lifetime Verified License">Lifetime Verified License</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Initial Data Mode</label>
+                        <select id="wizDataMode" class="input-control">
+                            <option value="clean">Start Fresh / Empty (For Real Client Entry)</option>
+                            <option value="demo">Keep 32 Demo Students (For Live Demo)</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="display:flex; justify-content:flex-end; gap:8px;">
+                    <button type="button" class="btn btn-soft" onclick="closeModal('clientOnboardingModal')">Cancel</button>
+                    <button type="submit" class="btn btn-emerald">✓ Launch Branded Coaching App</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- =========================================================
+         MODAL 7: MULTI-DEVICE CLOUD SYNC MODAL
+         ========================================================= -->
+    <div id="cloudSyncModal" class="modal-backdrop hidden" onclick="if(event.target===this) closeModal('cloudSyncModal')">
+        <div class="modal-card sm">
+            <div class="modal-hero">
+                <button type="button" class="modal-close" onclick="closeModal('cloudSyncModal')">✕</button>
+                <span class="sq-pill">☁️ LIVE MULTI-DEVICE CLOUD SYNC</span>
+                <h3 style="font-size:1.2rem; font-weight:800; margin-top:6px;">सभी फोन और लैपटॉप पर एक ही डेटा</h3>
+                <p style="font-size:0.75rem; opacity:0.9;">एक ही Sync Link सभी टीचर्स के फोन पर खोलें — डेटा अपने आप सिंक होगा</p>
+            </div>
+            <div class="modal-body">
+                <div style="background:var(--emerald-soft); border:1px solid #a7f3d0; border-radius:12px; padding:12px; font-size:0.78rem;">
+                    <div>Status: <strong id="syncModalStatusText" style="color:#166534;">Ready</strong></div>
+                    <div style="color:var(--text-muted); margin-top:2px;">Last Synced: <span id="syncModalLastTime">Just now</span></div>
+                </div>
+
+                <div class="form-group">
+                    <label>Cloud Room ID (सभी टीचर्स के लिए एक ही कोड)</label>
+                    <input type="text" id="syncRoomIdInput" class="input-control" value="shining-harnatand-2026" placeholder="e.g. shining-harnatand-2026">
+                </div>
+
+                <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                    <button type="button" class="btn btn-primary btn-sm" style="flex:1;" onclick="saveAndConnectSyncRoom()">🔗 Connect / Create Cloud Room</button>
+                    <button type="button" class="btn btn-emerald btn-sm" onclick="copySyncRoomLink()">📋 Copy Sync Link</button>
+                </div>
+
+                <div style="display:flex; gap:8px; flex-wrap:wrap; padding-top:8px; border-top:1px solid var(--border-color);">
+                    <button type="button" class="btn btn-soft-indigo btn-sm" style="flex:1;" onclick="pushCloudDataNow(true)">⬆ Push My Data Now</button>
+                    <button type="button" class="btn btn-soft-emerald btn-sm" style="flex:1;" onclick="pullCloudDataNow(true)">⬇ Pull Latest Data</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =========================================================
+         MODAL 8: PRINTABLE FEE RECEIPT / TEACHER SALARY SLIP
          ========================================================= -->
     <div id="receiptPrintModal" class="modal-backdrop hidden" onclick="if(event.target===this) closeModal('receiptPrintModal')">
         <div class="modal-card">
@@ -1659,6 +2126,7 @@
                 instituteName: "SHINING COACHING CLASSES",
                 instituteLogo: "",
                 syncRoomId: "shining-harnatand-2026",
+                cloudBlobMap: {},
                 academicYears: ["2025", "2026", "2027", "2028"],
                 selectedYear: "2026",
                 lastUpdatedAt: 0,
@@ -1672,43 +2140,43 @@
                 adminPin: "1234",
                 attendance: {},
                 students: [
-                    { id: 's1', name: 'Aarav Kumar', gender: 'Boys', section: 'A', className: '7th', rollNo: '701', fatherName: 'Manoj Kumar', motherName: 'Sunita Devi', mobile: '9876543210', dob: '2014-05-12', admissionDate: '2026-04-02', schoolName: 'DAV Public School', subjects: 'Maths, Science, English, SST', address: 'Station Road, Ward No. 4', totalFee: 5000, paidFee: 5000 },
-                    { id: 's2', name: 'Ananya Kumari', gender: 'Girls', section: 'A', className: '7th', rollNo: '702', fatherName: 'Rakesh Singh', motherName: 'Pooja Singh', mobile: '9876543211', dob: '2014-08-21', admissionDate: '2026-04-05', schoolName: 'St. Mary School', subjects: 'Maths, Science, English', address: 'Gandhi Nagar, Near Temple', totalFee: 5000, paidFee: 3500 },
-                    { id: 's3', name: 'Rohan Das', gender: 'Boys', section: 'A', className: '7th', rollNo: '703', fatherName: 'Suresh Das', motherName: 'Meena Das', mobile: '9876543212', dob: '2014-02-14', admissionDate: '2026-04-10', schoolName: 'Govt. High School', subjects: 'All Subjects', address: 'Shanti Colony, Lane 2', totalFee: 5000, paidFee: 5000 },
-                    { id: 's4', name: 'Siddharth Verma', gender: 'Boys', section: 'B', className: '7th', rollNo: '704', fatherName: 'Alok Verma', motherName: 'Neha Verma', mobile: '9876543213', dob: '2014-09-03', admissionDate: '2026-04-11', schoolName: 'Central Academy', subjects: 'Maths, Science, English, Hindi', address: 'Subhash Chowk', totalFee: 5000, paidFee: 2500 },
-                    { id: 's5', name: 'Kavya Mishra', gender: 'Girls', section: 'A', className: '7th', rollNo: '705', fatherName: 'Devendra Mishra', motherName: 'Ritu Mishra', mobile: '9876543214', dob: '2014-11-18', admissionDate: '2026-04-14', schoolName: 'Holy Cross School', subjects: 'All Subjects', address: 'Ashok Nagar, Block C', totalFee: 5000, paidFee: 5000 },
-                    { id: 's6', name: 'Prince Raj', gender: 'Boys', section: 'B', className: '7th', rollNo: '706', fatherName: 'Bipin Bihari', motherName: 'Anita Devi', mobile: '9876543215', dob: '2014-06-27', admissionDate: '2026-04-16', schoolName: 'Saraswati Vidya Mandir', subjects: 'Maths, Science, English', address: 'Purani Bazar, Near Post Office', totalFee: 5000, paidFee: 1500 },
+                    { id: 's1', academicYear: '2026', name: 'Aarav Kumar', gender: 'Boys', section: 'A', className: '7th', rollNo: '701', fatherName: 'Manoj Kumar', motherName: 'Sunita Devi', mobile: '9876543210', dob: '2014-05-12', admissionDate: '2026-04-02', schoolName: 'DAV Public School', subjects: 'Maths, Science, English, SST', address: 'Station Road, Ward No. 4', totalFee: 5000, paidFee: 5000 },
+                    { id: 's2', academicYear: '2026', name: 'Ananya Kumari', gender: 'Girls', section: 'A', className: '7th', rollNo: '702', fatherName: 'Rakesh Singh', motherName: 'Pooja Singh', mobile: '9876543211', dob: '2014-08-21', admissionDate: '2026-04-05', schoolName: 'St. Mary School', subjects: 'Maths, Science, English', address: 'Gandhi Nagar, Near Temple', totalFee: 5000, paidFee: 3500 },
+                    { id: 's3', academicYear: '2026', name: 'Rohan Das', gender: 'Boys', section: 'A', className: '7th', rollNo: '703', fatherName: 'Suresh Das', motherName: 'Meena Das', mobile: '9876543212', dob: '2014-02-14', admissionDate: '2026-04-10', schoolName: 'Govt. High School', subjects: 'All Subjects', address: 'Shanti Colony, Lane 2', totalFee: 5000, paidFee: 5000 },
+                    { id: 's4', academicYear: '2026', name: 'Siddharth Verma', gender: 'Boys', section: 'B', className: '7th', rollNo: '704', fatherName: 'Alok Verma', motherName: 'Neha Verma', mobile: '9876543213', dob: '2014-09-03', admissionDate: '2026-04-11', schoolName: 'Central Academy', subjects: 'Maths, Science, English, Hindi', address: 'Subhash Chowk', totalFee: 5000, paidFee: 2500 },
+                    { id: 's5', academicYear: '2026', name: 'Kavya Mishra', gender: 'Girls', section: 'A', className: '7th', rollNo: '705', fatherName: 'Devendra Mishra', motherName: 'Ritu Mishra', mobile: '9876543214', dob: '2014-11-18', admissionDate: '2026-04-14', schoolName: 'Holy Cross School', subjects: 'All Subjects', address: 'Ashok Nagar, Block C', totalFee: 5000, paidFee: 5000 },
+                    { id: 's6', academicYear: '2026', name: 'Prince Raj', gender: 'Boys', section: 'B', className: '7th', rollNo: '706', fatherName: 'Bipin Bihari', motherName: 'Anita Devi', mobile: '9876543215', dob: '2014-06-27', admissionDate: '2026-04-16', schoolName: 'Saraswati Vidya Mandir', subjects: 'Maths, Science, English', address: 'Purani Bazar, Near Post Office', totalFee: 5000, paidFee: 1500 },
 
-                    { id: 's7', name: 'Priya Sharma', gender: 'Girls', section: 'A', className: '8th', rollNo: '801', fatherName: 'Dinesh Sharma', motherName: 'Kavita Sharma', mobile: '9811223301', dob: '2013-03-19', admissionDate: '2026-04-01', schoolName: 'Central Academy', subjects: 'Maths, Science, English, Sanskrit', address: 'Civil Lines, Block B', totalFee: 6000, paidFee: 6000 },
-                    { id: 's8', name: 'Aditya Raj', gender: 'Boys', section: 'A', className: '8th', rollNo: '802', fatherName: 'Santosh Prasad', motherName: 'Rekha Devi', mobile: '9811223302', dob: '2013-11-05', admissionDate: '2026-04-03', schoolName: 'DAV Public School', subjects: 'Maths, Science, English', address: 'Subhash Chowk', totalFee: 6000, paidFee: 4000 },
-                    { id: 's9', name: 'Neha Gupta', gender: 'Girls', section: 'B', className: '8th', rollNo: '803', fatherName: 'Anil Gupta', motherName: 'Seema Gupta', mobile: '9811223303', dob: '2013-07-28', admissionDate: '2026-04-08', schoolName: 'Holy Cross School', subjects: 'All Subjects', address: 'Main Market Road', totalFee: 6000, paidFee: 6000 },
-                    { id: 's10', name: 'Vikramaditya Sinha', gender: 'Boys', section: 'A', className: '8th', rollNo: '804', fatherName: 'Pankaj Sinha', motherName: 'Nidhi Sinha', mobile: '9811223304', dob: '2013-09-10', admissionDate: '2026-04-12', schoolName: 'St. Xavier School', subjects: 'Maths, Science, SST', address: 'Ashok Nagar', totalFee: 6000, paidFee: 3000 },
-                    { id: 's11', name: 'Riya Kumari', gender: 'Girls', section: 'A', className: '8th', rollNo: '805', fatherName: 'Mukesh Yadav', motherName: 'Sangeeta Devi', mobile: '9811223305', dob: '2013-04-22', admissionDate: '2026-04-14', schoolName: 'Govt. Girls High School', subjects: 'All Subjects', address: 'Naya Tola, Ward 9', totalFee: 6000, paidFee: 6000 },
-                    { id: 's12', name: 'Ayush Tiwari', gender: 'Boys', section: 'B', className: '8th', rollNo: '806', fatherName: 'Rameshwar Tiwari', motherName: 'Archana Tiwari', mobile: '9811223306', dob: '2013-12-01', admissionDate: '2026-04-18', schoolName: 'Kendriya Vidyalaya', subjects: 'Maths, Science, English', address: 'Railway Colony, Qtr 42', totalFee: 6000, paidFee: 2000 },
+                    { id: 's7', academicYear: '2026', name: 'Priya Sharma', gender: 'Girls', section: 'A', className: '8th', rollNo: '801', fatherName: 'Dinesh Sharma', motherName: 'Kavita Sharma', mobile: '9811223301', dob: '2013-03-19', admissionDate: '2026-04-01', schoolName: 'Central Academy', subjects: 'Maths, Science, English, Sanskrit', address: 'Civil Lines, Block B', totalFee: 6000, paidFee: 6000 },
+                    { id: 's8', academicYear: '2026', name: 'Aditya Raj', gender: 'Boys', section: 'A', className: '8th', rollNo: '802', fatherName: 'Santosh Prasad', motherName: 'Rekha Devi', mobile: '9811223302', dob: '2013-11-05', admissionDate: '2026-04-03', schoolName: 'DAV Public School', subjects: 'Maths, Science, English', address: 'Subhash Chowk', totalFee: 6000, paidFee: 4000 },
+                    { id: 's9', academicYear: '2026', name: 'Neha Gupta', gender: 'Girls', section: 'B', className: '8th', rollNo: '803', fatherName: 'Anil Gupta', motherName: 'Seema Gupta', mobile: '9811223303', dob: '2013-07-28', admissionDate: '2026-04-08', schoolName: 'Holy Cross School', subjects: 'All Subjects', address: 'Main Market Road', totalFee: 6000, paidFee: 6000 },
+                    { id: 's10', academicYear: '2026', name: 'Vikramaditya Sinha', gender: 'Boys', section: 'A', className: '8th', rollNo: '804', fatherName: 'Pankaj Sinha', motherName: 'Nidhi Sinha', mobile: '9811223304', dob: '2013-09-10', admissionDate: '2026-04-12', schoolName: 'St. Xavier School', subjects: 'Maths, Science, SST', address: 'Ashok Nagar', totalFee: 6000, paidFee: 3000 },
+                    { id: 's11', academicYear: '2026', name: 'Riya Kumari', gender: 'Girls', section: 'A', className: '8th', rollNo: '805', fatherName: 'Mukesh Yadav', motherName: 'Sangeeta Devi', mobile: '9811223305', dob: '2013-04-22', admissionDate: '2026-04-14', schoolName: 'Govt. Girls High School', subjects: 'All Subjects', address: 'Naya Tola, Ward 9', totalFee: 6000, paidFee: 6000 },
+                    { id: 's12', academicYear: '2026', name: 'Ayush Tiwari', gender: 'Boys', section: 'B', className: '8th', rollNo: '806', fatherName: 'Rameshwar Tiwari', motherName: 'Archana Tiwari', mobile: '9811223306', dob: '2013-12-01', admissionDate: '2026-04-18', schoolName: 'Kendriya Vidyalaya', subjects: 'Maths, Science, English', address: 'Railway Colony, Qtr 42', totalFee: 6000, paidFee: 2000 },
 
-                    { id: 's13', name: 'Sakshi Verma', gender: 'Girls', section: 'A', className: '9th', rollNo: '901', fatherName: 'Ramesh Verma', motherName: 'Geeta Verma', mobile: '9934512301', dob: '2012-01-15', admissionDate: '2026-03-25', schoolName: 'Kendriya Vidyalaya', subjects: 'Maths, Physics, Chemistry, Biology, English', address: 'Patel Nagar', totalFee: 7500, paidFee: 7500 },
-                    { id: 's14', name: 'Aman Kumar', gender: 'Boys', section: 'A', className: '9th', rollNo: '902', fatherName: 'Vinod Yadav', motherName: 'Sarita Devi', mobile: '9934512302', dob: '2012-06-30', admissionDate: '2026-03-28', schoolName: 'Govt. Boys High School', subjects: 'Maths, Science, English', address: 'Naya Tola', totalFee: 7500, paidFee: 5000 },
-                    { id: 's15', name: 'Kajal Kumari', gender: 'Girls', section: 'B', className: '9th', rollNo: '903', fatherName: 'Deepak Thakur', motherName: 'Rina Thakur', mobile: '9934512303', dob: '2012-10-08', admissionDate: '2026-04-01', schoolName: 'DAV Public School', subjects: 'All Subjects', address: 'College Road', totalFee: 7500, paidFee: 7500 },
-                    { id: 's16', name: 'Vivek Kumar', gender: 'Boys', section: 'B', className: '9th', rollNo: '904', fatherName: 'Subhash Mahto', motherName: 'Poonam Devi', mobile: '9934512304', dob: '2012-03-17', admissionDate: '2026-04-04', schoolName: 'St. Joseph Academy', subjects: 'Maths, Science, English, SST', address: 'Kachahari Road', totalFee: 7500, paidFee: 4000 },
-                    { id: 's17', name: 'Nandini Singh', gender: 'Girls', section: 'A', className: '9th', rollNo: '905', fatherName: 'Pradeep Singh', motherName: 'Madhu Singh', mobile: '9934512305', dob: '2012-08-14', admissionDate: '2026-04-07', schoolName: 'Notre Dame Academy', subjects: 'All Subjects', address: 'Boring Canal Road', totalFee: 7500, paidFee: 7500 },
-                    { id: 's18', name: 'Gaurav Raj', gender: 'Boys', section: 'A', className: '9th', rollNo: '906', fatherName: 'Naresh Paswan', motherName: 'Usha Devi', mobile: '9934512306', dob: '2012-11-29', admissionDate: '2026-04-09', schoolName: 'Model High School', subjects: 'Maths, Science, Hindi', address: 'Ambedkar Chowk', totalFee: 7500, paidFee: 3000 },
+                    { id: 's13', academicYear: '2026', name: 'Sakshi Verma', gender: 'Girls', section: 'A', className: '9th', rollNo: '901', fatherName: 'Ramesh Verma', motherName: 'Geeta Verma', mobile: '9934512301', dob: '2012-01-15', admissionDate: '2026-03-25', schoolName: 'Kendriya Vidyalaya', subjects: 'Maths, Physics, Chemistry, Biology, English', address: 'Patel Nagar', totalFee: 7500, paidFee: 7500 },
+                    { id: 's14', academicYear: '2026', name: 'Aman Kumar', gender: 'Boys', section: 'A', className: '9th', rollNo: '902', fatherName: 'Vinod Yadav', motherName: 'Sarita Devi', mobile: '9934512302', dob: '2012-06-30', admissionDate: '2026-03-28', schoolName: 'Govt. Boys High School', subjects: 'Maths, Science, English', address: 'Naya Tola', totalFee: 7500, paidFee: 5000 },
+                    { id: 's15', academicYear: '2026', name: 'Kajal Kumari', gender: 'Girls', section: 'B', className: '9th', rollNo: '903', fatherName: 'Deepak Thakur', motherName: 'Rina Thakur', mobile: '9934512303', dob: '2012-10-08', admissionDate: '2026-04-01', schoolName: 'DAV Public School', subjects: 'All Subjects', address: 'College Road', totalFee: 7500, paidFee: 7500 },
+                    { id: 's16', academicYear: '2026', name: 'Vivek Kumar', gender: 'Boys', section: 'B', className: '9th', rollNo: '904', fatherName: 'Subhash Mahto', motherName: 'Poonam Devi', mobile: '9934512304', dob: '2012-03-17', admissionDate: '2026-04-04', schoolName: 'St. Joseph Academy', subjects: 'Maths, Science, English, SST', address: 'Kachahari Road', totalFee: 7500, paidFee: 4000 },
+                    { id: 's17', academicYear: '2026', name: 'Nandini Singh', gender: 'Girls', section: 'A', className: '9th', rollNo: '905', fatherName: 'Pradeep Singh', motherName: 'Madhu Singh', mobile: '9934512305', dob: '2012-08-14', admissionDate: '2026-04-07', schoolName: 'Notre Dame Academy', subjects: 'All Subjects', address: 'Boring Canal Road', totalFee: 7500, paidFee: 7500 },
+                    { id: 's18', academicYear: '2026', name: 'Gaurav Raj', gender: 'Boys', section: 'A', className: '9th', rollNo: '906', fatherName: 'Naresh Paswan', motherName: 'Usha Devi', mobile: '9934512306', dob: '2012-11-29', admissionDate: '2026-04-09', schoolName: 'Model High School', subjects: 'Maths, Science, Hindi', address: 'Ambedkar Chowk', totalFee: 7500, paidFee: 3000 },
 
-                    { id: 's19', name: 'Abhishek Mishra', gender: 'Boys', section: 'A', className: '10th', rollNo: '1001', fatherName: 'Prakash Mishra', motherName: 'Archana Mishra', mobile: '9709812301', dob: '2011-04-18', admissionDate: '2026-03-15', schoolName: 'St. Xavier High School', subjects: 'Maths, Science, English, SST (Board Target)', address: 'Shastri Nagar', totalFee: 9000, paidFee: 9000 },
-                    { id: 's20', name: 'Shreya Singh', gender: 'Girls', section: 'A', className: '10th', rollNo: '1002', fatherName: 'Amitabh Singh', motherName: 'Vandana Singh', mobile: '9709812302', dob: '2011-08-09', admissionDate: '2026-03-16', schoolName: 'Kendriya Vidyalaya', subjects: 'Maths, Science, English, SST', address: 'Rajendra Path', totalFee: 9000, paidFee: 6500 },
-                    { id: 's21', name: 'Harsh Vardhan', gender: 'Boys', section: 'B', className: '10th', rollNo: '1003', fatherName: 'Sanjay Kumar', motherName: 'Priyanka Devi', mobile: '9709812303', dob: '2011-12-22', admissionDate: '2026-03-20', schoolName: 'Model High School', subjects: 'Maths, Science, Hindi, English', address: 'Boring Road', totalFee: 9000, paidFee: 9000 },
-                    { id: 's22', name: 'Divya Bharti', gender: 'Girls', section: 'B', className: '10th', rollNo: '1004', fatherName: 'Umesh Saw', motherName: 'Suman Devi', mobile: '9709812304', dob: '2011-02-27', admissionDate: '2026-03-22', schoolName: 'Girls High School', subjects: 'All Board Subjects', address: 'Purani Bazar', totalFee: 9000, paidFee: 4500 },
-                    { id: 's23', name: 'Rahul Ranjan', gender: 'Boys', section: 'A', className: '10th', rollNo: '1005', fatherName: 'Ashok Ranjan', motherName: 'Babita Devi', mobile: '9709812305', dob: '2011-07-11', admissionDate: '2026-03-24', schoolName: 'DAV Public School', subjects: 'Maths, Science, English, SST (Board Target)', address: 'Hanuman Nagar', totalFee: 9000, paidFee: 9000 },
-                    { id: 's24', name: 'Soni Kumari', gender: 'Girls', section: 'A', className: '10th', rollNo: '1006', fatherName: 'Lalan Prasad', motherName: 'Manju Devi', mobile: '9709812306', dob: '2011-10-04', admissionDate: '2026-03-26', schoolName: 'Zila School', subjects: 'Maths, Science, English, Hindi', address: 'Station Chowk, Ward 12', totalFee: 9000, paidFee: 5000 },
+                    { id: 's19', academicYear: '2026', name: 'Abhishek Mishra', gender: 'Boys', section: 'A', className: '10th', rollNo: '1001', fatherName: 'Prakash Mishra', motherName: 'Archana Mishra', mobile: '9709812301', dob: '2011-04-18', admissionDate: '2026-03-15', schoolName: 'St. Xavier High School', subjects: 'Maths, Science, English, SST (Board Target)', address: 'Shastri Nagar', totalFee: 9000, paidFee: 9000 },
+                    { id: 's20', academicYear: '2026', name: 'Shreya Singh', gender: 'Girls', section: 'A', className: '10th', rollNo: '1002', fatherName: 'Amitabh Singh', motherName: 'Vandana Singh', mobile: '9709812302', dob: '2011-08-09', admissionDate: '2026-03-16', schoolName: 'Kendriya Vidyalaya', subjects: 'Maths, Science, English, SST', address: 'Rajendra Path', totalFee: 9000, paidFee: 6500 },
+                    { id: 's21', academicYear: '2026', name: 'Harsh Vardhan', gender: 'Boys', section: 'B', className: '10th', rollNo: '1003', fatherName: 'Sanjay Kumar', motherName: 'Priyanka Devi', mobile: '9709812303', dob: '2011-12-22', admissionDate: '2026-03-20', schoolName: 'Model High School', subjects: 'Maths, Science, Hindi, English', address: 'Boring Road', totalFee: 9000, paidFee: 9000 },
+                    { id: 's22', academicYear: '2026', name: 'Divya Bharti', gender: 'Girls', section: 'B', className: '10th', rollNo: '1004', fatherName: 'Umesh Saw', motherName: 'Suman Devi', mobile: '9709812304', dob: '2011-02-27', admissionDate: '2026-03-22', schoolName: 'Girls High School', subjects: 'All Board Subjects', address: 'Purani Bazar', totalFee: 9000, paidFee: 4500 },
+                    { id: 's23', academicYear: '2026', name: 'Rahul Ranjan', gender: 'Boys', section: 'A', className: '10th', rollNo: '1005', fatherName: 'Ashok Ranjan', motherName: 'Babita Devi', mobile: '9709812305', dob: '2011-07-11', admissionDate: '2026-03-24', schoolName: 'DAV Public School', subjects: 'Maths, Science, English, SST (Board Target)', address: 'Hanuman Nagar', totalFee: 9000, paidFee: 9000 },
+                    { id: 's24', academicYear: '2026', name: 'Soni Kumari', gender: 'Girls', section: 'A', className: '10th', rollNo: '1006', fatherName: 'Lalan Prasad', motherName: 'Manju Devi', mobile: '9709812306', dob: '2011-10-04', admissionDate: '2026-03-26', schoolName: 'Zila School', subjects: 'Maths, Science, English, Hindi', address: 'Station Chowk, Ward 12', totalFee: 9000, paidFee: 5000 },
 
-                    { id: 's25', name: 'Utkarsh Pandey', gender: 'Boys', section: 'A', className: '11th', rollNo: '1101', fatherName: 'Awadhesh Pandey', motherName: 'Reena Pandey', mobile: '9801122301', dob: '2010-03-14', admissionDate: '2026-04-02', schoolName: 'DAV Senior Secondary', subjects: 'Physics, Chemistry, Maths (PCM)', address: 'Kankarbagh Colony', totalFee: 11000, paidFee: 11000 },
-                    { id: 's26', name: 'Rishabh Raj', gender: 'Boys', section: 'B', className: '11th', rollNo: '1102', fatherName: 'Manish Kumar', motherName: 'Suman Kumari', mobile: '9801122302', dob: '2010-07-19', admissionDate: '2026-04-04', schoolName: 'St. Michael High School', subjects: 'Physics, Chemistry, Biology (PCB)', address: 'Bailey Road', totalFee: 11000, paidFee: 6500 },
-                    { id: 's27', name: 'Anushka Sinha', gender: 'Girls', section: 'A', className: '11th', rollNo: '1103', fatherName: 'Rajeev Sinha', motherName: 'Nidhi Sinha', mobile: '9801122303', dob: '2010-05-25', admissionDate: '2026-04-03', schoolName: 'Notre Dame Academy', subjects: 'Physics, Chemistry, Maths (PCM)', address: 'Patliputra Colony', totalFee: 11000, paidFee: 11000 },
-                    { id: 's28', name: 'Pallavi Kumari', gender: 'Girls', section: 'B', className: '11th', rollNo: '1104', fatherName: 'Dinesh Yadav', motherName: 'Geeta Devi', mobile: '9801122304', dob: '2010-09-12', admissionDate: '2026-04-06', schoolName: 'Bankipore Girls School', subjects: 'Physics, Chemistry, Biology (PCB)', address: 'Ashok Rajpath', totalFee: 11000, paidFee: 5500 },
+                    { id: 's25', academicYear: '2026', name: 'Utkarsh Pandey', gender: 'Boys', section: 'A', className: '11th', rollNo: '1101', fatherName: 'Awadhesh Pandey', motherName: 'Reena Pandey', mobile: '9801122301', dob: '2010-03-14', admissionDate: '2026-04-02', schoolName: 'DAV Senior Secondary', subjects: 'Physics, Chemistry, Maths (PCM)', address: 'Kankarbagh Colony', totalFee: 11000, paidFee: 11000 },
+                    { id: 's26', academicYear: '2026', name: 'Rishabh Raj', gender: 'Boys', section: 'B', className: '11th', rollNo: '1102', fatherName: 'Manish Kumar', motherName: 'Suman Kumari', mobile: '9801122302', dob: '2010-07-19', admissionDate: '2026-04-04', schoolName: 'St. Michael High School', subjects: 'Physics, Chemistry, Biology (PCB)', address: 'Bailey Road', totalFee: 11000, paidFee: 6500 },
+                    { id: 's27', academicYear: '2026', name: 'Anushka Sinha', gender: 'Girls', section: 'A', className: '11th', rollNo: '1103', fatherName: 'Rajeev Sinha', motherName: 'Nidhi Sinha', mobile: '9801122303', dob: '2010-05-25', admissionDate: '2026-04-03', schoolName: 'Notre Dame Academy', subjects: 'Physics, Chemistry, Maths (PCM)', address: 'Patliputra Colony', totalFee: 11000, paidFee: 11000 },
+                    { id: 's28', academicYear: '2026', name: 'Pallavi Kumari', gender: 'Girls', section: 'B', className: '11th', rollNo: '1104', fatherName: 'Dinesh Yadav', motherName: 'Geeta Devi', mobile: '9801122304', dob: '2010-09-12', admissionDate: '2026-04-06', schoolName: 'Bankipore Girls School', subjects: 'Physics, Chemistry, Biology (PCB)', address: 'Ashok Rajpath', totalFee: 11000, paidFee: 5500 },
 
-                    { id: 's29', name: 'Shubham Kumar', gender: 'Boys', section: 'A', className: '12th', rollNo: '1201', fatherName: 'Vinay Kumar', motherName: 'Anita Sinha', mobile: '9801122401', dob: '2009-02-11', admissionDate: '2026-03-18', schoolName: 'College of Commerce', subjects: 'Physics, Chemistry, Maths (12th Board)', address: 'Rajendra Nagar', totalFee: 12500, paidFee: 12500 },
-                    { id: 's30', name: 'Kunal Kishore', gender: 'Boys', section: 'B', className: '12th', rollNo: '1202', fatherName: 'Nawal Kishore', motherName: 'Poonam Devi', mobile: '9801122402', dob: '2009-06-28', admissionDate: '2026-03-20', schoolName: 'AN College', subjects: 'Physics, Chemistry, Biology (12th Board)', address: 'Boring Canal Road', totalFee: 12500, paidFee: 8000 },
-                    { id: 's31', name: 'Pragya Jha', gender: 'Girls', section: 'A', className: '12th', rollNo: '1203', fatherName: 'Subodh Jha', motherName: 'Meera Jha', mobile: '9801122403', dob: '2009-04-09', admissionDate: '2026-03-17', schoolName: 'JD Women College', subjects: 'Physics, Chemistry, Maths (12th Board)', address: 'Shastri Nagar', totalFee: 12500, paidFee: 12500 },
-                    { id: 's32', name: 'Nikita Kumari', gender: 'Girls', section: 'B', className: '12th', rollNo: '1204', fatherName: 'Ramesh Prasad', motherName: 'Sunita Devi', mobile: '9801122404', dob: '2009-11-15', admissionDate: '2026-03-21', schoolName: 'Magadh Mahila College', subjects: 'Physics, Chemistry, Biology (12th Board)', address: 'Gandhi Maidan Road', totalFee: 12500, paidFee: 7000 }
+                    { id: 's29', academicYear: '2026', name: 'Shubham Kumar', gender: 'Boys', section: 'A', className: '12th', rollNo: '1201', fatherName: 'Vinay Kumar', motherName: 'Anita Sinha', mobile: '9801122401', dob: '2009-02-11', admissionDate: '2026-03-18', schoolName: 'College of Commerce', subjects: 'Physics, Chemistry, Maths (12th Board)', address: 'Rajendra Nagar', totalFee: 12500, paidFee: 12500 },
+                    { id: 's30', academicYear: '2026', name: 'Kunal Kishore', gender: 'Boys', section: 'B', className: '12th', rollNo: '1202', fatherName: 'Nawal Kishore', motherName: 'Poonam Devi', mobile: '9801122402', dob: '2009-06-28', admissionDate: '2026-03-20', schoolName: 'AN College', subjects: 'Physics, Chemistry, Biology (12th Board)', address: 'Boring Canal Road', totalFee: 12500, paidFee: 8000 },
+                    { id: 's31', academicYear: '2026', name: 'Pragya Jha', gender: 'Girls', section: 'A', className: '12th', rollNo: '1203', fatherName: 'Subodh Jha', motherName: 'Meera Jha', mobile: '9801122403', dob: '2009-04-09', admissionDate: '2026-03-17', schoolName: 'JD Women College', subjects: 'Physics, Chemistry, Maths (12th Board)', address: 'Shastri Nagar', totalFee: 12500, paidFee: 12500 },
+                    { id: 's32', academicYear: '2026', name: 'Nikita Kumari', gender: 'Girls', section: 'B', className: '12th', rollNo: '1204', fatherName: 'Ramesh Prasad', motherName: 'Sunita Devi', mobile: '9801122404', dob: '2009-11-15', admissionDate: '2026-03-21', schoolName: 'Magadh Mahila College', subjects: 'Physics, Chemistry, Biology (12th Board)', address: 'Gandhi Maidan Road', totalFee: 12500, paidFee: 7000 }
                 ],
                 teachers: [
                     { id: 't1', name: 'Prof. Rajesh Kumar Verma', qualification: 'M.Sc. (Mathematics), B.Ed.', subjects: 'Mathematics & Physics', classesAssigned: '9th, 10th, 11th, 12th', mobile: '9835011223', experience: '8 Years', joiningDate: '2021-04-01', salary: 18000, paidSalary: 12000, advanceAmount: 2000, classesTaken: 23, leaveDays: 2, isOnLeave: false, leaveFrom: '', leaveTo: '', leaveReason: '', timing: '6:30 AM – 10:30 AM', address: 'Vidya Vihar Colony, Near Bus Stand' },
@@ -1718,8 +2186,8 @@
                 ]
             };
 
-            var STORAGE_KEY = 'shining_coaching_harnatand_v7';
-            var SESSION_UNLOCK_KEY = 'shining_coaching_unlocked_v7';
+            var STORAGE_KEY = 'shining_coaching_harnatand_v8';
+            var SESSION_UNLOCK_KEY = 'shining_coaching_unlocked_v8';
             var memoryStorageFallback = null;
             var isSessionUnlocked = false;
             var currentSelectedClass = '7th';
@@ -1762,6 +2230,7 @@
                             }
                             parsed.instituteLogo = parsed.instituteLogo || "";
                             parsed.syncRoomId = parsed.syncRoomId || DEFAULT_DATA.syncRoomId;
+                            parsed.cloudBlobMap = parsed.cloudBlobMap || {};
                             parsed.academicYears = Array.isArray(parsed.academicYears) && parsed.academicYears.length ? parsed.academicYears : ["2025", "2026", "2027", "2028"];
                             parsed.selectedYear = parsed.selectedYear || "2026";
                             parsed.lastUpdatedAt = Number(parsed.lastUpdatedAt) || 0;
@@ -1823,24 +2292,29 @@
             var syncPushTimer = null;
             var isCloudSyncing = false;
 
-            function getUrlSyncRoomParam() {
+            function getUrlSyncParams() {
                 try {
                     var params = new URLSearchParams(window.location.search || '');
-                    var room = (params.get('room') || '').trim();
-                    return room ? room.replace(/[^a-zA-Z0-9_-]/g, '') : '';
+                    var room = (params.get('room') || '').trim().replace(/[^a-zA-Z0-9_-]/g, '');
+                    var blob = (params.get('blob') || '').trim().replace(/[^a-zA-Z0-9_-]/g, '');
+                    return { room: room, blob: blob };
                 } catch (e) {
-                    return '';
+                    return { room: '', blob: '' };
                 }
             }
 
-            var urlRoomOverride = getUrlSyncRoomParam();
-            if (urlRoomOverride && appData.syncRoomId !== urlRoomOverride) {
-                appData.syncRoomId = urlRoomOverride;
+            var urlSyncInfo = getUrlSyncParams();
+            if (urlSyncInfo.room) {
+                appData.syncRoomId = urlSyncInfo.room;
+            }
+            if (urlSyncInfo.blob) {
+                appData.cloudBlobMap = appData.cloudBlobMap || {};
+                appData.cloudBlobMap[appData.syncRoomId] = urlSyncInfo.blob;
                 appData.lastUpdatedAt = 0;
                 safeSetStorage(STORAGE_KEY, JSON.stringify(appData));
             }
 
-            function updateSyncBadgeUI(statusLabel, isError) {
+            function updateSyncBadgeUI(statusLabel, stateType) {
                 var btn = document.getElementById('cloudSyncHeaderBtn');
                 var modalStatus = document.getElementById('syncModalStatusText');
                 var modalTime = document.getElementById('syncModalLastTime');
@@ -1848,46 +2322,91 @@
 
                 if (btn) {
                     btn.textContent = statusLabel;
-                    btn.className = 'btn btn-sm ' + (isError ? 'btn-amber' : 'btn-soft-emerald');
+                    if (stateType === 'warn') btn.className = 'btn btn-amber btn-sm';
+                    else if (stateType === 'syncing') btn.className = 'btn btn-soft-indigo btn-sm';
+                    else btn.className = 'btn btn-soft-emerald btn-sm';
                 }
                 if (modalStatus) {
                     modalStatus.textContent = statusLabel + ' (Room: ' + (appData.syncRoomId || 'default') + ')';
-                    modalStatus.style.color = isError ? '#b45309' : '#166534';
+                    modalStatus.style.color = stateType === 'warn' ? '#b45309' : '#166534';
                 }
-                if (modalTime && !isError) {
+                if (modalTime && stateType === 'ok') {
                     modalTime.textContent = nowStr;
                 }
             }
 
-            function getCloudEndpointUrl() {
-                var room = String(appData.syncRoomId || 'shining-harnatand-2026').replace(/[^a-zA-Z0-9_-]/g, '');
-                return 'https://kvdb.io/A9x7kLmP2qR8vT4wN6yB/' + encodeURIComponent(room);
+            function getActiveBlobId() {
+                var room = appData.syncRoomId || 'shining-harnatand-2026';
+                appData.cloudBlobMap = appData.cloudBlobMap || {};
+                return appData.cloudBlobMap[room] || '';
+            }
+
+            function setActiveBlobId(blobId) {
+                var room = appData.syncRoomId || 'shining-harnatand-2026';
+                appData.cloudBlobMap = appData.cloudBlobMap || {};
+                appData.cloudBlobMap[room] = blobId;
+                safeSetStorage(STORAGE_KEY, JSON.stringify(appData));
+            }
+
+            function buildShareableSyncUrl() {
+                var room = (appData.syncRoomId || 'shining-harnatand-2026').replace(/[^a-zA-Z0-9_-]/g, '');
+                var blobId = getActiveBlobId();
+                var baseUrl = window.location.href.split('?')[0].split('#')[0];
+                var url = baseUrl + '?room=' + encodeURIComponent(room);
+                if (blobId) {
+                    url += '&blob=' + encodeURIComponent(blobId);
+                }
+                return url;
             }
 
             window.pushCloudDataNow = function (showFeedback) {
                 if (!appData.syncRoomId) return;
                 isCloudSyncing = true;
-                updateSyncBadgeUI('☁️ Syncing...', false);
-                fetch(getCloudEndpointUrl(), {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(appData)
+                updateSyncBadgeUI('☁️ Syncing...', 'syncing');
+
+                var payload = cloneData(appData);
+                delete payload.cloudBlobMap;
+                var blobId = getActiveBlobId();
+                var endpoint = blobId
+                    ? ('https://jsonblob.com/api/jsonBlob/' + encodeURIComponent(blobId))
+                    : 'https://jsonblob.com/api/jsonBlob';
+                var method = blobId ? 'PUT' : 'POST';
+
+                fetch(endpoint, {
+                    method: method,
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(payload)
                 }).then(function (res) {
                     isCloudSyncing = false;
-                    if (!res.ok) throw new Error('Sync HTTP ' + res.status);
-                    updateSyncBadgeUI('☁️ Synced: ' + appData.syncRoomId, false);
-                    if (showFeedback) showToast('Cloud par live data save ho gaya!', 'success');
+                    if (!res.ok) throw new Error('HTTP ' + res.status);
+                    var loc = res.headers.get('Location') || res.headers.get('X-jsonblob') || '';
+                    if (!blobId && loc) {
+                        var parts = loc.split('/');
+                        var createdId = parts[parts.length - 1];
+                        if (createdId) setActiveBlobId(createdId);
+                    }
+                    updateSyncBadgeUI('☁️ Synced: ' + appData.syncRoomId, 'ok');
+                    if (showFeedback) showToast('Live Cloud Sync पूरा हुआ! अब Copy Sync Link से शेयर करें।', 'success');
                 }).catch(function () {
                     isCloudSyncing = false;
-                    updateSyncBadgeUI('☁️ Offline Saved', true);
-                    if (showFeedback) showToast('Offline mode: Internet aate hi sync ho jayega.', 'error');
+                    updateSyncBadgeUI('☁️ Saved Locally', 'ok');
+                    if (showFeedback) showToast('Local storage में सेव है। Internet/Cloud check करें।', 'error');
                 });
             };
 
             window.pullCloudDataNow = function (showFeedback) {
-                if (!appData.syncRoomId || isCloudSyncing) return;
-                fetch(getCloudEndpointUrl() + '?_t=' + Date.now(), {
+                var blobId = getActiveBlobId();
+                if (!blobId || isCloudSyncing) {
+                    if (!blobId) updateSyncBadgeUI('☁️ Sync: ' + (appData.syncRoomId || 'Ready'), 'ok');
+                    return;
+                }
+
+                fetch('https://jsonblob.com/api/jsonBlob/' + encodeURIComponent(blobId) + '?_t=' + Date.now(), {
                     method: 'GET',
+                    headers: { 'Accept': 'application/json' },
                     cache: 'no-store'
                 }).then(function (res) {
                     if (!res.ok) return null;
@@ -1897,26 +2416,27 @@
                         var remoteTs = Number(remoteData.lastUpdatedAt) || 0;
                         var localTs = Number(appData.lastUpdatedAt) || 0;
                         if (remoteTs > localTs) {
-                            remoteData.syncRoomId = appData.syncRoomId;
+                            var savedMap = appData.cloudBlobMap || {};
+                            var currentRoom = appData.syncRoomId;
                             appData = remoteData;
+                            appData.syncRoomId = currentRoom;
+                            appData.cloudBlobMap = savedMap;
                             safeSetStorage(STORAGE_KEY, JSON.stringify(appData));
                             renderDashboard();
                             if (!document.getElementById('view-class-students').classList.contains('hidden')) renderStudentList();
                             if (!document.getElementById('view-teachers').classList.contains('hidden')) renderTeacherList();
                             if (!document.getElementById('view-attendance').classList.contains('hidden')) renderAttendanceView();
                             if (!document.getElementById('view-reminders').classList.contains('hidden')) renderBulkRemindersView();
-                            if (showFeedback) showToast('Naya live data sabhi devices se sync ho gaya!', 'success');
+                            if (showFeedback) showToast('सभी devices से नया live data आ गया!', 'success');
                         } else if (localTs > remoteTs && localTs > 0) {
                             window.pushCloudDataNow(false);
                         } else if (showFeedback) {
-                            showToast('Aapke paas pehle se latest live data hai!', 'success');
+                            showToast('आपका डेटा पहले से ही up-to-date है!', 'success');
                         }
-                        updateSyncBadgeUI('☁️ Synced: ' + appData.syncRoomId, false);
-                    } else if ((Number(appData.lastUpdatedAt) || 0) > 0) {
-                        window.pushCloudDataNow(false);
+                        updateSyncBadgeUI('☁️ Synced: ' + appData.syncRoomId, 'ok');
                     }
                 }).catch(function () {
-                    updateSyncBadgeUI('☁️ Offline Saved', true);
+                    updateSyncBadgeUI('☁️ Saved Locally', 'ok');
                 });
             };
 
@@ -1932,7 +2452,7 @@
             window.openCloudSyncModal = function () {
                 var inp = document.getElementById('syncRoomIdInput');
                 if (inp) inp.value = appData.syncRoomId || 'shining-harnatand-2026';
-                updateSyncBadgeUI('☁️ Synced: ' + (appData.syncRoomId || 'shining-harnatand-2026'), false);
+                updateSyncBadgeUI('☁️ Synced: ' + (appData.syncRoomId || 'shining-harnatand-2026'), 'ok');
                 window.openModal('cloudSyncModal');
             };
 
@@ -1943,24 +2463,25 @@
                     showToast('कृपया सही Sync Room ID लिखें (जैसे: shining-harnatand-2026)', 'error');
                     return;
                 }
-                var isChanged = cleanRoom !== appData.syncRoomId;
                 appData.syncRoomId = cleanRoom;
-                if (isChanged) {
-                    appData.lastUpdatedAt = 0;
-                    safeSetStorage(STORAGE_KEY, JSON.stringify(appData));
-                    window.pullCloudDataNow(true);
-                } else {
-                    window.pushCloudDataNow(true);
-                }
+                saveAppData();
+                window.pushCloudDataNow(true);
                 window.closeModal('cloudSyncModal');
             };
 
             window.copySyncRoomLink = function () {
-                var room = (document.getElementById('syncRoomIdInput').value || appData.syncRoomId || 'shining-harnatand-2026').trim().replace(/[^a-zA-Z0-9_-]/g, '');
-                var baseUrl = window.location.href.split('?')[0].split('#')[0];
-                var shareUrl = baseUrl + '?room=' + encodeURIComponent(room);
-                copyTextFallback(shareUrl);
-                showToast('Sync Link कॉपी हो गया! WhatsApp पर सभी टीचर्स को भेज दें।', 'success');
+                var rawRoom = (document.getElementById('syncRoomIdInput').value || appData.syncRoomId || 'shining-harnatand-2026').trim().replace(/[^a-zA-Z0-9_-]/g, '');
+                appData.syncRoomId = rawRoom;
+                if (!getActiveBlobId()) {
+                    window.pushCloudDataNow(false);
+                    setTimeout(function () {
+                        copyTextFallback(buildShareableSyncUrl());
+                        showToast('Live Multi-Device Sync Link कॉपी हो गया! WhatsApp पर भेजें।', 'success');
+                    }, 900);
+                } else {
+                    copyTextFallback(buildShareableSyncUrl());
+                    showToast('Live Multi-Device Sync Link कॉपी हो गया! WhatsApp पर भेजें।', 'success');
+                }
             };
 
             function formatCurrency(amount) {
@@ -2381,7 +2902,7 @@
                 if (licBadge) {
                     licBadge.textContent = '✓ ' + (appData.licenseStatus || 'Commercial Pro');
                 }
-                updateSyncBadgeUI('☁️ Synced: ' + (appData.syncRoomId || 'shining-harnatand-2026'), false);
+                updateSyncBadgeUI('☁️ Synced: ' + (appData.syncRoomId || 'shining-harnatand-2026'), 'ok');
                 syncLockScreenBranding();
                 document.getElementById('nav-teacher-count').textContent = appData.teachers.length;
 
@@ -2442,6 +2963,20 @@
                 var tTotals = getTeacherFinancialTotals();
                 document.getElementById('kpi-teacher-due').textContent = formatCurrency(tTotals.totalRemainingPayable);
                 document.getElementById('kpi-total-teachers').textContent = appData.teachers.length + ' Teachers • View Salary →';
+
+                var onLeaveTeachers = appData.teachers.filter(function (t) { return Boolean(t.isOnLeave); });
+                var leaveBannerEl = document.getElementById('homeTeacherLeaveBanner');
+                if (leaveBannerEl) {
+                    if (onLeaveTeachers.length > 0) {
+                        leaveBannerEl.innerHTML =
+                            '<div class="teacher-leave-blink-card" style="margin-top:14px; padding:10px 14px; border-radius:12px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;">' +
+                                '<span class="teacher-leave-blink-text">🚨 ON LEAVE ALERT: ' + escapeHTML(onLeaveTeachers.map(function (t) { return t.name; }).join(', ')) + '</span>' +
+                                '<button type="button" class="btn btn-sm" style="background:#be123c; color:#fff;" onclick="switchView(\'teachers\')">Check Leave Dates →</button>' +
+                            '</div>';
+                    } else {
+                        leaveBannerEl.innerHTML = '';
+                    }
+                }
 
                 document.getElementById('homeTeacherSalarySummary').innerHTML =
                     '<div class="mini-stat-box">' +
@@ -2552,6 +3087,7 @@
                 var secLabel = currentClassSectionFilter === 'all' ? '' : (' • Section ' + currentClassSectionFilter);
                 document.getElementById('selectedClassHeading').textContent = 'Class ' + cls + wingLabel + secLabel + ' (' + activeYr + ')';
                 document.getElementById('addBtnClassLabel').textContent = 'Class ' + cls + ' • ' + activeYr;
+                var dynLabels = document.getElementsByClassName('dyn-cls-lbl');
                 for (var i = 0; i < dynLabels.length; i++) {
                     dynLabels[i].textContent = cls;
                 }
@@ -2613,8 +3149,8 @@
                 if (filtered.length === 0) {
                     container.innerHTML =
                         '<div class="panel" style="grid-column:1/-1; padding:32px; text-align:center;">' +
-                            '<h4 style="font-weight:800;">No students found in Class ' + escapeHTML(cls + wingLabel + secLabel) + '</h4>' +
-                            '<p class="section-desc" style="margin:6px 0 14px;">Click "+ Add Student" to enroll a student in this batch &amp; section.</p>' +
+                            '<h4 style="font-weight:800;">No students found in Class ' + escapeHTML(cls + wingLabel + secLabel) + ' (' + escapeHTML(activeYr) + ')</h4>' +
+                            '<p class="section-desc" style="margin:6px 0 14px;">Click "+ Add Student" to enroll a student in this batch &amp; year.</p>' +
                             '<button type="button" class="btn btn-primary btn-sm" onclick="openAddStudentModal(\'' + cls + '\')">+ Add Student</button>' +
                         '</div>';
                     return;
@@ -2673,7 +3209,7 @@
                 var due = Math.max(0, total - paid);
 
                 document.getElementById('bioStudentAvatar').textContent = getInitials(student.name);
-                document.getElementById('bioStudentClass').textContent = 'Class ' + student.className;
+                document.getElementById('bioStudentClass').textContent = 'Class ' + student.className + ' (' + (student.academicYear || '2026') + ')';
                 document.getElementById('bioStudentWingSec').textContent = (student.gender || 'Boys') + ' • Section ' + (student.section || 'A');
                 document.getElementById('bioStudentRoll').textContent = 'Roll No: ' + student.rollNo;
                 document.getElementById('bioStudentName').textContent = student.name;
@@ -3060,7 +3596,7 @@
             };
 
             window.exportAllStudentsToCSV = function () {
-                var headers = ["RollNo", "Name", "Class", "FatherName", "MotherName", "Mobile", "School", "TotalFee", "PaidFee", "PendingDue"];
+                var headers = ["AcademicYear", "RollNo", "Name", "Class", "Wing", "Section", "FatherName", "MotherName", "Mobile", "School", "TotalFee", "PaidFee", "PendingDue"];
                 var rows = [headers.join(",")];
 
                 appData.students.forEach(function (s) {
@@ -3068,9 +3604,12 @@
                     var paid = Number(s.paidFee) || 0;
                     var due = Math.max(0, total - paid);
                     var vals = [
+                        s.academicYear || "2026",
                         s.rollNo,
                         s.name,
                         s.className,
+                        s.gender || "Boys",
+                        s.section || "A",
                         s.fatherName,
                         s.motherName || "",
                         s.mobile,
@@ -3154,6 +3693,7 @@
                     startIdx = 1;
                 }
 
+                var activeYr = appData.selectedYear || "2026";
                 var importedCount = 0;
                 var skippedCount = 0;
 
@@ -3172,7 +3712,7 @@
                     }
 
                     var isDuplicate = appData.students.some(function (st) {
-                        return st.className === cls && String(st.rollNo).toLowerCase() === String(rollNo).toLowerCase();
+                        return (st.academicYear || '2026') === activeYr && st.className === cls && String(st.rollNo).toLowerCase() === String(rollNo).toLowerCase();
                     });
                     if (isDuplicate) {
                         skippedCount++;
@@ -3181,6 +3721,7 @@
 
                     appData.students.push({
                         id: "s_csv_" + Date.now() + "_" + i,
+                        academicYear: activeYr,
                         name: name,
                         gender: "Boys",
                         section: "A",
@@ -3190,7 +3731,7 @@
                         motherName: cols[4] || "",
                         mobile: cols[5] || "9876543210",
                         dob: "",
-                        admissionDate: new Date().toISOString().split("T")[0],
+                        admissionDate: activeYr + "-" + new Date().toISOString().slice(5, 10),
                         schoolName: cols[6] || "",
                         subjects: "All Subjects",
                         address: "",
@@ -3202,7 +3743,7 @@
 
                 saveAppData();
                 renderDashboard();
-                showToast("Imported " + importedCount + " students! (" + skippedCount + " skipped/duplicate)", importedCount > 0 ? "success" : "error");
+                showToast("Imported " + importedCount + " students into " + activeYr + "!", importedCount > 0 ? "success" : "error");
             }
 
             window.handleCSVFileUpload = function (event) {
@@ -3257,7 +3798,7 @@
                 });
 
                 document.getElementById('attendanceSummaryBadges').innerHTML =
-                    '<span class="badge badge-indigo">Total: ' + classStudents.length + '</span>' +
+                    '<span class="badge badge-indigo">Year ' + activeYr + ' • Total: ' + classStudents.length + '</span>' +
                     '<span class="badge badge-emerald">Present: ' + presentCount + '</span>' +
                     '<span class="badge badge-rose">Absent: ' + absentCount + '</span>' +
                     '<span class="badge badge-amber">Unmarked: ' + unmarkedCount + '</span>';
@@ -3266,7 +3807,7 @@
                 container.innerHTML = '';
 
                 if (classStudents.length === 0) {
-                    container.innerHTML = '<div class="panel" style="grid-column:1/-1; padding:28px; text-align:center;">No students enrolled in Class ' + escapeHTML(cls) + '.</div>';
+                    container.innerHTML = '<div class="panel" style="grid-column:1/-1; padding:28px; text-align:center;">No students enrolled in Class ' + escapeHTML(cls) + ' (' + escapeHTML(activeYr) + ').</div>';
                     return;
                 }
 
@@ -3328,18 +3869,6 @@
                     var matchYr = filterYr === 'all' || (s.academicYear || '2026') === filterYr;
                     return due > 0 && matchYr && (filterCls === 'all' || s.className === filterCls);
                 });
-                saveAppData();
-                renderAttendanceView();
-                renderDashboard();
-                showToast('Class ' + cls + ' के सभी छात्र Present मार्क किए गए!', 'success');
-            };
-
-            function renderBulkRemindersView() {
-                var filterCls = document.getElementById('reminderClassFilter').value;
-                var dueStudents = appData.students.filter(function (s) {
-                    var due = (Number(s.totalFee) || 0) - (Number(s.paidFee) || 0);
-                    return due > 0 && (filterCls === 'all' || s.className === filterCls);
-                });
 
                 var sample = dueStudents[0] || appData.students[0];
                 if (sample) {
@@ -3365,7 +3894,7 @@
                     card.innerHTML =
                         '<div>' +
                             '<div style="display:flex; justify-content:space-between; align-items:center;">' +
-                                '<span class="badge badge-indigo">Class ' + escapeHTML(s.className) + ' • Roll ' + escapeHTML(s.rollNo) + '</span>' +
+                                '<span class="badge badge-indigo">' + escapeHTML(s.academicYear || '2026') + ' • Class ' + escapeHTML(s.className) + ' • Roll ' + escapeHTML(s.rollNo) + '</span>' +
                                 '<span class="badge badge-amber">बकाया: ' + formatCurrency(due) + '</span>' +
                             '</div>' +
                             '<h3 style="font-size:1rem; font-weight:800; margin-top:8px;">' + escapeHTML(s.name) + '</h3>' +
@@ -3456,7 +3985,8 @@
                     showToast('Student biodata updated!', 'success');
                 } else {
                     appData.students.push(studentObj);
-                    showToast(studentObj.name + ' added to Class ' + studentObj.className + '!', 'success');
+                    appData.selectedYear = selectedYr;
+                    showToast(studentObj.name + ' added to Class ' + studentObj.className + ' (' + selectedYr + ')!', 'success');
                 }
 
                 saveAppData();
@@ -3729,7 +4259,7 @@
             window.pullCloudDataNow(false);
             setInterval(function () {
                 window.pullCloudDataNow(false);
-            }, 5000);
+            }, 6000);
             document.addEventListener('DOMContentLoaded', function () {
                 checkInitialLockState();
                 renderDashboard();

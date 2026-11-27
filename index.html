@@ -2471,6 +2471,19 @@
                 }
             }
 
+            function getUrlSnapParam() {
+                try {
+                    var hash = window.location.hash || '';
+                    if (hash.indexOf('#snap=') === 0) {
+                        return hash.slice(6);
+                    }
+                    var params = new URLSearchParams(window.location.search || '');
+                    return params.get('snap') || '';
+                } catch (e) {
+                    return '';
+                }
+            }
+
             var urlRoom = getUrlRoomParam();
             if (urlRoom && urlRoom !== appData.syncRoomId) {
                 appData.syncRoomId = urlRoom;
@@ -2480,9 +2493,64 @@
             }
             appData.syncRev = Number(appData.syncRev) || 0;
 
+            function uint8ToBase64Url(bytes) {
+                var bin = '';
+                for (var i = 0; i < bytes.length; i++) {
+                    bin += String.fromCharCode(bytes[i]);
+                }
+                return btoa(bin).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+            }
+
+            function base64UrlToUint8(b64u) {
+                var b64 = b64u.replace(/-/g, '+').replace(/_/g, '/');
+                while (b64.length % 4) b64 += '=';
+                var bin = atob(b64);
+                var bytes = new Uint8Array(bin.length);
+                for (var i = 0; i < bin.length; i++) {
+                    bytes[i] = bin.charCodeAt(i);
+                }
+                return bytes;
+            }
+
+            function compressStringAsync(str) {
+                if (typeof window.CompressionStream === 'undefined') {
+                    return Promise.resolve('RAW:' + str);
+                }
+                try {
+                    var stream = new Blob([str]).stream().pipeThrough(new window.CompressionStream('gzip'));
+                    return new Response(stream).arrayBuffer().then(function (buf) {
+                        return 'GZ:' + uint8ToBase64Url(new Uint8Array(buf));
+                    }).catch(function () {
+                        return 'RAW:' + str;
+                    });
+                } catch (e) {
+                    return Promise.resolve('RAW:' + str);
+                }
+            }
+
+            function decompressStringAsync(encoded) {
+                if (!encoded) return Promise.resolve(null);
+                if (encoded.indexOf('RAW:') === 0) {
+                    return Promise.resolve(encoded.slice(4));
+                }
+                if (encoded.indexOf('GZ:') === 0) {
+                    if (typeof window.DecompressionStream === 'undefined') {
+                        return Promise.resolve(null);
+                    }
+                    try {
+                        var bytes = base64UrlToUint8(encoded.slice(3));
+                        var stream = new Blob([bytes]).stream().pipeThrough(new window.DecompressionStream('gzip'));
+                        return new Response(stream).text().catch(function () { return null; });
+                    } catch (e) {
+                        return Promise.resolve(null);
+                    }
+                }
+                return Promise.resolve(encoded);
+            }
+
             function getCloudTopicUrl(roomId) {
                 var clean = (roomId || 'shining26').replace(/[^a-zA-Z0-9_-]/g, '');
-                return 'https://ntfy.sh/shining_coaching_sync_v6_' + encodeURIComponent(clean);
+                return 'https://ntfy.sh/shining_coaching_gz_v7_' + encodeURIComponent(clean);
             }
 
             function updateSyncBadgeUI(statusLabel, stateType) {
@@ -2519,7 +2587,7 @@
                     return idx;
                 }
                 return {
-                    v: 6,
+                    v: 7,
                     rev: Number(appData.syncRev) || 1,
                     dev: DEVICE_SYNC_ID,
                     ts: Date.now(),
@@ -2638,7 +2706,7 @@
             function handleParsedCloudPacket(parsedMsg, showFeedback, forceOverwrite) {
                 if (!parsedMsg) return false;
                 if (parsedMsg.dev && parsedMsg.dev === DEVICE_SYNC_ID && !forceOverwrite) return false;
-                var unpacked = (parsedMsg.v >= 2 && parsedMsg.v <= 6) ? unpackCompactSyncPayload(parsedMsg) : parsedMsg;
+                var unpacked = (parsedMsg.v >= 2 && parsedMsg.v <= 7) ? unpackCompactSyncPayload(parsedMsg) : parsedMsg;
                 if (unpacked && Array.isArray(unpacked.students) && Array.isArray(unpacked.teachers)) {
                     var remoteRev = Number(unpacked.syncRev) || 0;
                     var localRev = Number(appData.syncRev) || 0;
@@ -2650,16 +2718,23 @@
                 return false;
             }
 
-            function processIncomingNtfyLine(lineText, showFeedback, forceOverwrite) {
-                if (!lineText) return false;
+            function processIncomingNtfyLineAsync(lineText, showFeedback, forceOverwrite) {
+                if (!lineText) return Promise.resolve(false);
                 try {
                     var wrapper = JSON.parse(lineText);
                     if (wrapper && wrapper.event === 'message' && wrapper.message) {
-                        var msgObj = JSON.parse(wrapper.message);
-                        return handleParsedCloudPacket(msgObj, showFeedback, forceOverwrite);
+                        return decompressStringAsync(wrapper.message).then(function (jsonStr) {
+                            if (!jsonStr) return false;
+                            try {
+                                var msgObj = JSON.parse(jsonStr);
+                                return handleParsedCloudPacket(msgObj, showFeedback, forceOverwrite);
+                            } catch (e) {
+                                return false;
+                            }
+                        });
                     }
                 } catch (e) {}
-                return false;
+                return Promise.resolve(false);
             }
 
             function startRealtimeCloudStream() {
@@ -2676,7 +2751,7 @@
                     };
                     es.onmessage = function (ev) {
                         updateSyncBadgeUI('☁️ Live Sync: ' + appData.syncRoomId, 'ok');
-                        processIncomingNtfyLine(ev.data, false, false);
+                        processIncomingNtfyLineAsync(ev.data, false, false);
                     };
                     es.onerror = function () {};
                     activeEventSource = es;
@@ -2694,20 +2769,22 @@
                 var compactStr = JSON.stringify(buildCompactSyncPayload());
                 var topicUrl = getCloudTopicUrl(appData.syncRoomId);
 
-                fetch(topicUrl, {
-                    method: 'POST',
-                    body: compactStr
-                }).then(function (r) {
-                    if (!r.ok) throw new Error('HTTP ' + r.status);
-                    isCloudSyncing = false;
-                    updateSyncBadgeUI('☁️ Live Sync: ' + appData.syncRoomId, 'ok');
-                    if (showFeedback) showToast('Live Cloud Sync पूरा हुआ! सभी फोन पर अपडेट चला गया।', 'success');
-                }).catch(function () {
-                    isCloudSyncing = false;
-                    updateSyncBadgeUI('☁️ Live Sync: ' + appData.syncRoomId, 'ok');
-                    setTimeout(function () {
-                        fetch(topicUrl, { method: 'POST', body: compactStr }).catch(function () {});
-                    }, 3000);
+                compressStringAsync(compactStr).then(function (compressedPayload) {
+                    return fetch(topicUrl, {
+                        method: 'POST',
+                        body: compressedPayload
+                    }).then(function (r) {
+                        if (!r.ok) throw new Error('HTTP ' + r.status);
+                        isCloudSyncing = false;
+                        updateSyncBadgeUI('☁️ Live Sync: ' + appData.syncRoomId, 'ok');
+                        if (showFeedback) showToast('Live Cloud Sync पूरा हुआ! सभी फोन पर अपडेट चला गया।', 'success');
+                    }).catch(function () {
+                        isCloudSyncing = false;
+                        updateSyncBadgeUI('☁️ Live Sync: ' + appData.syncRoomId, 'ok');
+                        setTimeout(function () {
+                            fetch(topicUrl, { method: 'POST', body: compressedPayload }).catch(function () {});
+                        }, 2500);
+                    });
                 });
             };
 
@@ -2722,18 +2799,26 @@
                     return res.text();
                 }).then(function (rawText) {
                     var lines = rawText.trim().split('\n');
-                    var updated = false;
+                    var chain = Promise.resolve(false);
+                    var anyUpdated = false;
 
-                    for (var i = 0; i < lines.length; i++) {
-                        if (processIncomingNtfyLine(lines[i], showFeedback, Boolean(showFeedback))) {
-                            updated = true;
+                    lines.forEach(function (line) {
+                        chain = chain.then(function () {
+                            return processIncomingNtfyLineAsync(line, false, Boolean(showFeedback)).then(function (didUpdate) {
+                                if (didUpdate) anyUpdated = true;
+                                return anyUpdated;
+                            });
+                        });
+                    });
+
+                    return chain.then(function (updated) {
+                        if (updated && showFeedback) {
+                            showToast('सभी devices से नया live data सिंक हो गया!', 'success');
+                        } else if (!updated && showFeedback) {
+                            showToast('आपका डेटा पहले से ही up-to-date है!', 'success');
                         }
-                    }
-
-                    if (!updated && showFeedback) {
-                        showToast('आपका डेटा पहले से ही up-to-date है!', 'success');
-                    }
-                    updateSyncBadgeUI('☁️ Live Sync: ' + appData.syncRoomId, 'ok');
+                        updateSyncBadgeUI('☁️ Live Sync: ' + appData.syncRoomId, 'ok');
+                    });
                 }).catch(function () {
                     if (showFeedback) {
                         updateSyncBadgeUI('⚠️ Sync Retry: ' + appData.syncRoomId, 'warn');
@@ -2776,10 +2861,13 @@
                 var rawRoom = (document.getElementById('syncRoomIdInput').value || appData.syncRoomId || 'shining26').trim().replace(/[^a-zA-Z0-9_-]/g, '');
                 appData.syncRoomId = rawRoom;
                 var baseUrl = window.location.href.split('?')[0].split('#')[0];
-                var shareUrl = baseUrl + '?room=' + encodeURIComponent(rawRoom);
-                copyTextFallback(shareUrl);
-                window.pushCloudDataNow(false);
-                showToast('Live Multi-Device Sync Link कॉपी हो गया! WhatsApp पर भेजें।', 'success');
+                var compactStr = JSON.stringify(buildCompactSyncPayload());
+                compressStringAsync(compactStr).then(function (compressed) {
+                    var shareUrl = baseUrl + '?room=' + encodeURIComponent(rawRoom) + '#snap=' + encodeURIComponent(compressed);
+                    copyTextFallback(shareUrl);
+                    window.pushCloudDataNow(false);
+                    showToast('Instant Live Sync Link कॉपी हो गया! WhatsApp पर भेजें।', 'success');
+                });
             };
 
             function formatCurrency(amount) {
@@ -4770,6 +4858,25 @@
 
             checkInitialLockState();
             renderDashboard();
+
+            var initialSnap = getUrlSnapParam();
+            if (initialSnap) {
+                decompressStringAsync(decodeURIComponent(initialSnap)).then(function (jsonStr) {
+                    if (!jsonStr) return;
+                    try {
+                        var snapObj = JSON.parse(jsonStr);
+                        var unpacked = (snapObj.v >= 2 && snapObj.v <= 7) ? unpackCompactSyncPayload(snapObj) : snapObj;
+                        if (unpacked && Array.isArray(unpacked.students)) {
+                            var remoteRev = Number(unpacked.syncRev) || 0;
+                            var localRev = Number(appData.syncRev) || 0;
+                            if (localRev === 0 || remoteRev >= localRev) {
+                                applyRemoteCloudState(unpacked, false);
+                            }
+                        }
+                    } catch (e) {}
+                });
+            }
+
             startRealtimeCloudStream();
             window.pullCloudDataNow(false);
             setInterval(function () {

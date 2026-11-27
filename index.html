@@ -1191,6 +1191,7 @@
                     <button type="button" id="nav-teachers" class="nav-btn" onclick="switchView('teachers')">👨‍🏫 Teachers <span id="nav-teacher-count" class="pill-count">4</span></button>
                     <button type="button" id="nav-attendance" class="nav-btn" onclick="switchView('attendance')">📋 हाजिरी</button>
                     <button type="button" id="nav-reminders" class="nav-btn" onclick="switchView('reminders')">🔔 Reminders <span id="nav-due-count" class="pill-count amber">0</span></button>
+                    <button type="button" id="nav-expenses" class="nav-btn" onclick="switchView('expenses')">💸 खर्च (Expense)</button>
                     <button type="button" id="nav-excel" class="nav-btn" onclick="switchView('excel')">📊 Excel / CSV</button>
                     <button type="button" id="nav-whitelabel" class="nav-btn" onclick="switchView('whitelabel')">🏷 White-Label</button>
                 </nav>
@@ -1248,6 +1249,42 @@
                         <div id="kpi-total-teachers" class="kpi-sub">0 Teachers • View Salary →</div>
                     </div>
                     <div class="kpi-icon" style="background:var(--purple-soft); color:var(--purple);">👨‍🏫</div>
+                </div>
+            </div>
+
+            <!-- Monthly & Yearly Expenditure + Net Profit Live Strip -->
+            <div class="panel" style="padding:16px 20px;">
+                <div style="display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:10px; margin-bottom:12px;">
+                    <div>
+                        <h3 class="section-title">💸 Coaching Expenditure &amp; Net Balance (महीना और साल का कुल खर्च)</h3>
+                        <p class="section-desc">इस महीने और पूरे साल (<span id="dash-exp-year-lbl">2026</span>) का कुल खर्च (किराया, बिजली, स्टेशनरी आदि) और शुद्ध बचत</p>
+                    </div>
+                    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                        <button type="button" class="btn btn-amber btn-sm" onclick="openAddExpenseModal()">+ Add Expense (खर्च जोड़ें)</button>
+                        <button type="button" class="btn btn-soft-indigo btn-sm" onclick="switchView('expenses')">View Full Report →</button>
+                    </div>
+                </div>
+                <div class="salary-summary-grid" style="padding:0;">
+                    <div class="mini-stat-box" style="background:var(--rose-soft); border-color:#fecdd3;">
+                        <span class="kpi-label" style="color:var(--rose);">इस महीने का खर्च (This Month)</span>
+                        <div id="kpi-month-expense" style="font-size:1.25rem; font-weight:800; color:var(--rose); margin-top:4px;">₹0</div>
+                        <div id="kpi-month-expense-sub" class="kpi-sub">Current Month</div>
+                    </div>
+                    <div class="mini-stat-box" style="background:var(--amber-soft); border-color:#fde68a;">
+                        <span class="kpi-label" style="color:#b45309;">पूरे साल का खर्च (Yearly Expense)</span>
+                        <div id="kpi-year-expense" style="font-size:1.25rem; font-weight:800; color:#b45309; margin-top:4px;">₹0</div>
+                        <div id="kpi-year-expense-sub" class="kpi-sub">Other Coaching Expenses</div>
+                    </div>
+                    <div class="mini-stat-box" style="background:var(--purple-soft); border-color:#ddd6fe;">
+                        <span class="kpi-label" style="color:var(--purple);">कुल खर्च + टीचर भुगतान (Total Outflow)</span>
+                        <div id="kpi-total-outflow" style="font-size:1.25rem; font-weight:800; color:var(--purple); margin-top:4px;">₹0</div>
+                        <div class="kpi-sub">Expenses + Teacher Paid</div>
+                    </div>
+                    <div class="mini-stat-box" style="background:var(--emerald-soft); border-color:#a7f3d0;">
+                        <span class="kpi-label" style="color:var(--emerald-dark);">शुद्ध बचत (Net Balance)</span>
+                        <div id="kpi-net-savings" style="font-size:1.25rem; font-weight:800; color:var(--emerald-dark); margin-top:4px;">₹0</div>
+                        <div class="kpi-sub">Collected Fee − Total Outflow</div>
+                    </div>
                 </div>
             </div>
 
@@ -1465,6 +1502,94 @@
             </div>
 
             <div id="bulkRemindersContainer" class="cards-grid"></div>
+        </div>
+
+        <!-- VIEW 5B: COACHING EXPENDITURE (MONTHLY & YEARLY TRACKER) -->
+        <div id="view-expenses" class="section-stack hidden">
+            <div class="toolbar-bar">
+                <div>
+                    <h2 class="section-title">💸 Coaching Expenditure Tracker (महीना और साल का खर्च हिसाब)</h2>
+                    <p class="section-desc">कोचिंग का किराया, बिजली बिल, स्टेशनरी, प्रिंटिंग, मरम्मत और अन्य सभी खर्चों का महीने और साल के अनुसार पूरा हिसाब</p>
+                </div>
+                <div style="display:flex; gap:8px; flex-wrap:wrap; align-items:center;">
+                    <select id="expenseYearFilter" class="input-control" onchange="renderExpensesView()"></select>
+                    <select id="expenseMonthFilter" class="input-control" onchange="renderExpensesView()">
+                        <option value="all">All Months (पूरा साल)</option>
+                        <option value="01">January (जनवरी)</option>
+                        <option value="02">February (फ़रवरी)</option>
+                        <option value="03">March (मार्च)</option>
+                        <option value="04">April (अप्रैल)</option>
+                        <option value="05">May (मई)</option>
+                        <option value="06">June (जून)</option>
+                        <option value="07">July (जुलाई)</option>
+                        <option value="08">August (अगस्त)</option>
+                        <option value="09">September (सितंबर)</option>
+                        <option value="10">October (अक्टूबर)</option>
+                        <option value="11">November (नवंबर)</option>
+                        <option value="12">December (दिसंबर)</option>
+                    </select>
+                    <select id="expenseCategoryFilter" class="input-control" onchange="renderExpensesView()">
+                        <option value="all">All Categories</option>
+                        <option value="Room Rent (किराया)">Room Rent (किराया)</option>
+                        <option value="Electricity & Internet (बिजली/नेट)">Electricity &amp; Internet (बिजली/नेट)</option>
+                        <option value="Stationery & Chalk/Marker">Stationery &amp; Chalk/Marker</option>
+                        <option value="Test Paper & Printing">Test Paper &amp; Printing</option>
+                        <option value="Maintenance & Cleaning">Maintenance &amp; Cleaning</option>
+                        <option value="Other Expense (अन्य खर्च)">Other Expense (अन्य खर्च)</option>
+                    </select>
+                    <button type="button" class="btn btn-amber btn-sm" onclick="openAddExpenseModal()">+ Add Expense (नया खर्च)</button>
+                </div>
+            </div>
+
+            <!-- Expense KPI Strip -->
+            <div id="expenseSummaryKpiGrid" class="kpi-grid"></div>
+
+            <!-- Month-Wise Yearly Expenditure Breakdown Table -->
+            <div class="panel">
+                <div class="panel-header">
+                    <div>
+                        <h3 class="section-title">📅 Month-Wise Expenditure Summary (<span id="expTableYearTitle">2026</span> का मासिक खर्च चार्ट)</h3>
+                        <p class="section-desc">हर महीने का कुल खर्च और सालाना ग्रैंड टोटल (Grand Total)</p>
+                    </div>
+                </div>
+                <div class="table-wrap">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Month (महीना)</th>
+                                <th class="text-center">Entries</th>
+                                <th class="text-right">Coaching Expense (₹)</th>
+                                <th class="text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="monthWiseExpenseBody"></tbody>
+                        <tfoot id="monthWiseExpenseFoot"></tfoot>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Detailed Expense Entries -->
+            <div class="panel">
+                <div class="panel-header">
+                    <h3 class="section-title">🧾 Detailed Expense Entries (खर्च की पूरी सूची)</h3>
+                    <span id="expenseEntriesCountBadge" class="badge badge-amber">0 Entries</span>
+                </div>
+                <div class="table-wrap">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Category</th>
+                                <th>Description (विवरण)</th>
+                                <th>Paid To / Mode</th>
+                                <th class="text-right">Amount (₹)</th>
+                                <th class="text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="expenseEntriesTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
         </div>
 
         <!-- VIEW 6: EXCEL / CSV IMPORT & EXPORT -->
@@ -2090,6 +2215,54 @@
         </div>
     </div>
 
+    <!-- =========================================================
+         MODAL 9: ADD / EDIT COACHING EXPENSE MODAL
+         ========================================================= -->
+    <div id="expenseFormModal" class="modal-backdrop hidden" onclick="if(event.target===this) closeModal('expenseFormModal')">
+        <div class="modal-card sm">
+            <div class="panel-header">
+                <h3 id="expenseFormTitle" style="font-size:1.05rem; font-weight:800;">💸 Add Coaching Expense (खर्च जोड़ें)</h3>
+                <button type="button" class="edit-icon-btn" onclick="closeModal('expenseFormModal')">✕</button>
+            </div>
+            <form id="expenseForm" onsubmit="saveExpenseForm(event)" class="modal-body">
+                <input type="hidden" id="formExpenseId">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Date (तारीख) *</label>
+                        <input type="date" id="formExpenseDate" class="input-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Amount (राशि ₹) *</label>
+                        <input type="number" id="formExpenseAmount" class="input-control" required min="1" placeholder="e.g. 2500">
+                    </div>
+                    <div class="form-group full">
+                        <label>Expense Category (खर्च का प्रकार) *</label>
+                        <select id="formExpenseCategory" class="input-control" required>
+                            <option value="Room Rent (किराया)">Room Rent (किराया)</option>
+                            <option value="Electricity & Internet (बिजली/नेट)">Electricity &amp; Internet (बिजली/नेट)</option>
+                            <option value="Stationery & Chalk/Marker">Stationery &amp; Chalk/Marker</option>
+                            <option value="Test Paper & Printing">Test Paper &amp; Printing</option>
+                            <option value="Maintenance & Cleaning">Maintenance &amp; Cleaning</option>
+                            <option value="Other Expense (अन्य खर्च)">Other Expense (अन्य खर्च)</option>
+                        </select>
+                    </div>
+                    <div class="form-group full">
+                        <label>Description / Note (खर्च का विवरण) *</label>
+                        <input type="text" id="formExpenseTitle" class="input-control" required placeholder="e.g. Monthly Hall Rent / Whiteboard Markers">
+                    </div>
+                    <div class="form-group full">
+                        <label>Paid To / Payment Mode (किसको दिया / माध्यम)</label>
+                        <input type="text" id="formExpensePaidTo" class="input-control" placeholder="e.g. Cash / UPI / Landlord">
+                    </div>
+                </div>
+                <div style="display:flex; justify-content:flex-end; gap:8px; padding-top:8px; border-top:1px solid var(--border-color);">
+                    <button type="button" class="btn btn-soft" onclick="closeModal('expenseFormModal')">Cancel</button>
+                    <button type="submit" class="btn btn-amber">✓ Save Expense</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Toast Notification Container -->
     <div id="toastContainer" class="toast-wrap"></div>
 
@@ -2127,6 +2300,13 @@
                 licenseExpiry: "2027-12-31",
                 adminPin: "1234",
                 attendance: {},
+                expenses: [
+                    { id: 'exp1', date: '2026-11-01', category: 'Room Rent (किराया)', title: 'Coaching Building Monthly Rent', paidTo: 'Landlord (Bank Transfer)', amount: 8500 },
+                    { id: 'exp2', date: '2026-11-05', category: 'Electricity & Internet (बिजली/नेट)', title: 'Electricity Bill & Wi-Fi Recharge', paidTo: 'UPI / Online', amount: 1850 },
+                    { id: 'exp3', date: '2026-11-12', category: 'Test Paper & Printing', title: 'Weekly Test Question Paper Xerox', paidTo: 'Cash', amount: 950 },
+                    { id: 'exp4', date: '2026-10-02', category: 'Room Rent (किराया)', title: 'October Hall Rent', paidTo: 'Bank Transfer', amount: 8500 },
+                    { id: 'exp5', date: '2026-10-15', category: 'Stationery & Chalk/Marker', title: 'Whiteboard Markers, Duster & Registers', paidTo: 'Cash', amount: 1200 }
+                ],
                 students: [
                     { id: 's1', academicYear: '2026', name: 'Aarav Kumar', gender: 'Boys', section: 'A', className: '7th', rollNo: '701', fatherName: 'Manoj Kumar', motherName: 'Sunita Devi', mobile: '9876543210', dob: '2014-05-12', admissionDate: '2026-04-02', schoolName: 'DAV Public School', subjects: 'Maths, Science, English, SST', address: 'Station Road, Ward No. 4', totalFee: 5000, paidFee: 5000 },
                     { id: 's2', academicYear: '2026', name: 'Ananya Kumari', gender: 'Girls', section: 'A', className: '7th', rollNo: '702', fatherName: 'Rakesh Singh', motherName: 'Pooja Singh', mobile: '9876543211', dob: '2014-08-21', admissionDate: '2026-04-05', schoolName: 'St. Mary School', subjects: 'Maths, Science, English', address: 'Gandhi Nagar, Near Temple', totalFee: 5000, paidFee: 3500 },
@@ -2213,6 +2393,7 @@
                         var parsed = JSON.parse(raw);
                         if (parsed && Array.isArray(parsed.students) && Array.isArray(parsed.teachers)) {
                             parsed.attendance = parsed.attendance || {};
+                            parsed.expenses = Array.isArray(parsed.expenses) ? parsed.expenses : cloneData(DEFAULT_DATA.expenses);
                             if (!parsed.instituteName || /impact coaching/i.test(parsed.instituteName)) {
                                 parsed.instituteName = DEFAULT_DATA.instituteName;
                             }
@@ -2279,6 +2460,7 @@
             var syncPushTimer = null;
             var isCloudSyncing = false;
             var activeEventSource = null;
+            var incomingChunkStore = {};
             var DEVICE_SYNC_ID = 'dev_' + Math.random().toString(36).slice(2, 10);
 
             function getUrlRoomParam() {
@@ -2301,7 +2483,7 @@
 
             function getCloudTopicUrl(roomId) {
                 var clean = (roomId || 'shining26').replace(/[^a-zA-Z0-9_-]/g, '');
-                return 'https://ntfy.sh/shining_coaching_live_v3_' + encodeURIComponent(clean);
+                return 'https://ntfy.sh/shining_coaching_live_v5_' + encodeURIComponent(clean);
             }
 
             function updateSyncBadgeUI(statusLabel, stateType) {
@@ -2326,11 +2508,23 @@
             }
 
             function buildCompactSyncPayload() {
+                var dict = [];
+                function intern(val) {
+                    var s = String(val || '');
+                    if (s.length < 4) return s;
+                    var idx = dict.indexOf(s);
+                    if (idx === -1) {
+                        idx = dict.length;
+                        dict.push(s);
+                    }
+                    return idx;
+                }
                 return {
-                    v: 3,
+                    v: 5,
                     rev: Number(appData.syncRev) || 1,
                     dev: DEVICE_SYNC_ID,
                     ts: Date.now(),
+                    d: dict,
                     n: appData.instituteName,
                     tg: appData.instituteTagline,
                     dn: appData.directorName,
@@ -2343,19 +2537,22 @@
                     ay: appData.academicYears,
                     sy: appData.selectedYear,
                     at: appData.attendance || {},
+                    ex: (appData.expenses || []).map(function (e) {
+                        return [e.id, e.date, intern(e.category || ''), e.title || '', e.paidTo || '', Number(e.amount) || 0];
+                    }),
                     st: (appData.students || []).map(function (s) {
                         return [
-                            s.id, s.academicYear || '2026', s.name, s.gender || 'Boys',
+                            s.id, intern(s.academicYear || '2026'), s.name, intern(s.gender || 'Boys'),
                             s.section || 'A', s.className, s.rollNo, s.fatherName,
-                            s.motherName || '', s.mobile, s.dob || '', s.admissionDate || '',
-                            s.schoolName || '', s.subjects || '', s.address || '',
+                            s.motherName || '', s.mobile, s.dob || '', intern(s.admissionDate || ''),
+                            intern(s.schoolName || ''), intern(s.subjects || ''), intern(s.address || ''),
                             Number(s.totalFee) || 0, Number(s.paidFee) || 0
                         ];
                     }),
                     tc: (appData.teachers || []).map(function (t) {
                         return [
-                            t.id, t.name, t.qualification || '', t.subjects || '',
-                            t.classesAssigned || '', t.mobile || '', t.experience || '',
+                            t.id, t.name, intern(t.qualification || ''), intern(t.subjects || ''),
+                            intern(t.classesAssigned || ''), t.mobile || '', t.experience || '',
                             t.joiningDate || '', Number(t.salary) || 0, Number(t.paidSalary) || 0,
                             Number(t.advanceAmount) || 0, Number(t.classesTaken) || 0,
                             Number(t.leaveDays) || 0, t.isOnLeave ? 1 : 0,
@@ -2368,6 +2565,11 @@
 
             function unpackCompactSyncPayload(p) {
                 if (!p || !Array.isArray(p.st) || !Array.isArray(p.tc)) return null;
+                var dict = Array.isArray(p.d) ? p.d : null;
+                function lookup(v) {
+                    if (dict && typeof v === 'number') return dict[v] || '';
+                    return v || '';
+                }
                 return {
                     instituteName: p.n || appData.instituteName,
                     instituteLogo: appData.instituteLogo || "",
@@ -2385,19 +2587,29 @@
                     licenseExpiry: p.le || appData.licenseExpiry,
                     adminPin: p.pn || appData.adminPin,
                     attendance: p.at || {},
+                    expenses: Array.isArray(p.ex) ? p.ex.map(function (r) {
+                        return {
+                            id: r[0],
+                            date: r[1],
+                            category: lookup(r[2]) || 'Other Expense (अन्य खर्च)',
+                            title: r[3] || '',
+                            paidTo: r[4] || '',
+                            amount: Number(r[5]) || 0
+                        };
+                    }) : (appData.expenses || []),
                     students: p.st.map(function (r) {
                         return {
-                            id: r[0], academicYear: r[1], name: r[2], gender: r[3],
+                            id: r[0], academicYear: lookup(r[1]) || '2026', name: r[2], gender: lookup(r[3]) || 'Boys',
                             section: r[4], className: r[5], rollNo: r[6], fatherName: r[7],
-                            motherName: r[8], mobile: r[9], dob: r[10], admissionDate: r[11],
-                            schoolName: r[12], subjects: r[13], address: r[14],
+                            motherName: r[8], mobile: r[9], dob: r[10], admissionDate: lookup(r[11]),
+                            schoolName: lookup(r[12]), subjects: lookup(r[13]), address: lookup(r[14]),
                             totalFee: Number(r[15]) || 0, paidFee: Number(r[16]) || 0
                         };
                     }),
                     teachers: p.tc.map(function (r) {
                         return {
-                            id: r[0], name: r[1], qualification: r[2], subjects: r[3],
-                            classesAssigned: r[4], mobile: r[5], experience: r[6],
+                            id: r[0], name: r[1], qualification: lookup(r[2]), subjects: lookup(r[3]),
+                            classesAssigned: lookup(r[4]), mobile: r[5], experience: r[6],
                             joiningDate: r[7], salary: Number(r[8]) || 0, paidSalary: Number(r[9]) || 0,
                             advanceAmount: Number(r[10]) || 0, classesTaken: Number(r[11]) || 0,
                             leaveDays: Number(r[12]) || 0, isOnLeave: Boolean(r[13]),
@@ -2420,13 +2632,14 @@
                 if (!document.getElementById('view-teachers').classList.contains('hidden')) renderTeacherList();
                 if (!document.getElementById('view-attendance').classList.contains('hidden')) renderAttendanceView();
                 if (!document.getElementById('view-reminders').classList.contains('hidden')) renderBulkRemindersView();
+                if (!document.getElementById('view-expenses').classList.contains('hidden')) renderExpensesView();
                 if (showFeedback) showToast('सभी devices से नया live data सिंक हो गया!', 'success');
             }
 
             function handleParsedCloudPacket(parsedMsg, showFeedback, forceOverwrite) {
                 if (!parsedMsg) return false;
                 if (parsedMsg.dev && parsedMsg.dev === DEVICE_SYNC_ID && !forceOverwrite) return false;
-                var unpacked = (parsedMsg.v === 3 || parsedMsg.v === 2) ? unpackCompactSyncPayload(parsedMsg) : parsedMsg;
+                var unpacked = (parsedMsg.v >= 2 && parsedMsg.v <= 5) ? unpackCompactSyncPayload(parsedMsg) : parsedMsg;
                 if (unpacked && Array.isArray(unpacked.students) && Array.isArray(unpacked.teachers)) {
                     var remoteRev = Number(unpacked.syncRev) || 0;
                     var localRev = Number(appData.syncRev) || 0;
@@ -2442,20 +2655,25 @@
                 if (!lineText) return false;
                 try {
                     var wrapper = JSON.parse(lineText);
-                    if (wrapper && wrapper.event === 'message') {
-                        if (wrapper.attachment && wrapper.attachment.url) {
-                            fetch(wrapper.attachment.url)
-                                .then(function (r) { return r.json(); })
-                                .then(function (attJson) {
-                                    handleParsedCloudPacket(attJson, showFeedback, forceOverwrite);
-                                })
-                                .catch(function () {});
-                            return true;
+                    if (wrapper && wrapper.event === 'message' && wrapper.message) {
+                        var msgObj = JSON.parse(wrapper.message);
+                        if (msgObj && msgObj.chunked && msgObj.pkgId) {
+                            var entry = incomingChunkStore[msgObj.pkgId] || { total: msgObj.total, parts: {} };
+                            entry.parts[msgObj.idx] = msgObj.data;
+                            incomingChunkStore[msgObj.pkgId] = entry;
+                            var gotCount = Object.keys(entry.parts).length;
+                            if (gotCount === entry.total) {
+                                var fullStr = '';
+                                for (var k = 0; k < entry.total; k++) {
+                                    fullStr += (entry.parts[k] || '');
+                                }
+                                delete incomingChunkStore[msgObj.pkgId];
+                                var fullObj = JSON.parse(fullStr);
+                                return handleParsedCloudPacket(fullObj, showFeedback, forceOverwrite);
+                            }
+                            return false;
                         }
-                        if (wrapper.message) {
-                            var parsedMsg = JSON.parse(wrapper.message);
-                            return handleParsedCloudPacket(parsedMsg, showFeedback, forceOverwrite);
-                        }
+                        return handleParsedCloudPacket(msgObj, showFeedback, forceOverwrite);
                     }
                 } catch (e) {}
                 return false;
@@ -2488,15 +2706,36 @@
                 appData.syncRev = (Number(appData.syncRev) || 0) + 1;
                 appData.lastUpdatedAt = Date.now();
                 safeSetStorage(STORAGE_KEY, JSON.stringify(appData));
-                updateSyncBadgeUI('☁️ Syncing...', 'syncing');
+                updateSyncBadgeUI('☁️ Auto Syncing...', 'syncing');
 
-                var compact = buildCompactSyncPayload();
-                fetch(getCloudTopicUrl(appData.syncRoomId), {
-                    method: 'POST',
-                    body: JSON.stringify(compact)
-                }).then(function (res) {
+                var compactStr = JSON.stringify(buildCompactSyncPayload());
+                var CHUNK_SIZE = 3800;
+                var totalChunks = Math.ceil(compactStr.length / CHUNK_SIZE);
+                var pkgId = DEVICE_SYNC_ID + '_' + Date.now();
+                var topicUrl = getCloudTopicUrl(appData.syncRoomId);
+
+                var sendChain = Promise.resolve();
+                for (var idx = 0; idx < totalChunks; idx++) {
+                    (function (chunkIdx) {
+                        var slice = compactStr.slice(chunkIdx * CHUNK_SIZE, (chunkIdx + 1) * CHUNK_SIZE);
+                        var packet = totalChunks === 1
+                            ? slice
+                            : JSON.stringify({ chunked: true, pkgId: pkgId, idx: chunkIdx, total: totalChunks, data: slice });
+                        sendChain = sendChain.then(function () {
+                            if (chunkIdx > 0) {
+                                return new Promise(function (res) { setTimeout(res, 180); }).then(function () {
+                                    return fetch(topicUrl, { method: 'POST', body: packet });
+                                });
+                            }
+                            return fetch(topicUrl, { method: 'POST', body: packet });
+                        }).then(function (r) {
+                            if (!r.ok) throw new Error('HTTP ' + r.status);
+                        });
+                    })(idx);
+                }
+
+                sendChain.then(function () {
                     isCloudSyncing = false;
-                    if (!res.ok) throw new Error('HTTP ' + res.status);
                     updateSyncBadgeUI('☁️ Live Sync: ' + appData.syncRoomId, 'ok');
                     if (showFeedback) showToast('Live Cloud Sync पूरा हुआ! सभी फोन पर अपडेट चला गया।', 'success');
                 }).catch(function () {
@@ -2504,6 +2743,8 @@
                     if (showFeedback) {
                         updateSyncBadgeUI('⚠️ Sync Retry: ' + appData.syncRoomId, 'warn');
                         showToast('Cloud से कनेक्ट नहीं हो पाया, Internet चेक करें।', 'error');
+                    } else {
+                        setTimeout(function () { window.pushCloudDataNow(false); }, 2500);
                     }
                 });
             };
@@ -2521,10 +2762,9 @@
                     var lines = rawText.trim().split('\n');
                     var updated = false;
 
-                    for (var i = lines.length - 1; i >= 0; i--) {
+                    for (var i = 0; i < lines.length; i++) {
                         if (processIncomingNtfyLine(lines[i], showFeedback, Boolean(showFeedback))) {
                             updated = true;
-                            break;
                         }
                     }
 
@@ -2546,7 +2786,7 @@
                 if (syncPushTimer) clearTimeout(syncPushTimer);
                 syncPushTimer = setTimeout(function () {
                     window.pushCloudDataNow(false);
-                }, 400);
+                }, 150);
             }
 
             window.openCloudSyncModal = function () {
@@ -2857,7 +3097,7 @@
             };
 
             window.switchView = function (viewName) {
-                var views = ['dashboard', 'class-students', 'teachers', 'attendance', 'reminders', 'excel', 'whitelabel'];
+                var views = ['dashboard', 'class-students', 'teachers', 'attendance', 'reminders', 'expenses', 'excel', 'whitelabel'];
                 views.forEach(function (v) {
                     var el = document.getElementById('view-' + v);
                     if (el) {
@@ -2875,6 +3115,7 @@
                 if (viewName === 'teachers') renderTeacherList();
                 if (viewName === 'attendance') renderAttendanceView();
                 if (viewName === 'reminders') renderBulkRemindersView();
+                if (viewName === 'expenses') renderExpensesView();
                 if (viewName === 'whitelabel') populateWhiteLabelForm();
             };
 
@@ -3059,6 +3300,43 @@
                 var tTotals = getTeacherFinancialTotals();
                 document.getElementById('kpi-teacher-due').textContent = formatCurrency(tTotals.totalRemainingPayable);
                 document.getElementById('kpi-total-teachers').textContent = appData.teachers.length + ' Teachers • View Salary →';
+
+                // Monthly & Yearly Expenditure Calculation
+                var allExpenses = Array.isArray(appData.expenses) ? appData.expenses : [];
+                var nowDate = new Date();
+                var curMonthPrefix = activeYr + '-' + String(nowDate.getMonth() + 1).padStart(2, '0');
+                var monthExpenseTotal = 0;
+                var yearExpenseTotal = 0;
+                allExpenses.forEach(function (ex) {
+                    var d = String(ex.date || '');
+                    var amt = Number(ex.amount) || 0;
+                    if (d.indexOf(activeYr + '-') === 0) {
+                        yearExpenseTotal += amt;
+                    }
+                    if (d.indexOf(curMonthPrefix) === 0) {
+                        monthExpenseTotal += amt;
+                    }
+                });
+                var totalOutflow = yearExpenseTotal + tTotals.totalPaidSalary + tTotals.totalAdvance;
+                var netSavings = grandCollected - totalOutflow;
+
+                var dashExpYrLbl = document.getElementById('dash-exp-year-lbl');
+                if (dashExpYrLbl) dashExpYrLbl.textContent = activeYr;
+                var kpiMonthExp = document.getElementById('kpi-month-expense');
+                if (kpiMonthExp) kpiMonthExp.textContent = formatCurrency(monthExpenseTotal);
+                var kpiMonthExpSub = document.getElementById('kpi-month-expense-sub');
+                if (kpiMonthExpSub) kpiMonthExpSub.textContent = curMonthPrefix + ' (Month)';
+                var kpiYearExp = document.getElementById('kpi-year-expense');
+                if (kpiYearExp) kpiYearExp.textContent = formatCurrency(yearExpenseTotal);
+                var kpiYearExpSub = document.getElementById('kpi-year-expense-sub');
+                if (kpiYearExpSub) kpiYearExpSub.textContent = 'Year ' + activeYr + ' Coaching Expenses';
+                var kpiOutflow = document.getElementById('kpi-total-outflow');
+                if (kpiOutflow) kpiOutflow.textContent = formatCurrency(totalOutflow);
+                var kpiNetSav = document.getElementById('kpi-net-savings');
+                if (kpiNetSav) {
+                    kpiNetSav.textContent = formatCurrency(netSavings);
+                    kpiNetSav.style.color = netSavings >= 0 ? 'var(--emerald-dark)' : 'var(--rose)';
+                }
 
                 var onLeaveTeachers = appData.teachers.filter(function (t) { return Boolean(t.isOnLeave); });
                 var leaveBannerEl = document.getElementById('homeTeacherLeaveBanner');
@@ -3997,6 +4275,193 @@
                 });
             }
 
+            // =========================================================
+            // COACHING EXPENDITURE (MONTHLY & YEARLY) LOGIC
+            // =========================================================
+            var MONTH_LABELS = [
+                { num: '01', name: 'January (जनवरी)' },
+                { num: '02', name: 'February (फ़रवरी)' },
+                { num: '03', name: 'March (मार्च)' },
+                { num: '04', name: 'April (अप्रैल)' },
+                { num: '05', name: 'May (मई)' },
+                { num: '06', name: 'June (जून)' },
+                { num: '07', name: 'July (जुलाई)' },
+                { num: '08', name: 'August (अगस्त)' },
+                { num: '09', name: 'September (सितंबर)' },
+                { num: '10', name: 'October (अक्टूबर)' },
+                { num: '11', name: 'November (नवंबर)' },
+                { num: '12', name: 'December (दिसंबर)' }
+            ];
+
+            function renderExpensesView() {
+                var yearsList = appData.academicYears || ['2025', '2026', '2027', '2028'];
+                var yrSel = document.getElementById('expenseYearFilter');
+                if (yrSel && yrSel.options.length !== yearsList.length) {
+                    yrSel.innerHTML = yearsList.map(function (y) {
+                        return '<option value="' + y + '">Year ' + y + '</option>';
+                    }).join('');
+                    yrSel.value = appData.selectedYear || '2026';
+                }
+                var selectedYr = (yrSel && yrSel.value) || appData.selectedYear || '2026';
+                var selectedMonth = (document.getElementById('expenseMonthFilter') && document.getElementById('expenseMonthFilter').value) || 'all';
+                var selectedCat = (document.getElementById('expenseCategoryFilter') && document.getElementById('expenseCategoryFilter').value) || 'all';
+
+                var allExpenses = Array.isArray(appData.expenses) ? appData.expenses : [];
+                var yearExpenses = allExpenses.filter(function (e) {
+                    return String(e.date || '').indexOf(selectedYr + '-') === 0;
+                });
+
+                var curMonthNum = String(new Date().getMonth() + 1).padStart(2, '0');
+                var thisMonthTotal = 0;
+                var yearTotal = 0;
+                yearExpenses.forEach(function (e) {
+                    var amt = Number(e.amount) || 0;
+                    yearTotal += amt;
+                    if (String(e.date || '').slice(5, 7) === curMonthNum) {
+                        thisMonthTotal += amt;
+                    }
+                });
+
+                var tTotals = getTeacherFinancialTotals();
+                var grandYearlyOutflow = yearTotal + tTotals.totalPaidSalary + tTotals.totalAdvance;
+
+                var kpiGrid = document.getElementById('expenseSummaryKpiGrid');
+                if (kpiGrid) {
+                    kpiGrid.innerHTML =
+                        '<div class="kpi-card" style="background:var(--rose-soft); border-color:#fecdd3;"><div><div class="kpi-label" style="color:var(--rose);">Current Month (' + selectedYr + '-' + curMonthNum + ')</div><div class="kpi-value" style="color:var(--rose);">' + formatCurrency(thisMonthTotal) + '</div><div class="kpi-sub">इस महीने का कुल खर्च</div></div></div>' +
+                        '<div class="kpi-card" style="background:var(--amber-soft); border-color:#fde68a;"><div><div class="kpi-label" style="color:#b45309;">Total Yearly Expense (' + selectedYr + ')</div><div class="kpi-value" style="color:#b45309;">' + formatCurrency(yearTotal) + '</div><div class="kpi-sub">' + yearExpenses.length + ' Expense Entries</div></div></div>' +
+                        '<div class="kpi-card" style="background:var(--purple-soft); border-color:#ddd6fe;"><div><div class="kpi-label" style="color:var(--purple);">Teacher Salary Paid + Advance</div><div class="kpi-value" style="color:var(--purple);">' + formatCurrency(tTotals.totalPaidSalary + tTotals.totalAdvance) + '</div><div class="kpi-sub">Staff Payroll Outflow</div></div></div>' +
+                        '<div class="kpi-card"><div><div class="kpi-label">Grand Yearly Total Kharcha</div><div class="kpi-value" style="color:var(--text-main);">' + formatCurrency(grandYearlyOutflow) + '</div><div class="kpi-sub">Coaching Expense + Staff Salary</div></div></div>';
+                }
+
+                var tblTitle = document.getElementById('expTableYearTitle');
+                if (tblTitle) tblTitle.textContent = selectedYr;
+
+                var monthBody = document.getElementById('monthWiseExpenseBody');
+                var monthFoot = document.getElementById('monthWiseExpenseFoot');
+                if (monthBody && monthFoot) {
+                    monthBody.innerHTML = MONTH_LABELS.map(function (m) {
+                        var mItems = yearExpenses.filter(function (e) { return String(e.date || '').slice(5, 7) === m.num; });
+                        var mSum = mItems.reduce(function (acc, item) { return acc + (Number(item.amount) || 0); }, 0);
+                        var isCur = m.num === curMonthNum;
+                        return '<tr onclick="filterExpenseByMonth(\'' + m.num + '\')" style="' + (isCur ? 'background:#fffbeb;' : '') + '">' +
+                            '<td style="font-weight:800;">' + m.name + (isCur ? ' <span class="badge badge-amber">Current</span>' : '') + '</td>' +
+                            '<td class="text-center">' + mItems.length + '</td>' +
+                            '<td class="text-right" style="font-weight:800; color:' + (mSum > 0 ? 'var(--rose)' : 'var(--text-muted)') + ';">' + formatCurrency(mSum) + '</td>' +
+                            '<td class="text-center"><button type="button" class="btn btn-soft-indigo btn-sm" onclick="event.stopPropagation(); filterExpenseByMonth(\'' + m.num + '\')">Filter Month</button></td>' +
+                        '</tr>';
+                    }).join('');
+
+                    monthFoot.innerHTML =
+                        '<tr>' +
+                            '<td>Grand Total (' + selectedYr + ' • All 12 Months)</td>' +
+                            '<td class="text-center">' + yearExpenses.length + '</td>' +
+                            '<td class="text-right" style="color:var(--rose);">' + formatCurrency(yearTotal) + '</td>' +
+                            '<td class="text-center"><button type="button" class="btn btn-soft btn-sm" onclick="filterExpenseByMonth(\'all\')">Show All</button></td>' +
+                        '</tr>';
+                }
+
+                var filteredEntries = yearExpenses.filter(function (e) {
+                    var matchM = selectedMonth === 'all' || String(e.date || '').slice(5, 7) === selectedMonth;
+                    var matchC = selectedCat === 'all' || e.category === selectedCat;
+                    return matchM && matchC;
+                }).sort(function (a, b) {
+                    return String(b.date || '').localeCompare(String(a.date || ''));
+                });
+
+                var badgeEl = document.getElementById('expenseEntriesCountBadge');
+                if (badgeEl) badgeEl.textContent = filteredEntries.length + ' Entries';
+
+                var entriesBody = document.getElementById('expenseEntriesTableBody');
+                if (entriesBody) {
+                    if (filteredEntries.length === 0) {
+                        entriesBody.innerHTML = '<tr><td colspan="6" class="text-center" style="padding:24px; color:var(--text-muted);">इस फ़िल्टर में कोई खर्च दर्ज नहीं है। "+ Add Expense" दबाकर नया खर्च जोड़ें।</td></tr>';
+                    } else {
+                        entriesBody.innerHTML = filteredEntries.map(function (e) {
+                            return '<tr>' +
+                                '<td style="font-weight:700; white-space:nowrap;">' + escapeHTML(e.date) + '</td>' +
+                                '<td><span class="badge badge-indigo">' + escapeHTML(e.category) + '</span></td>' +
+                                '<td style="font-weight:700;">' + escapeHTML(e.title) + '</td>' +
+                                '<td style="color:var(--text-secondary);">' + escapeHTML(e.paidTo || 'Cash') + '</td>' +
+                                '<td class="text-right" style="font-weight:800; color:var(--rose);">' + formatCurrency(e.amount) + '</td>' +
+                                '<td class="text-center" style="white-space:nowrap;">' +
+                                    '<button type="button" class="btn btn-soft btn-sm" onclick="openEditExpenseModal(\'' + e.id + '\')">✏️</button> ' +
+                                    '<button type="button" class="btn btn-danger-ghost btn-sm" onclick="deleteExpenseEntry(\'' + e.id + '\')">🗑</button>' +
+                                '</td>' +
+                            '</tr>';
+                        }).join('');
+                    }
+                }
+            }
+
+            window.filterExpenseByMonth = function (monthNum) {
+                var sel = document.getElementById('expenseMonthFilter');
+                if (sel) sel.value = monthNum;
+                renderExpensesView();
+            };
+
+            window.openAddExpenseModal = function () {
+                document.getElementById('expenseFormTitle').textContent = '💸 Add Coaching Expense (खर्च जोड़ें)';
+                document.getElementById('expenseForm').reset();
+                document.getElementById('formExpenseId').value = '';
+                document.getElementById('formExpenseDate').value = new Date().toISOString().split('T')[0];
+                window.openModal('expenseFormModal');
+            };
+
+            window.openEditExpenseModal = function (expenseId) {
+                var ex = (appData.expenses || []).find(function (item) { return item.id === expenseId; });
+                if (!ex) return;
+                document.getElementById('expenseFormTitle').textContent = '✏️ Edit Coaching Expense';
+                document.getElementById('formExpenseId').value = ex.id;
+                document.getElementById('formExpenseDate').value = ex.date;
+                document.getElementById('formExpenseAmount').value = ex.amount;
+                document.getElementById('formExpenseCategory').value = ex.category;
+                document.getElementById('formExpenseTitle').value = ex.title;
+                document.getElementById('formExpensePaidTo').value = ex.paidTo || '';
+                window.openModal('expenseFormModal');
+            };
+
+            window.saveExpenseForm = function (event) {
+                event.preventDefault();
+                if (!Array.isArray(appData.expenses)) appData.expenses = [];
+                var id = document.getElementById('formExpenseId').value;
+                var expObj = {
+                    id: id || ('exp_' + Date.now()),
+                    date: document.getElementById('formExpenseDate').value,
+                    amount: Number(document.getElementById('formExpenseAmount').value) || 0,
+                    category: document.getElementById('formExpenseCategory').value,
+                    title: document.getElementById('formExpenseTitle').value.trim(),
+                    paidTo: document.getElementById('formExpensePaidTo').value.trim() || 'Cash'
+                };
+
+                if (id) {
+                    var idx = appData.expenses.findIndex(function (e) { return e.id === id; });
+                    if (idx !== -1) appData.expenses[idx] = expObj;
+                    showToast('खर्च अपडेट हो गया!', 'success');
+                } else {
+                    appData.expenses.push(expObj);
+                    showToast(formatCurrency(expObj.amount) + ' का नया खर्च जोड़ा गया!', 'success');
+                }
+
+                saveAppData();
+                window.closeModal('expenseFormModal');
+                renderDashboard();
+                if (!document.getElementById('view-expenses').classList.contains('hidden')) {
+                    renderExpensesView();
+                }
+            };
+
+            window.deleteExpenseEntry = function (expenseId) {
+                if (!Array.isArray(appData.expenses)) return;
+                var idx = appData.expenses.findIndex(function (e) { return e.id === expenseId; });
+                if (idx === -1) return;
+                appData.expenses.splice(idx, 1);
+                saveAppData();
+                renderDashboard();
+                renderExpensesView();
+                showToast('खर्च रिकॉर्ड हटा दिया गया।', 'success');
+            };
+
             window.openAddStudentModal = function (preselectedClass) {
                 var cls = preselectedClass || '7th';
                 var activeYr = appData.selectedYear || '2026';
@@ -4339,6 +4804,7 @@
             window.renderTeacherList = renderTeacherList;
             window.renderAttendanceView = renderAttendanceView;
             window.renderBulkRemindersView = renderBulkRemindersView;
+            window.renderExpensesView = renderExpensesView;
 
             checkInitialLockState();
             renderDashboard();
@@ -4348,7 +4814,13 @@
                 if (!document.hidden) {
                     window.pullCloudDataNow(false);
                 }
-            }, 15000);
+            }, 8000);
+            document.addEventListener('visibilitychange', function () {
+                if (!document.hidden) {
+                    startRealtimeCloudStream();
+                    window.pullCloudDataNow(false);
+                }
+            });
             document.addEventListener('DOMContentLoaded', function () {
                 checkInitialLockState();
                 renderDashboard();

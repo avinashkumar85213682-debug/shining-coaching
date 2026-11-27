@@ -2295,13 +2295,25 @@
                 safeSetStorage(STORAGE_KEY, JSON.stringify(appData));
             }
 
-            function getNtfyTopicUrl(pollMode) {
-                var cleanRoom = (appData.syncRoomId || 'shining-harnatand-2026').replace(/[^a-zA-Z0-9_-]/g, '');
-                var topic = 'scc_erp_live_' + cleanRoom;
-                if (pollMode) {
-                    return 'https://ntfy.sh/' + encodeURIComponent(topic) + '/json?poll=1&since=24h&_t=' + Date.now();
+            // Deterministic 32-char hex bucket key derived from room name for full-size JSON cloud storage
+            function getRoomStorageId(roomName) {
+                var clean = (roomName || 'shining-harnatand-2026').replace(/[^a-zA-Z0-9_-]/g, '');
+                var h1 = 0x811c9dc5, h2 = 0x1b873593, h3 = 0x85ebca6b, h4 = 0xc2b2ae35;
+                for (var i = 0; i < clean.length; i++) {
+                    var c = clean.charCodeAt(i);
+                    h1 = Math.imul(h1 ^ c, 0x01000193);
+                    h2 = Math.imul(h2 ^ (c + 17), 0x27d4eb2f);
+                    h3 = Math.imul(h3 ^ (c + 31), 0x165667b1);
+                    h4 = Math.imul(h4 ^ (c + 47), 0x9e3779b1);
                 }
-                return 'https://ntfy.sh/' + encodeURIComponent(topic);
+                function toHex8(n) { return (n >>> 0).toString(16).padStart(8, '0'); }
+                return 'scc' + toHex8(h1) + toHex8(h2) + toHex8(h3) + toHex8(h4).slice(0, 5);
+            }
+
+            function getCloudEndpointUrl() {
+                var cleanRoom = (appData.syncRoomId || 'shining-harnatand-2026').replace(/[^a-zA-Z0-9_-]/g, '');
+                var bucketId = getRoomStorageId(cleanRoom);
+                return 'https://api.jsonstorage.net/v1/json/00000000-0000-0000-0000-000000000000/' + bucketId;
             }
 
             function updateSyncBadgeUI(statusLabel, stateType) {
@@ -2325,85 +2337,80 @@
                 }
             }
 
+            function buildCompactSyncPayload() {
+                var payload = cloneData(appData);
+                payload.instituteLogo = "";
+                return payload;
+            }
+
+            function applyRemoteCloudState(candidate, showFeedback) {
+                var currentRoom = appData.syncRoomId;
+                var localLogo = appData.instituteLogo;
+                appData = candidate;
+                appData.syncRoomId = currentRoom;
+                if (!appData.instituteLogo && localLogo) appData.instituteLogo = localLogo;
+                safeSetStorage(STORAGE_KEY, JSON.stringify(appData));
+                renderDashboard();
+                if (!document.getElementById('view-class-students').classList.contains('hidden')) renderStudentList();
+                if (!document.getElementById('view-teachers').classList.contains('hidden')) renderTeacherList();
+                if (!document.getElementById('view-attendance').classList.contains('hidden')) renderAttendanceView();
+                if (!document.getElementById('view-reminders').classList.contains('hidden')) renderBulkRemindersView();
+                if (showFeedback) showToast('सभी devices से नया live data सिंक हो गया!', 'success');
+            }
+
             window.pushCloudDataNow = function (showFeedback) {
                 if (!appData.syncRoomId) return;
                 isCloudSyncing = true;
                 updateSyncBadgeUI('☁️ Syncing...', 'syncing');
 
-                var payload = cloneData(appData);
-                // Keep payload compact so cloud push never exceeds size limits
-                if (payload.instituteLogo && payload.instituteLogo.length > 60000) {
-                    payload.instituteLogo = "";
-                }
+                var payload = buildCompactSyncPayload();
+                var endpoint = getCloudEndpointUrl();
 
-                fetch(getNtfyTopicUrl(false), {
-                    method: 'POST',
+                fetch(endpoint, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 }).then(function (res) {
                     isCloudSyncing = false;
                     if (!res.ok) throw new Error('HTTP ' + res.status);
                     updateSyncBadgeUI('☁️ Live Sync: ' + appData.syncRoomId, 'ok');
-                    if (showFeedback) showToast('Live Cloud Sync पूरा हुआ! अब Copy Sync Link से शेयर करें।', 'success');
+                    if (showFeedback) showToast('Live Cloud Sync पूरा हुआ! अब सभी फ़ोन पर यही डेटा दिखेगा।', 'success');
                 }).catch(function () {
                     isCloudSyncing = false;
-                    updateSyncBadgeUI('☁️ Sync: ' + appData.syncRoomId, 'ok');
-                    if (showFeedback) showToast('Device में सेव है। Internet कनेक्शन चेक करें।', 'error');
+                    updateSyncBadgeUI('⚠️ Sync Retry: ' + appData.syncRoomId, 'warn');
+                    if (showFeedback) showToast('Cloud से कनेक्ट नहीं हो पाया, Internet चेक करें।', 'error');
                 });
             };
 
             window.pullCloudDataNow = function (showFeedback) {
                 if (!appData.syncRoomId || isCloudSyncing) return;
+                var endpoint = getCloudEndpointUrl() + '?_t=' + Date.now();
 
-                fetch(getNtfyTopicUrl(true), {
+                fetch(endpoint, {
                     method: 'GET',
                     cache: 'no-store'
                 }).then(function (res) {
-                    if (!res.ok) return '';
-                    return res.text();
-                }).then(function (rawText) {
-                    if (!rawText) {
-                        updateSyncBadgeUI('☁️ Live Sync: ' + appData.syncRoomId, 'ok');
-                        return;
+                    if (res.status === 404) {
+                        // Room not initialized in cloud yet — push current local state once
+                        window.pushCloudDataNow(false);
+                        return null;
                     }
-                    var lines = rawText.trim().split('\n');
-                    var newestRemote = null;
-                    var newestTs = Number(appData.lastUpdatedAt) || 0;
-
-                    for (var i = 0; i < lines.length; i++) {
-                        try {
-                            var wrapper = JSON.parse(lines[i]);
-                            if (wrapper && wrapper.event === 'message' && wrapper.message) {
-                                var candidate = JSON.parse(wrapper.message);
-                                if (candidate && Array.isArray(candidate.students) && Array.isArray(candidate.teachers)) {
-                                    var ts = Number(candidate.lastUpdatedAt) || 0;
-                                    if (ts > newestTs) {
-                                        newestTs = ts;
-                                        newestRemote = candidate;
-                                    }
-                                }
-                            }
-                        } catch (e) {}
-                    }
-
-                    if (newestRemote) {
-                        var currentRoom = appData.syncRoomId;
-                        var localLogo = appData.instituteLogo;
-                        appData = newestRemote;
-                        appData.syncRoomId = currentRoom;
-                        if (!appData.instituteLogo && localLogo) appData.instituteLogo = localLogo;
-                        safeSetStorage(STORAGE_KEY, JSON.stringify(appData));
-                        renderDashboard();
-                        if (!document.getElementById('view-class-students').classList.contains('hidden')) renderStudentList();
-                        if (!document.getElementById('view-teachers').classList.contains('hidden')) renderTeacherList();
-                        if (!document.getElementById('view-attendance').classList.contains('hidden')) renderAttendanceView();
-                        if (!document.getElementById('view-reminders').classList.contains('hidden')) renderBulkRemindersView();
-                        if (showFeedback) showToast('सभी devices से नया live data आ गया!', 'success');
-                    } else if (showFeedback) {
-                        showToast('आपका डेटा पहले से ही up-to-date है!', 'success');
+                    if (!res.ok) throw new Error('HTTP ' + res.status);
+                    return res.json();
+                }).then(function (candidate) {
+                    if (!candidate) return;
+                    if (candidate && Array.isArray(candidate.students) && Array.isArray(candidate.teachers)) {
+                        var remoteTs = Number(candidate.lastUpdatedAt) || 0;
+                        var localTs = Number(appData.lastUpdatedAt) || 0;
+                        if (remoteTs > localTs) {
+                            applyRemoteCloudState(candidate, showFeedback);
+                        } else if (showFeedback) {
+                            showToast('आपका डेटा पहले से ही up-to-date है!', 'success');
+                        }
                     }
                     updateSyncBadgeUI('☁️ Live Sync: ' + appData.syncRoomId, 'ok');
                 }).catch(function () {
-                    updateSyncBadgeUI('☁️ Sync: ' + appData.syncRoomId, 'ok');
+                    updateSyncBadgeUI('⚠️ Sync Retry: ' + appData.syncRoomId, 'warn');
                 });
             };
 
@@ -2413,7 +2420,7 @@
                 if (syncPushTimer) clearTimeout(syncPushTimer);
                 syncPushTimer = setTimeout(function () {
                     window.pushCloudDataNow(false);
-                }, 350);
+                }, 250);
             }
 
             window.openCloudSyncModal = function () {
@@ -4211,7 +4218,7 @@
             window.pullCloudDataNow(false);
             setInterval(function () {
                 window.pullCloudDataNow(false);
-            }, 5000);
+            }, 3000);
             document.addEventListener('DOMContentLoaded', function () {
                 checkInitialLockState();
                 renderDashboard();

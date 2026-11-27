@@ -2279,32 +2279,25 @@
             var syncPushTimer = null;
             var isCloudSyncing = false;
 
-            function getUrlSyncParams() {
+            function getUrlRoomParam() {
                 try {
                     var params = new URLSearchParams(window.location.search || '');
-                    return {
-                        room: (params.get('room') || '').trim().replace(/[^a-zA-Z0-9_-]/g, ''),
-                        bin: (params.get('bin') || '').trim().replace(/[^a-zA-Z0-9_-]/g, '')
-                    };
+                    return (params.get('room') || '').trim().replace(/[^a-zA-Z0-9_-]/g, '');
                 } catch (e) {
-                    return { room: '', bin: '' };
+                    return '';
                 }
             }
 
-            var urlParams = getUrlSyncParams();
-            if (urlParams.room && urlParams.room !== appData.syncRoomId) {
-                appData.syncRoomId = urlParams.room;
-                appData.syncBinId = urlParams.bin || '';
-                appData.lastUpdatedAt = 0;
-                safeSetStorage(STORAGE_KEY, JSON.stringify(appData));
-            } else if (urlParams.bin && urlParams.bin !== appData.syncBinId) {
-                appData.syncBinId = urlParams.bin;
+            var urlRoom = getUrlRoomParam();
+            if (urlRoom && urlRoom !== appData.syncRoomId) {
+                appData.syncRoomId = urlRoom;
                 appData.lastUpdatedAt = 0;
                 safeSetStorage(STORAGE_KEY, JSON.stringify(appData));
             }
 
-            function getCloudBinUrl(binId) {
-                return 'https://api.jsonstorage.net/v1/json/' + encodeURIComponent(binId);
+            function getFirebaseRoomUrl(roomId) {
+                var clean = (roomId || 'shining26').replace(/[^a-zA-Z0-9_-]/g, '');
+                return 'https://shining-coaching-sync-default-rtdb.firebaseio.com/rooms/' + encodeURIComponent(clean) + '.json';
             }
 
             function updateSyncBadgeUI(statusLabel, stateType) {
@@ -2336,11 +2329,9 @@
 
             function applyRemoteCloudState(candidate, showFeedback) {
                 var currentRoom = appData.syncRoomId;
-                var currentBin = appData.syncBinId;
                 var localLogo = appData.instituteLogo;
                 appData = candidate;
                 appData.syncRoomId = currentRoom;
-                appData.syncBinId = currentBin;
                 if (!appData.instituteLogo && localLogo) appData.instituteLogo = localLogo;
                 safeSetStorage(STORAGE_KEY, JSON.stringify(appData));
                 renderDashboard();
@@ -2351,67 +2342,31 @@
                 if (showFeedback) showToast('सभी devices से नया live data सिंक हो गया!', 'success');
             }
 
-            function ensureCloudBinCreated(payload, callback) {
-                if (appData.syncBinId) {
-                    callback(appData.syncBinId);
-                    return;
-                }
-                fetch('https://api.jsonstorage.net/v1/json', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                }).then(function (res) {
-                    if (!res.ok) throw new Error('HTTP ' + res.status);
-                    return res.json();
-                }).then(function (data) {
-                    var uri = (data && data.uri) || '';
-                    var parts = uri.split('/');
-                    var newId = parts[parts.length - 1] || '';
-                    if (!newId) throw new Error('No bin ID');
-                    appData.syncBinId = newId;
-                    safeSetStorage(STORAGE_KEY, JSON.stringify(appData));
-                    try {
-                        var newUrl = window.location.pathname + '?room=' + encodeURIComponent(appData.syncRoomId || 'shining26') + '&bin=' + encodeURIComponent(newId);
-                        window.history.replaceState({}, '', newUrl);
-                    } catch (e) {}
-                    callback(newId);
-                }).catch(function () {
-                    isCloudSyncing = false;
-                    updateSyncBadgeUI('⚠️ Offline Saved: ' + (appData.syncRoomId || 'shining26'), 'warn');
-                });
-            }
-
             window.pushCloudDataNow = function (showFeedback) {
                 if (!appData.syncRoomId) return;
                 isCloudSyncing = true;
                 updateSyncBadgeUI('☁️ Syncing...', 'syncing');
 
                 var payload = buildCompactSyncPayload();
-                ensureCloudBinCreated(payload, function (binId) {
-                    fetch(getCloudBinUrl(binId), {
-                        method: 'PUT',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
-                    }).then(function (res) {
-                        isCloudSyncing = false;
-                        if (!res.ok) throw new Error('HTTP ' + res.status);
-                        updateSyncBadgeUI('☁️ Live Sync: ' + appData.syncRoomId, 'ok');
-                        if (showFeedback) showToast('Live Cloud Sync पूरा हुआ! अब "Copy Sync Link" भेजें।', 'success');
-                    }).catch(function () {
-                        isCloudSyncing = false;
-                        updateSyncBadgeUI('⚠️ Sync Retry: ' + appData.syncRoomId, 'warn');
-                        if (showFeedback) showToast('Cloud से कनेक्ट नहीं हो पाया, Internet चेक करें।', 'error');
-                    });
+                fetch(getFirebaseRoomUrl(appData.syncRoomId), {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                }).then(function (res) {
+                    isCloudSyncing = false;
+                    if (!res.ok) throw new Error('HTTP ' + res.status);
+                    updateSyncBadgeUI('☁️ Live Sync: ' + appData.syncRoomId, 'ok');
+                    if (showFeedback) showToast('Live Cloud Sync पूरा हुआ! अब "Copy Sync Link" भेजें।', 'success');
+                }).catch(function () {
+                    isCloudSyncing = false;
+                    updateSyncBadgeUI('⚠️ Sync Retry: ' + appData.syncRoomId, 'warn');
+                    if (showFeedback) showToast('Cloud से कनेक्ट नहीं हो पाया, Internet चेक करें।', 'error');
                 });
             };
 
             window.pullCloudDataNow = function (showFeedback) {
                 if (!appData.syncRoomId || isCloudSyncing) return;
-                if (!appData.syncBinId) {
-                    window.pushCloudDataNow(false);
-                    return;
-                }
-                var endpoint = getCloudBinUrl(appData.syncBinId) + '?_t=' + Date.now();
+                var endpoint = getFirebaseRoomUrl(appData.syncRoomId) + '?_t=' + Date.now();
 
                 fetch(endpoint, {
                     method: 'GET',
@@ -2420,6 +2375,10 @@
                     if (!res.ok) throw new Error('HTTP ' + res.status);
                     return res.json();
                 }).then(function (candidate) {
+                    if (!candidate) {
+                        window.pushCloudDataNow(false);
+                        return;
+                    }
                     if (candidate && Array.isArray(candidate.students) && Array.isArray(candidate.teachers)) {
                         var remoteTs = Number(candidate.lastUpdatedAt) || 0;
                         var localTs = Number(appData.lastUpdatedAt) || 0;
@@ -2441,7 +2400,7 @@
                 if (syncPushTimer) clearTimeout(syncPushTimer);
                 syncPushTimer = setTimeout(function () {
                     window.pushCloudDataNow(false);
-                }, 250);
+                }, 200);
             }
 
             window.openCloudSyncModal = function () {
@@ -2458,10 +2417,7 @@
                     showToast('कृपया सही Sync Room Code लिखें (जैसे: shining26)', 'error');
                     return;
                 }
-                if (cleanRoom !== appData.syncRoomId) {
-                    appData.syncRoomId = cleanRoom;
-                    appData.syncBinId = '';
-                }
+                appData.syncRoomId = cleanRoom;
                 saveAppData();
                 window.pushCloudDataNow(true);
                 window.closeModal('cloudSyncModal');
@@ -2470,14 +2426,11 @@
             window.copySyncRoomLink = function () {
                 var rawRoom = (document.getElementById('syncRoomIdInput').value || appData.syncRoomId || 'shining26').trim().replace(/[^a-zA-Z0-9_-]/g, '');
                 appData.syncRoomId = rawRoom;
-                var payload = buildCompactSyncPayload();
-                ensureCloudBinCreated(payload, function (binId) {
-                    var baseUrl = window.location.href.split('?')[0].split('#')[0];
-                    var shareUrl = baseUrl + '?room=' + encodeURIComponent(rawRoom) + '&bin=' + encodeURIComponent(binId);
-                    copyTextFallback(shareUrl);
-                    window.pushCloudDataNow(false);
-                    showToast('Live Multi-Device Sync Link कॉपी हो गया! WhatsApp पर भेजें।', 'success');
-                });
+                var baseUrl = window.location.href.split('?')[0].split('#')[0];
+                var shareUrl = baseUrl + '?room=' + encodeURIComponent(rawRoom);
+                copyTextFallback(shareUrl);
+                window.pushCloudDataNow(false);
+                showToast('Live Multi-Device Sync Link कॉपी हो गया! WhatsApp पर भेजें।', 'success');
             };
 
             function formatCurrency(amount) {
